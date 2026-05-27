@@ -43,6 +43,16 @@ db.serialize(() => {
   `);
 });
 
+db.run(`
+CREATE TABLE IF NOT EXISTS casas (
+  id TEXT PRIMARY KEY,
+  endereco TEXT,
+  bairro TEXT,
+  lat REAL,
+  lng REAL
+)
+`);
+
 // SALVAR CADASTRO
 app.post("/cadastro", (req, res) => {
   const c = req.body;
@@ -95,6 +105,51 @@ app.post("/cadastro", (req, res) => {
       id: this.lastID
     });
   });
+});
+
+app.post('/lotes', async (req, res) => {
+
+  const casas = req.body;
+
+  try{
+
+    for(const casa of casas){
+
+      await db.run(`
+        INSERT OR IGNORE INTO casas (
+          id,
+          endereco,
+          bairro,
+          lat,
+          lng
+        )
+        VALUES (?, ?, ?, ?, ?)
+      `,
+      [
+        casa.id,
+        casa.label,
+        casa.bairro,
+        casa.lat,
+        casa.lng
+      ]);
+
+    }
+
+    res.json({
+      ok:true,
+      msg:'Lotes salvos com sucesso!'
+    });
+
+  }catch(err){
+
+    console.error(err);
+
+    res.status(500).json({
+      erro:'Erro ao salvar lotes'
+    });
+
+  }
+
 });
 
 // LISTAR TODOS

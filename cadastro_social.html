@@ -56,6 +56,20 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .role-engenheiro{background:rgba(210,153,34,.15);color:#e3b341;border:1px solid rgba(210,153,34,.3);}
 .btn-logout{background:none;border:1px solid var(--border);border-radius:var(--radius);color:var(--text2);font-size:11px;padding:4px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
 .btn-logout:hover{border-color:var(--red);color:var(--red);}
+.btn-blue{
+  background:#0969da;
+  color:#fff;
+  border:none;
+  padding:10px 16px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+  transition:.2s;
+}
+
+.btn-blue:hover{
+  background:#1f6feb;
+}
  
 /* STATSBAR */
 #statsbar{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;}
@@ -226,6 +240,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
       <button class="nav-btn active" id="nav-map" onclick="switchView('map')">🗺 Mapa</button>
       <button class="nav-btn" id="nav-admin" onclick="switchView('admin')" style="display:none">⚙️ Administração</button>
       <button class="nav-btn" id="btn-import-top" onclick="document.getElementById('geojson-input').click()" style="display:none;background:var(--amber);color:#0d1117;border-color:var(--amber);font-weight:600">📂 Importar GeoJSON</button>
+      <button onclick="salvarLotes()" class="btn-blue">Salvar Lotes</button>
       <input type="file" id="geojson-input" accept=".geojson,.json" onchange="loadGeoJSON(this)" style="display:none"/>
     </div>
     <div class="topbar-right">
@@ -767,22 +782,83 @@ function loadDemoHouses(){
   renderHousesList();
   updateStats();
 }
+
+async function salvarLotes(){
+
+  try{
+
+    const res = await fetch("http://localhost:3000/lotes", {
+      method: "POST",
+      headers: {
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify(houses)
+    });
+
+    const data = await res.json();
+
+    showToast(data.msg || "Lotes salvos!");
+
+  }catch(err){
+    console.error(err);
+    showToast("Erro ao salvar lotes", true);
+  }
+}
  
 function loadGeoJSON(input){
-  const file=input.files[0]; if(!file) return;
+  const file=input.files[0];
+  if(!file) return;
+
   const reader=new FileReader();
+
   reader.onload=e=>{
+
     try{
+
       const gj=JSON.parse(e.target.result);
-      houses=[];
+
+      let novas=0;
+
       gj.features.forEach((f,i)=>{
-        const c=f.geometry.coordinates, p=f.properties||{};
-        houses.push({id:'h'+i,label:p.endereco||p.name||p.nome||p.address||('Imóvel '+(i+1)),bairro:p.bairro||'',lat:c[1],lng:c[0]});
+
+        const c=f.geometry.coordinates;
+        const p=f.properties||{};
+
+        const id = p.id || ('h'+Date.now()+i);
+
+        // verifica se já existe
+        const existe = houses.some(h=>h.id===id);
+
+        if(!existe){
+
+          houses.push({
+            id:id,
+            label:p.endereco||p.name||p.nome||p.address||('Imóvel '+(i+1)),
+            bairro:p.bairro||'',
+            lat:c[1],
+            lng:c[0]
+          });
+
+          novas++;
+        }
+
       });
-      renderHousesList(); updateStats(); drawMap();
-      showToast('Mapa carregado: '+houses.length+' imóveis do QGIS!');
-    }catch(e){ showToast('Erro ao ler o GeoJSON.',true); }
+
+      renderHousesList();
+      updateStats();
+      drawMap();
+
+      showToast(novas+' novas casas importadas!');
+
+    }catch(err){
+
+      console.error(err);
+      showToast('Erro ao ler o GeoJSON.',true);
+
+    }
+
   };
+
   reader.readAsText(file);
 }
  

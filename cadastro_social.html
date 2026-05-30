@@ -610,22 +610,65 @@ function initMap(){
 
   markersLayer = L.layerGroup().addTo(map);
 
-  map.on('click', function(e){
+  let casasMarcadas = [];
+
+map.on('click', function(e){
 
   const lat = e.latlng.lat;
   const lng = e.latlng.lng;
 
-  if(window.marcadorTemp){
-    map.removeLayer(window.marcadorTemp);
+  const indice = casasMarcadas.findIndex(c => {
+
+    const distancia = map.distance(
+      [lat, lng],
+      [c.lat, c.lng]
+    );
+
+    return distancia < 10; // tolerância em metros
+
+  });
+
+  // Se já estiver marcada, remove
+  if(indice !== -1){
+
+    map.removeLayer(casasMarcadas[indice].ponto);
+    map.removeLayer(casasMarcadas[indice].destaque);
+
+    casasMarcadas.splice(indice, 1);
+
+    return;
   }
 
-  window.marcadorTemp = L.marker([lat, lng]).addTo(map);
+  // Marca a casa
+  const ponto = L.circleMarker(
+    [lat, lng],
+    {
+      radius: 4,
+      color: '#ff0000',
+      fillColor: '#ff0000',
+      fillOpacity: 1,
+      weight: 2
+    }
+  ).addTo(map);
 
-  console.log(lat, lng);
+  const destaque = L.circle(
+    [lat, lng],
+    {
+      radius: 10,
+      color: '#ffff00',
+      fillOpacity: 0,
+      weight: 2
+    }
+  ).addTo(map);
+
+  casasMarcadas.push({
+    lat,
+    lng,
+    ponto,
+    destaque
+  });
 
 });
-
-  drawMap();
 
 }
  

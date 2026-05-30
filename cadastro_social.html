@@ -96,7 +96,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .loc-pulse{width:8px;height:8px;border-radius:50%;background:var(--blue2);animation:blink 1.5s infinite;flex-shrink:0;}
 .map-overlay{
   position:absolute;
-  top:10px;
+  top:30px;
   right:10px;
   z-index:9999;
   display:flex;
@@ -484,6 +484,7 @@ let map;
 let markersLayer;
 let modoAtual = null;
 let anguloMapa = 0;
+let drawnItems;
  
 // Mapa canvas
 let cam = {lat:-5.0892, lng:-42.8016, zoom:15};
@@ -685,8 +686,8 @@ function initMap(){
 
   markersLayer = L.layerGroup().addTo(map);
 
-  const drawnItems = new L.FeatureGroup();
-map.addLayer(drawnItems);
+  drawnItems = new L.FeatureGroup();
+  map.addLayer(drawnItems);
 
 const drawControl = new L.Control.Draw({
   draw: {
@@ -864,12 +865,22 @@ async function salvarLotes(){
 
   try{
 
+    const lotes = [];
+
+    drawnItems.eachLayer(layer => {
+
+      lotes.push(
+        layer.toGeoJSON()
+      );
+
+    });
+
     const res = await fetch("/lotes", {
-      method: "POST",
-      headers: {
+      method:"POST",
+      headers:{
         "Content-Type":"application/json"
       },
-      body: JSON.stringify(houses)
+      body:JSON.stringify(lotes)
     });
 
     const data = await res.json();
@@ -877,9 +888,13 @@ async function salvarLotes(){
     showToast(data.msg || "Lotes salvos!");
 
   }catch(err){
+
     console.error(err);
+
     showToast("Erro ao salvar lotes", true);
+
   }
+
 }
  
 async function loadMapFile(input){

@@ -487,7 +487,7 @@ async function carregarCadastrosDoBanco() {
 
   try {
 
-    const res = await fetch("http://localhost:3000/cadastros");
+    const res = await fetch("/cadastros");
 
     const dados = await res.json();
 
@@ -694,7 +694,7 @@ async function salvarLotes(){
 
   try{
 
-    const res = await fetch("http://localhost:3000/lotes", {
+    const res = await fetch("/lotes", {
       method: "POST",
       headers: {
         "Content-Type":"application/json"
@@ -998,7 +998,7 @@ async function saveCadastro() {
 
   try {
 
-    const res = await fetch("http://localhost:3000/cadastro", {
+    const res = await fetch("/cadastro", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -1036,7 +1036,7 @@ async function saveCadastro() {
 }
 
 async function carregarCadastro(casaId) {
-  const res = await fetch(`http://localhost:3000/cadastro/${casaId}`);
+  const res = await fetch(`/cadastro/${casaId}`);
   return await res.json();
 }
  

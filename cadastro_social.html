@@ -450,6 +450,8 @@ let cam = {lat:-5.0892, lng:-42.8016, zoom:15};
 let dragging = false, dragStart = {x:0,y:0}, camStart = {lat:0,lng:0};
 let tileCache = {}, pendingTiles = {};
 let animFrame = null;
+
+let casaSelecionada = null;
  
 const ROLE_LABEL = {colaborador:'Colaborador de Campo', assistente:'Assistente Social', engenheiro:'Engenheiro'};
 const AVATAR_BG  = {colaborador:'#1a7f37', assistente:'#1f6feb', engenheiro:'#9e6a03'};
@@ -640,7 +642,15 @@ function drawMap(){
 
     const done = !!cadastros[h.id];
 
-    const marker = L.marker([h.lat, h.lng]);
+    const marker = L.circleMarker(
+  [h.lat, h.lng],
+  {
+    radius: casaSelecionada === h.id ? 12 : 8,
+    color: casaSelecionada === h.id ? '#ff0000' : '#3388ff',
+    fillColor: casaSelecionada === h.id ? '#ff0000' : '#3388ff',
+    fillOpacity: 1
+  }
+);
 
     marker.bindPopup(`
       <b>${h.label}</b><br>
@@ -648,8 +658,14 @@ function drawMap(){
     `);
 
     marker.on('click', () => {
-      openHouse(h);
-    });
+
+  casaSelecionada = h.id;
+
+  drawMap();
+
+  openHouse(h);
+
+});
 
     markersLayer.addLayer(marker);
 

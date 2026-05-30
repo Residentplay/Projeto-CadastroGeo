@@ -94,7 +94,15 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .map-ctrl-btn:hover{background:var(--bg3);}
 #gps-bar{position:absolute;bottom:10px;left:10px;right:10px;background:rgba(22,27,34,.9);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-size:11px;color:var(--text2);display:flex;align-items:center;gap:8px;backdrop-filter:blur(4px);}
 .loc-pulse{width:8px;height:8px;border-radius:50%;background:var(--blue2);animation:blink 1.5s infinite;flex-shrink:0;}
- 
+.map-overlay{
+  position:absolute;
+  top:10px;
+  right:10px;
+  z-index:9999;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+} 
 /* SIDEBAR */
 #sidebar{width:300px;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
 #sidebar-header{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}

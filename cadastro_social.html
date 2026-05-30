@@ -610,6 +610,21 @@ function initMap(){
 
   markersLayer = L.layerGroup().addTo(map);
 
+  map.on('click', function(e){
+
+  const lat = e.latlng.lat;
+  const lng = e.latlng.lng;
+
+  if(window.marcadorTemp){
+    map.removeLayer(window.marcadorTemp);
+  }
+
+  window.marcadorTemp = L.marker([lat, lng]).addTo(map);
+
+  console.log(lat, lng);
+
+});
+
   drawMap();
 
 }

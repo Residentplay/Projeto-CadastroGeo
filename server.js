@@ -4,18 +4,22 @@ const path = require("path");
 const cors = require("cors");
 
 const app = express();
-app.use(express.json());
+
+app.use(express.json({ limit: "50mb" }));
 app.use(cors());
 app.use(express.static(__dirname));
 
 const db = new sqlite3.Database("./cadastrogeo.db");
 
-// CRIAR TABELA
+// ==========================
+// CRIAR TABELAS
+// ==========================
 db.serialize(() => {
+
   db.run(`
     CREATE TABLE IF NOT EXISTS cadastros (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      casa_id TEXT UNIQUE,
+      lote_id TEXT UNIQUE,
       endereco TEXT,
       bairro TEXT,
       latitude TEXT,
@@ -43,23 +47,289 @@ db.serialize(() => {
       data_cadastro TEXT
     )
   `);
-});
-
-db.run(`
-CREATE TABLE IF NOT EXISTS casas (
-  id TEXT PRIMARY KEY,
-  endereco TEXT,
-  bairro TEXT,
-  lat REAL,
-  lng REAL
-)
-`);
-
-// SALVAR CADASTRO
-app.post("/cadastro", (req, res) => {
-  const c = req.body;
 
   db.run(`
+  CREATE INDEX IF NOT EXISTS idx_lote_id
+  ON cadastros(lote_id)
+`);
+
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS lotes (
+      id TEXT PRIMARY KEY,
+      nome TEXT,
+      status TEXT,
+      geojson TEXT
+    )
+  `);
+
+});
+
+// ==========================
+// LISTAR LOTES
+// ==========================
+app.get("/lotes", (req, res) => {
+
+  db.all(
+    "SELECT * FROM lotes",
+    [],
+    (err, rows) => {
+
+      if (err) {
+        return res.status(500).json({
+          erro: err.message
+        });
+      }
+
+      res.json(rows);
+
+    }
+  );
+
+});
+
+// ==========================
+// BUSCAR LOTE POR ID
+// ==========================
+app.get("/lotes/:id", (req, res) => {
+
+  db.get(
+    "SELECT * FROM lotes WHERE id = ?",
+    [req.params.id],
+    (err, row) => {
+
+      if (err) {
+        return res.status(500).json({
+          erro: err.message
+        });
+      }
+
+      res.json(row || {});
+    }
+  );
+
+});
+
+// ==========================
+// SALVAR EM LOTE
+// ==========================
+app.post("/lotes", (req, res) => {
+
+  const lotes = req.body;
+
+  if (!Array.isArray(lotes)) {
+    return res.status(400).json({
+      erro: "O corpo da requisição deve ser um array."
+    });
+  }
+
+  db.serialize(() => {
+
+    const stmt = db.prepare(`
+      INSERT OR REPLACE INTO lotes (
+        id,
+        nome,
+        status,
+        geojson
+      )
+      VALUES (?, ?, ?, ?)
+    `);
+
+    for (const lote of lotes) {
+
+      stmt.run([
+        lote.id,
+        lote.nome || "",
+        lote.status || "livre",
+        JSON.stringify(lote.geojson || lote)
+      ]);
+
+    }
+
+    stmt.finalize((err) => {
+
+      if (err) {
+        return res.status(500).json({
+          erro: err.message
+        });
+      }
+
+      res.json({
+        ok: true,
+        total: lotes.length,
+        msg: "Lotes salvos com sucesso!"
+      });
+
+    });
+
+  });
+
+});
+
+// ==========================
+// SALVAR CADASTRO
+// ==========================
+app.post("/cadastro", (req, res) => {
+
+  const c = req.body;
+
+  db.get(
+  "SELECT * FROM lotes WHERE id = ?",
+  [c.lote_id],
+  (err, lote) => {
+
+    if (err) {
+      return res.status(500).json({
+        erro: err.message
+      });
+    }
+
+    if (!lote) {
+      return res.status(404).json({
+        erro: "Lote não encontrado"
+      });
+    }
+
+    salvarCadastro();
+  }
+);
+
+function salvarCadastro() {
+
+  db.run(
+    `
+    INSERT OR REPLACE INTO cadastros (
+      lote_id,endereco,bairro,latitude,longitude,
+      nome,cpf,nascimento,sexo,escolaridade,
+      telefone,nis,moradores,menores,idosos,
+      renda,fonte_renda,tipo_moradia,material,
+      agua,esgoto,energia,observacoes,
+      colaborador,status,data_cadastro
+    )
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `,
+    [
+      c.lote_id,
+      c.endereco,
+      c.bairro,
+      c.latitude,
+      c.longitude,
+      c.nome,
+      c.cpf,
+      c.nascimento,
+      c.sexo,
+      c.escolaridade,
+      c.telefone,
+      c.nis,
+      c.moradores,
+      c.menores,
+      c.idosos,
+      c.renda,
+      c.fonte_renda,
+      c.tipo_moradia,
+      c.material,
+      c.agua,
+      c.esgoto,
+      c.energia,
+      c.observacoes,
+      c.colaborador,
+      c.status,
+      c.data_cadastro
+    ],
+    
+
+    function (err) {
+
+      if (err) {
+        return res.status(500).json({
+          erro: err.message
+        });
+      }
+
+      res.json({
+        success: true,
+        id: this.lastID
+      });
+
+    }
+  );
+}
+});
+
+
+
+// ==========================
+// LISTAR CADASTROS
+// ==========================
+app.get("/cadastros", (req, res) => {
+
+  db.all(
+    "SELECT * FROM cadastros",
+    [],
+    (err, rows) => {
+
+      if (err) {
+        return res.status(500).json({
+          erro: err.message
+        });
+      }
+
+      res.json(rows);
+
+    }
+  );
+
+});
+
+// ==========================
+// BUSCAR CADASTRO POR CASA
+// ==========================
+app.get("/cadastro/:lote_id", (req, res) => {
+
+  db.get(
+    "SELECT * FROM cadastros WHERE lote_id = ?",
+    [req.params.lote_id],
+    (err, row) => {
+
+      if (err) {
+        return res.status(500).json({
+          erro: err.message
+        });
+      }
+
+      res.json(row || {});
+
+    }
+  );
+
+});
+
+app.get("/cadastro/:id", (req, res) => {
+
+  db.get(
+    "SELECT * FROM cadastros WHERE casa_id = ?",
+    [req.params.id],
+    (err, row) => {
+
+      if (err) {
+        return res.status(500).json({
+          erro: err.message
+        });
+      }
+
+      res.json(row || {});
+
+    }
+  );
+
+});
+
+app.post("/cadastro", (req, res) => {
+
+  const c = req.body;
+
+  db.run(
+    `
     INSERT OR REPLACE INTO cadastros (
       casa_id,endereco,bairro,latitude,longitude,
       nome,cpf,nascimento,sexo,escolaridade,
@@ -69,119 +339,61 @@ app.post("/cadastro", (req, res) => {
       colaborador,status,data_cadastro
     )
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-  `, [
-    c.casa_id,
-    c.endereco,
-    c.bairro,
-    c.latitude,
-    c.longitude,
-    c.nome,
-    c.cpf,
-    c.nascimento,
-    c.sexo,
-    c.escolaridade,
-    c.telefone,
-    c.nis,
-    c.moradores,
-    c.menores,
-    c.idosos,
-    c.renda,
-    c.fonte_renda,
-    c.tipo_moradia,
-    c.material,
-    c.agua,
-    c.esgoto,
-    c.energia,
-    c.observacoes,
-    c.colaborador,
-    c.status,
-    c.data_cadastro
-  ],
-  function(err) {
-    if (err) {
-      return res.status(500).json(err);
-    }
+    `,
+    [
+      c.casa_id,
+      c.endereco,
+      c.bairro,
+      c.latitude,
+      c.longitude,
+      c.nome,
+      c.cpf,
+      c.nascimento,
+      c.sexo,
+      c.escolaridade,
+      c.telefone,
+      c.nis,
+      c.moradores,
+      c.menores,
+      c.idosos,
+      c.renda,
+      c.fonte_renda,
+      c.tipo_moradia,
+      c.material,
+      c.agua,
+      c.esgoto,
+      c.energia,
+      c.observacoes,
+      c.colaborador,
+      c.status,
+      c.data_cadastro
+    ],
+    err => {
 
-    res.json({
-      success: true,
-      id: this.lastID
-    });
-  });
-});
-
-app.post('/lotes', async (req, res) => {
-
-  const casas = req.body;
-
-  try{
-
-    for(const casa of casas){
-
-      await db.run(`
-        INSERT OR IGNORE INTO casas (
-          id,
-          endereco,
-          bairro,
-          lat,
-          lng
-        )
-        VALUES (?, ?, ?, ?, ?)
-      `,
-      [
-        casa.id,
-        casa.label,
-        casa.bairro,
-        casa.lat,
-        casa.lng
-      ]);
-
-    }
-
-    res.json({
-      ok:true,
-      msg:'Lotes salvos com sucesso!'
-    });
-
-  }catch(err){
-
-    console.error(err);
-
-    res.status(500).json({
-      erro:'Erro ao salvar lotes'
-    });
-
-  }
-
-});
-
-// LISTAR TODOS
-app.get("/cadastros", (req, res) => {
-  db.all("SELECT * FROM cadastros", [], (err, rows) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
-
-    res.json(rows);
-  });
-});
-
-// BUSCAR CASA
-app.get("/cadastro/:casa_id", (req, res) => {
-  db.get(
-    "SELECT * FROM cadastros WHERE casa_id = ?",
-    [req.params.casa_id],
-    (err, row) => {
       if (err) {
-        return res.status(500).json(err);
+        return res.status(500).json({
+          erro: err.message
+        });
       }
 
-      res.json(row || {});
+      res.json({
+        sucesso: true
+      });
+
     }
   );
+
 });
 
+// ==========================
+// PÁGINA PRINCIPAL
+// ==========================
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "cadastro_social.html"));
+
+  res.sendFile(
+    path.join(__dirname, "cadastro_social.html")
+  );
+
 });
 
 const PORT = process.env.PORT || 3000;

@@ -1089,34 +1089,47 @@ async function openHouse(h){
   viewOnly?modal.classList.add('view-only'):modal.classList.remove('view-only');
   const cadastro = await carregarCadastro(h.id);
 
-if (cadastro && cadastro.nome) {
+if (cadastro && cadastro.casa_id) {
   fillForm({
-    end: cadastro.endereco,
-    bairro: cadastro.bairro,
-    lat: cadastro.latitude,
-    lng: cadastro.longitude,
-    data: cadastro.data_cadastro,
-    nome: cadastro.nome,
-    cpf: cadastro.cpf,
-    nasc: cadastro.nascimento,
-    sexo: cadastro.sexo,
-    esc: cadastro.escolaridade,
-    tel: cadastro.telefone,
-    nis: cadastro.nis,
-    mor: cadastro.moradores,
-    men: cadastro.menores,
-    ido: cadastro.idosos,
-    renda: cadastro.renda,
-    fonte: cadastro.fonte_renda,
-    tipo: cadastro.tipo_moradia,
-    mat: cadastro.material,
-    agua: cadastro.agua,
-    esg: cadastro.esgoto,
-    en: cadastro.energia,
-    obs: cadastro.observacoes,
-    colab: cadastro.colaborador,
-    status: cadastro.status
-  });
+
+  end: cadastro.endereco,
+  bairro: cadastro.bairro,
+
+  lat: cadastro.latitude,
+  lng: cadastro.longitude,
+
+  data: cadastro.data_cadastro,
+
+  nome: cadastro.nome,
+  cpf: cadastro.cpf,
+
+  nasc: cadastro.nascimento,
+  sexo: cadastro.sexo,
+  esc: cadastro.escolaridade,
+
+  tel: cadastro.telefone,
+  nis: cadastro.nis,
+
+  mor: cadastro.moradores,
+  men: cadastro.menores,
+  ido: cadastro.idosos,
+
+  renda: cadastro.renda,
+  fonte: cadastro.fonte_renda,
+
+  tipo: cadastro.tipo_moradia,
+  mat: cadastro.material,
+
+  agua: cadastro.agua,
+  esg: cadastro.esgoto,
+  en: cadastro.energia,
+
+  obs: cadastro.observacoes,
+
+  colab: cadastro.colaborador,
+  status: cadastro.status
+
+});
 }
   else{
     clearForm();
@@ -1150,48 +1163,69 @@ function closeModal(){
 }
  
 async function saveCadastro() {
+
   if (!currentHouse) return;
 
   const cadastro = {
+
     casa_id: currentHouse.id,
+
     endereco: document.getElementById('f-end').value,
     bairro: document.getElementById('f-bairro').value,
     latitude: document.getElementById('f-lat').value,
     longitude: document.getElementById('f-lng').value,
+
     nome: document.getElementById('f-nome').value,
     cpf: document.getElementById('f-cpf').value,
     nascimento: document.getElementById('f-nasc').value,
     sexo: document.getElementById('f-sexo').value,
     escolaridade: document.getElementById('f-esc').value,
+
     telefone: document.getElementById('f-tel').value,
     nis: document.getElementById('f-nis').value,
+
     moradores: document.getElementById('f-mor').value,
     menores: document.getElementById('f-men').value,
     idosos: document.getElementById('f-ido').value,
+
     renda: document.getElementById('f-renda').value,
     fonte_renda: document.getElementById('f-fonte').value,
+
     tipo_moradia: document.getElementById('f-tipo').value,
     material: document.getElementById('f-mat').value,
+
     agua: document.getElementById('f-agua').value,
     esgoto: document.getElementById('f-esg').value,
     energia: document.getElementById('f-en').value,
+
     observacoes: document.getElementById('f-obs').value,
+
     colaborador: document.getElementById('f-colab').value,
     status: document.getElementById('f-status').value || 'Cadastrado',
+
     data_cadastro: document.getElementById('f-data').value
+
   };
 
   try {
 
-    const res = await fetch("/cadastro", {
-      method: "POST",
+    const res = await fetch('/cadastro', {
+
+      method: 'POST',
+
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json'
       },
+
       body: JSON.stringify(cadastro)
+
     });
 
-    await res.json();
+    const retorno = await res.json();
+
+    if (!res.ok) {
+      throw new Error(retorno.erro || 'Erro ao salvar');
+    }
 
     cadastros[currentHouse.id] = cadastro;
 
@@ -1200,29 +1234,39 @@ async function saveCadastro() {
       time: new Date().toLocaleTimeString('pt-BR')
     });
 
-    const li = document.getElementById('li-' + currentHouse.id);
-
-    if (li) {
-      li.querySelector('.house-dot').className = 'house-dot cadastrado';
-      li.querySelector('.house-badge').className = 'house-badge badge-cadastrado';
-      li.querySelector('.house-badge').textContent = 'Cadastrado';
-    }
-
+    renderHousesList();
     updateStats();
     drawMap();
     closeModal();
 
-    showToast('Cadastro salvo no banco!');
+    showToast('Cadastro salvo com sucesso!');
 
   } catch (err) {
+
     console.error(err);
+
     showToast('Erro ao salvar cadastro!', true);
+
   }
+
 }
 
 async function carregarCadastro(casaId) {
-  const res = await fetch(`/cadastro/${casaId}`);
-  return await res.json();
+
+  try {
+
+    const res = await fetch(`/cadastro/${casaId}`);
+
+    return await res.json();
+
+  } catch (err) {
+
+    console.error(err);
+
+    return {};
+
+  }
+
 }
  
 //

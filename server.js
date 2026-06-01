@@ -230,21 +230,18 @@ app.post("/cadastro", (req, res) => {
           c.status,
           c.data_cadastro
         ],
-        function (err) {
+        function(err) {
 
-          if (err) {
-            return res.status(500).json({
-              erro: err.message
-            });
-          }
+      if (err) {
+        return res.status(500).json({
+          erro: err.message
+        });
+      }
 
-          res.json({
-            success: true,
-            id: this.lastID
-          });
-
-        }
-      );
+      res.json({
+        success: true,
+        id: this.lastID
+      });
 
     }
   );

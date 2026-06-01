@@ -789,6 +789,8 @@ function loadTile(url, cb){
  
 function drawMap(){
 
+  console.log("Desenhando:", houses);
+
   if(!map || !markersLayer) return;
 
   markersLayer.clearLayers();
@@ -1091,13 +1093,9 @@ function importarGeoJSON(gj){
 
 function importarKML(xml){
 
-  console.log("ENTROU EM importarKML");
-
   houses = [];
 
   const placemarks = xml.getElementsByTagName("Placemark");
-
-  console.log("Placemarks encontrados:", placemarks.length);
 
   Array.from(placemarks).forEach((p, i) => {
 
@@ -1108,28 +1106,57 @@ function importarKML(xml){
     const coordText =
       p.getElementsByTagName("coordinates")[0]?.textContent;
 
-      console.log("Coordenadas:", coordText);
-
     if(!coordText) return;
 
-    const coords = coordText.trim().split(",");
+    const pontos = coordText
+      .trim()
+      .split(/\s+/);
+
+    let somaLat = 0;
+    let somaLng = 0;
+    let total = 0;
+
+    pontos.forEach(pt => {
+
+      const c = pt.split(",");
+
+      if(c.length < 2) return;
+
+      somaLng += parseFloat(c[0]);
+      somaLat += parseFloat(c[1]);
+
+      total++;
+
+    });
+
+    if(total === 0) return;
 
     houses.push({
       id:'h'+i,
       label:name,
       bairro:'',
-      lat:parseFloat(coords[1]),
-      lng:parseFloat(coords[0])
+      lat:somaLat / total,
+      lng:somaLng / total
     });
 
   });
+
+  console.log("Casas carregadas:", houses);
 
   renderHousesList();
   updateStats();
   drawMap();
 
-  showToast('KML carregado!');
+  if(houses.length){
 
+    map.setView(
+      [houses[0].lat, houses[0].lng],
+      19
+    );
+
+  }
+
+  showToast('KML carregado!');
 }
  
 function renderHousesList(){

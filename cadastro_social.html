@@ -789,52 +789,86 @@ function loadTile(url, cb){
  
 function drawMap(){
 
-  console.log("Desenhando:", houses);
-
   if(!map || !markersLayer) return;
 
   markersLayer.clearLayers();
 
   houses.forEach(h => {
 
-    if(
-    h.lat === null ||
-    h.lng === null ||
-    isNaN(h.lat) ||
-    isNaN(h.lng)
-  ){
-    console.error("Coordenadas inválidas:", h);
-    return;
-  }
-
     const done = !!cadastros[h.id];
 
-    const marker = L.circleMarker(
-  [h.lat, h.lng],
-  {
-    radius: casaSelecionada === h.id ? 12 : 8,
-    color: casaSelecionada === h.id ? '#ff0000' : '#3388ff',
-    fillColor: casaSelecionada === h.id ? '#ff0000' : '#3388ff',
-    fillOpacity: 1
-  }
-);
+    if(h.polygon){
 
-    marker.bindPopup(`
-      <b>${h.label}</b><br>
-      ${done ? 'Cadastrado' : 'Pendente'}
-    `);
+      const poly = L.polygon(
 
-    marker.on('click', () => {
+        h.polygon.map(p => [p[1], p[0]]),
 
-  casaSelecionada = h.id;
+        {
+          color:
+            casaSelecionada === h.id
+            ? "#ff0000"
+            : "#3388ff",
 
-  drawMap();
+          weight:
+            casaSelecionada === h.id
+            ? 4
+            : 2,
 
-  openHouse(h);
+          fillOpacity:
+            casaSelecionada === h.id
+            ? 0.6
+            : 0.3
+        }
 
-});
+      );
 
-    markersLayer.addLayer(marker);
+      poly.bindPopup(`
+        <b>${h.label}</b><br>
+        ${done ? 'Cadastrado' : 'Pendente'}
+      `);
+
+      poly.on("click", () => {
+
+        casaSelecionada = h.id;
+
+        drawMap();
+
+        openHouse(h);
+
+      });
+
+      markersLayer.addLayer(poly);
+
+    }
+
+    else{
+
+      const marker = L.circleMarker(
+
+        [h.lat, h.lng],
+
+        {
+          radius:8,
+          color:"#3388ff",
+          fillColor:"#3388ff",
+          fillOpacity:1
+        }
+
+      );
+
+      marker.on("click", () => {
+
+        casaSelecionada = h.id;
+
+        drawMap();
+
+        openHouse(h);
+
+      });
+
+      markersLayer.addLayer(marker);
+
+    }
 
   });
 
@@ -1023,9 +1057,6 @@ async function loadMapFile(input){
 
 function importarGeoJSON(gj){
 
-  console.log("ENTROU EM importarGeoJSON");
-  console.log(gj.features);
-
   houses = [];
 
   gj.features.forEach((f, i) => {
@@ -1036,30 +1067,31 @@ function importarGeoJSON(gj){
 
     let lat = null;
     let lng = null;
+    let polygon = null;
 
-    if(f.geometry.type === "Point"){
+    if(f.geometry.type === "Polygon"){
 
-      lng = f.geometry.coordinates[0];
-      lat = f.geometry.coordinates[1];
-
-    }
-
-    else if(f.geometry.type === "Polygon"){
-
-      const ring = f.geometry.coordinates[0];
+      polygon = f.geometry.coordinates[0];
 
       let somaLat = 0;
       let somaLng = 0;
 
-      ring.forEach(coord => {
+      polygon.forEach(coord => {
 
         somaLng += coord[0];
         somaLat += coord[1];
 
       });
 
-      lng = somaLng / ring.length;
-      lat = somaLat / ring.length;
+      lng = somaLng / polygon.length;
+      lat = somaLat / polygon.length;
+
+    }
+
+    else if(f.geometry.type === "Point"){
+
+      lng = f.geometry.coordinates[0];
+      lat = f.geometry.coordinates[1];
 
     }
 
@@ -1067,76 +1099,13 @@ function importarGeoJSON(gj){
       return;
     }
 
-    if(lat == null || lng == null){
-  console.error("Coordenadas inválidas:", f);
-  return;
-}
-
     houses.push({
       id:'h'+i,
-      label:p.endereco || p.name || p.nome || ('Imóvel '+(i+1)),
+      label:p.endereco || p.nome || p.name || ('Lote '+(i+1)),
       bairro:p.bairro || '',
       lat,
-      lng
-    });
-
-  });
-
-  console.log("houses:",houses);
-
-  renderHousesList();
-  updateStats();
-  drawMap();
-
-  showToast('GeoJSON carregado!');
-}
-
-function importarKML(xml){
-
-  houses = [];
-
-  const placemarks = xml.getElementsByTagName("Placemark");
-
-  Array.from(placemarks).forEach((p, i) => {
-
-    const name =
-      p.getElementsByTagName("name")[0]?.textContent
-      || ('Imóvel '+(i+1));
-
-    const coordText =
-      p.getElementsByTagName("coordinates")[0]?.textContent;
-
-    if(!coordText) return;
-
-    const pontos = coordText
-      .trim()
-      .split(/\s+/);
-
-    let somaLat = 0;
-    let somaLng = 0;
-    let total = 0;
-
-    pontos.forEach(pt => {
-
-      const c = pt.split(",");
-
-      if(c.length < 2) return;
-
-      somaLng += parseFloat(c[0]);
-      somaLat += parseFloat(c[1]);
-
-      total++;
-
-    });
-
-    if(total === 0) return;
-
-    houses.push({
-      id:'h'+i,
-      label:name,
-      bairro:'',
-      lat:somaLat / total,
-      lng:somaLng / total
+      lng,
+      polygon
     });
 
   });
@@ -1149,14 +1118,121 @@ function importarKML(xml){
 
   if(houses.length){
 
-    map.setView(
-      [houses[0].lat, houses[0].lng],
-      19
+    map.fitBounds(
+      L.geoJSON(gj).getBounds()
     );
 
   }
 
-  showToast('KML carregado!');
+  showToast("GeoJSON carregado!");
+
+}
+
+function importarKML(xml){
+
+  console.log("ENTROU EM importarKML");
+
+  houses = [];
+
+  const placemarks = xml.getElementsByTagName("Placemark");
+
+  console.log("Placemarks encontrados:", placemarks.length);
+
+  Array.from(placemarks).forEach((p, i) => {
+
+    const name =
+      p.getElementsByTagName("name")[0]?.textContent ||
+      ("Lote " + (i + 1));
+
+    const coordText =
+      p.getElementsByTagName("coordinates")[0]?.textContent;
+
+    if(!coordText) return;
+
+    const pontos = coordText
+      .trim()
+      .split(/\s+/)
+      .map(c => {
+
+        const partes = c.split(",");
+
+        return [
+          parseFloat(partes[0]), // longitude
+          parseFloat(partes[1])  // latitude
+        ];
+
+      });
+
+    if(!pontos.length) return;
+
+    let somaLat = 0;
+    let somaLng = 0;
+
+    pontos.forEach(pt => {
+
+      somaLng += pt[0];
+      somaLat += pt[1];
+
+    });
+
+    const centroLng = somaLng / pontos.length;
+    const centroLat = somaLat / pontos.length;
+
+    houses.push({
+
+      id: "h" + i,
+
+      label: name,
+
+      bairro: "",
+
+      lat: centroLat,
+
+      lng: centroLng,
+
+      polygon: pontos
+
+    });
+
+  });
+
+  console.log("Casas carregadas:", houses);
+
+  renderHousesList();
+  updateStats();
+  drawMap();
+
+  if(houses.length){
+
+    const grupo = L.featureGroup();
+
+    houses.forEach(h => {
+
+      if(h.polygon){
+
+        grupo.addLayer(
+          L.polygon(
+            h.polygon.map(p => [p[1], p[0]])
+          )
+        );
+
+      }
+
+    });
+
+    if(grupo.getLayers().length){
+
+      map.fitBounds(
+        grupo.getBounds(),
+        { padding:[30,30] }
+      );
+
+    }
+
+  }
+
+  showToast("KML carregado com sucesso!");
+
 }
  
 function renderHousesList(){

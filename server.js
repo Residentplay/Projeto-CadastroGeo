@@ -164,22 +164,7 @@ app.post("/cadastro", (req, res) => {
 
   const c = req.body;
 
-  //db.get(
-  //  "SELECT id FROM lotes WHERE id = ?",
-  //  [c.lote_id],
-  //  (err, lote) => {
-
-  //    if (err) {
-  //      return res.status(500).json({
-  //        erro: err.message
-  //      });
-   //   }
-
-  //    if (!lote) {
-  //      return res.status(404).json({
-  //        erro: "Lote não encontrado"
-  //      });
-  //    }
+  
 
       db.run(
         `

@@ -934,9 +934,13 @@ async function loadMapFile(input){
 
   const file = input.files[0];
 
+  console.log("Arquivo:", file);
+
   if(!file) return;
 
   const ext = file.name.split('.').pop().toLowerCase();
+
+  console.log("Extensão:", ext);
 
   // GEOJSON
   if(ext === 'geojson' || ext === 'json'){
@@ -945,13 +949,20 @@ async function loadMapFile(input){
 
     reader.onload = e => {
 
+      console.log("Arquivo lido");
+
       try{
 
         const gj = JSON.parse(e.target.result);
 
+        console.log("GeoJSON convertido");
+        console.log(gj);
+
         importarGeoJSON(gj);
 
       }catch(err){
+
+        console.error("Erro JSON:", err);
 
         showToast('Erro ao ler GeoJSON', true);
 
@@ -1004,7 +1015,8 @@ async function loadMapFile(input){
 
 function importarGeoJSON(gj){
 
-  console.log("GeoJSON recebido:", gj);
+  console.log("ENTROU EM importarGeoJSON");
+  console.log(gj.features);
 
   houses = [];
 

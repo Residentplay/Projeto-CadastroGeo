@@ -795,36 +795,42 @@ function drawMap(){
 
   houses.forEach(h => {
 
-    const done = !!cadastros[h.id];
+    const cadastrado = !!cadastros[h.id];
 
-    if(h.polygon){
+    let corBorda = "#666";
+    let corPreenchimento = "#666";
+
+    // lote cadastrado
+    if(cadastrado){
+      corBorda = "#00cc44";
+      corPreenchimento = "#00cc44";
+    }
+
+    // lote selecionado
+    if(casaSelecionada === h.id){
+      corBorda = "#ffff00";
+      corPreenchimento = "#ffff00";
+    }
+
+    // Se veio polígono do KML
+    if(h.polygon && h.polygon.length){
 
       const poly = L.polygon(
 
         h.polygon.map(p => [p[1], p[0]]),
 
         {
-          color:
-            casaSelecionada === h.id
-            ? "#ff0000"
-            : "#3388ff",
-
-          weight:
-            casaSelecionada === h.id
-            ? 4
-            : 2,
-
-          fillOpacity:
-            casaSelecionada === h.id
-            ? 0.6
-            : 0.3
+          color: corBorda,
+          fillColor: corPreenchimento,
+          fillOpacity: 0.35,
+          weight: casaSelecionada === h.id ? 4 : 2
         }
 
       );
 
       poly.bindPopup(`
         <b>${h.label}</b><br>
-        ${done ? 'Cadastrado' : 'Pendente'}
+        ${cadastrado ? '✅ Cadastrado' : '⏳ Pendente'}
       `);
 
       poly.on("click", () => {
@@ -841,20 +847,24 @@ function drawMap(){
 
     }
 
+    // Se for ponto normal (GeoJSON Point)
     else{
 
       const marker = L.circleMarker(
-
         [h.lat, h.lng],
-
         {
-          radius:8,
-          color:"#3388ff",
-          fillColor:"#3388ff",
-          fillOpacity:1
+          radius: casaSelecionada === h.id ? 12 : 8,
+          color: corBorda,
+          fillColor: corPreenchimento,
+          fillOpacity: 1,
+          weight: 2
         }
-
       );
+
+      marker.bindPopup(`
+        <b>${h.label}</b><br>
+        ${cadastrado ? '✅ Cadastrado' : '⏳ Pendente'}
+      `);
 
       marker.on("click", () => {
 
@@ -871,6 +881,8 @@ function drawMap(){
     }
 
   });
+
+  console.log("Desenhando:", houses);
 
 }
  
@@ -1428,6 +1440,12 @@ async function saveCadastro() {
     showToast('Erro ao salvar cadastro!', true);
 
   }
+
+  cadastros[currentHouse.id] = cadastro;
+
+  loteSelecionado = null;
+
+  drawMap();
 
 }
 

@@ -49,10 +49,9 @@ db.serialize(() => {
   `);
 
   db.run(`
-  CREATE INDEX IF NOT EXISTS idx_lote_id
-  ON cadastros(lote_id)
-`);
-
+    CREATE INDEX IF NOT EXISTS idx_lote_id
+    ON cadastros(lote_id)
+  `);
 
   db.run(`
     CREATE TABLE IF NOT EXISTS lotes (
@@ -76,9 +75,7 @@ app.get("/lotes", (req, res) => {
     (err, rows) => {
 
       if (err) {
-        return res.status(500).json({
-          erro: err.message
-        });
+        return res.status(500).json({ erro: err.message });
       }
 
       res.json(rows);
@@ -99,19 +96,18 @@ app.get("/lotes/:id", (req, res) => {
     (err, row) => {
 
       if (err) {
-        return res.status(500).json({
-          erro: err.message
-        });
+        return res.status(500).json({ erro: err.message });
       }
 
       res.json(row || {});
+
     }
   );
 
 });
 
 // ==========================
-// SALVAR EM LOTE
+// SALVAR LOTES
 // ==========================
 app.post("/lotes", (req, res) => {
 
@@ -119,47 +115,42 @@ app.post("/lotes", (req, res) => {
 
   if (!Array.isArray(lotes)) {
     return res.status(400).json({
-      erro: "O corpo da requisição deve ser um array."
+      erro: "O corpo deve ser um array."
     });
   }
 
-  db.serialize(() => {
+  const stmt = db.prepare(`
+    INSERT OR REPLACE INTO lotes (
+      id,
+      nome,
+      status,
+      geojson
+    )
+    VALUES (?, ?, ?, ?)
+  `);
 
-    const stmt = db.prepare(`
-      INSERT OR REPLACE INTO lotes (
-        id,
-        nome,
-        status,
-        geojson
-      )
-      VALUES (?, ?, ?, ?)
-    `);
+  lotes.forEach(lote => {
 
-    for (const lote of lotes) {
+    stmt.run([
+      lote.id,
+      lote.nome || "",
+      lote.status || "livre",
+      JSON.stringify(lote.geojson || lote)
+    ]);
 
-      stmt.run([
-        lote.id,
-        lote.nome || "",
-        lote.status || "livre",
-        JSON.stringify(lote.geojson || lote)
-      ]);
+  });
 
+  stmt.finalize(err => {
+
+    if (err) {
+      return res.status(500).json({
+        erro: err.message
+      });
     }
 
-    stmt.finalize((err) => {
-
-      if (err) {
-        return res.status(500).json({
-          erro: err.message
-        });
-      }
-
-      res.json({
-        ok: true,
-        total: lotes.length,
-        msg: "Lotes salvos com sucesso!"
-      });
-
+    res.json({
+      ok: true,
+      total: lotes.length
     });
 
   });
@@ -174,71 +165,9 @@ app.post("/cadastro", (req, res) => {
   const c = req.body;
 
   db.get(
-  "SELECT * FROM lotes WHERE id = ?",
-  [c.lote_id],
-  (err, lote) => {
-
-    if (err) {
-      return res.status(500).json({
-        erro: err.message
-      });
-    }
-
-    if (!lote) {
-      return res.status(404).json({
-        erro: "Lote não encontrado"
-      });
-    }
-
-    salvarCadastro();
-  }
-);
-
-function salvarCadastro() {
-
-  db.run(
-    `
-    INSERT OR REPLACE INTO cadastros (
-      lote_id,endereco,bairro,latitude,longitude,
-      nome,cpf,nascimento,sexo,escolaridade,
-      telefone,nis,moradores,menores,idosos,
-      renda,fonte_renda,tipo_moradia,material,
-      agua,esgoto,energia,observacoes,
-      colaborador,status,data_cadastro
-    )
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-    `,
-    [
-      c.lote_id,
-      c.endereco,
-      c.bairro,
-      c.latitude,
-      c.longitude,
-      c.nome,
-      c.cpf,
-      c.nascimento,
-      c.sexo,
-      c.escolaridade,
-      c.telefone,
-      c.nis,
-      c.moradores,
-      c.menores,
-      c.idosos,
-      c.renda,
-      c.fonte_renda,
-      c.tipo_moradia,
-      c.material,
-      c.agua,
-      c.esgoto,
-      c.energia,
-      c.observacoes,
-      c.colaborador,
-      c.status,
-      c.data_cadastro
-    ],
-    
-
-    function (err) {
+    "SELECT id FROM lotes WHERE id = ?",
+    [c.lote_id],
+    (err, lote) => {
 
       if (err) {
         return res.status(500).json({
@@ -246,17 +175,96 @@ function salvarCadastro() {
         });
       }
 
-      res.json({
-        success: true,
-        id: this.lastID
-      });
+      if (!lote) {
+        return res.status(404).json({
+          erro: "Lote não encontrado"
+        });
+      }
+
+      db.run(
+        `
+        INSERT OR REPLACE INTO cadastros (
+          lote_id,
+          endereco,
+          bairro,
+          latitude,
+          longitude,
+          nome,
+          cpf,
+          nascimento,
+          sexo,
+          escolaridade,
+          telefone,
+          nis,
+          moradores,
+          menores,
+          idosos,
+          renda,
+          fonte_renda,
+          tipo_moradia,
+          material,
+          agua,
+          esgoto,
+          energia,
+          observacoes,
+          colaborador,
+          status,
+          data_cadastro
+        )
+        VALUES (
+          ?,?,?,?,?,?,?,?,?,?,
+          ?,?,?,?,?,?,?,?,?,?,
+          ?,?,?,?,?,?
+        )
+        `,
+        [
+          c.lote_id,
+          c.endereco,
+          c.bairro,
+          c.latitude,
+          c.longitude,
+          c.nome,
+          c.cpf,
+          c.nascimento,
+          c.sexo,
+          c.escolaridade,
+          c.telefone,
+          c.nis,
+          c.moradores,
+          c.menores,
+          c.idosos,
+          c.renda,
+          c.fonte_renda,
+          c.tipo_moradia,
+          c.material,
+          c.agua,
+          c.esgoto,
+          c.energia,
+          c.observacoes,
+          c.colaborador,
+          c.status,
+          c.data_cadastro
+        ],
+        function (err) {
+
+          if (err) {
+            return res.status(500).json({
+              erro: err.message
+            });
+          }
+
+          res.json({
+            success: true,
+            id: this.lastID
+          });
+
+        }
+      );
 
     }
   );
-}
+
 });
-
-
 
 // ==========================
 // LISTAR CADASTROS
@@ -282,7 +290,7 @@ app.get("/cadastros", (req, res) => {
 });
 
 // ==========================
-// BUSCAR CADASTRO POR CASA
+// BUSCAR CADASTRO POR LOTE
 // ==========================
 app.get("/cadastro/:lote_id", (req, res) => {
 
@@ -303,8 +311,6 @@ app.get("/cadastro/:lote_id", (req, res) => {
   );
 
 });
-
-
 
 // ==========================
 // PÁGINA PRINCIPAL

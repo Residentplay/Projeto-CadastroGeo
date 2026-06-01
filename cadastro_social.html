@@ -930,6 +930,8 @@ async function loadMapFile(input){
   "Satélite": satelite
 }).addTo(map);
 
+  console.log("Arquivo selecionado:", input.files)
+
   const file = input.files[0];
 
   if(!file) return;

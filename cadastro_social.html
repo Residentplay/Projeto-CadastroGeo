@@ -981,6 +981,8 @@ async function loadMapFile(input){
 
     reader.onload = e => {
 
+      console.log("KML lido");
+
       try{
 
         const parser = new DOMParser();
@@ -990,9 +992,13 @@ async function loadMapFile(input){
           "text/xml"
         );
 
+        console.log(xml);
+
         importarKML(xml);
 
       }catch(err){
+
+        console.error(err);
 
         showToast('Erro ao ler KML', true);
 
@@ -1085,9 +1091,13 @@ function importarGeoJSON(gj){
 
 function importarKML(xml){
 
+  console.log("ENTROU EM importarKML");
+
   houses = [];
 
   const placemarks = xml.getElementsByTagName("Placemark");
+
+  console.log("Placemarks encontrados:", placemarks.length);
 
   Array.from(placemarks).forEach((p, i) => {
 
@@ -1097,6 +1107,8 @@ function importarKML(xml){
 
     const coordText =
       p.getElementsByTagName("coordinates")[0]?.textContent;
+
+      console.log("Coordenadas:", coordText);
 
     if(!coordText) return;
 

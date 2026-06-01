@@ -1143,7 +1143,7 @@ if (cadastro && cadastro.casa_id) {
   document.querySelectorAll('.house-item').forEach(el=>el.classList.remove('selected'));
   const li=document.getElementById('li-'+h.id); if(li) li.classList.add('selected');
   document.getElementById('modal-wrap').classList.add('open');
-  panTo(h.lat,h.lng);
+  map.panTo(h.lat,h.lng);
 }
  
 function fillForm(c){

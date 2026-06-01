@@ -874,7 +874,7 @@ async function salvarLotes(){
       );
 
     });
-
+    console.log(lotes);
     const res = await fetch("/lotes", {
       method:"POST",
       headers:{

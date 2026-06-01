@@ -795,6 +795,11 @@ function drawMap(){
 
   houses.forEach(h => {
 
+    if (h.lat == null || h.lng == null) {
+    console.error("Casa sem coordenadas:", h);
+    return;
+  }
+
     const done = !!cadastros[h.id];
 
     const marker = L.circleMarker(
@@ -991,7 +996,7 @@ async function loadMapFile(input){
 }
 
 function importarGeoJSON(gj){
-
+  console.log(gj.features[0]);
   houses = [];
 
   gj.features.forEach((f, i) => {

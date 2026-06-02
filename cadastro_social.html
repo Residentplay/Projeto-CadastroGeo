@@ -1374,6 +1374,10 @@ if (cadastro && cadastro.casa_id) {
   const li=document.getElementById('li-'+h.id); if(li) li.classList.add('selected');
   document.getElementById('modal-wrap').classList.add('open');
 
+  console.log("ABRINDO CASA:", h);
+  console.log("LAT:", h.lat);
+  console.log("LNG:", h.lng);
+
   if(
     Number.isFinite(h.lat) &&
     Number.isFinite(h.lng)

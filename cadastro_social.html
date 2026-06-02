@@ -787,6 +787,11 @@ function loadTile(url, cb){
   img.src=url;
 }
  
+console.log(
+  "Casas reconstruídas:",
+  JSON.stringify(houses, null, 2)
+);
+
 function drawMap(){
 
   if(!map || !markersLayer) return;
@@ -1514,60 +1519,112 @@ async function carregarLotes(){
 
     lotes.forEach(lote => {
 
-      let geo;
-
       try{
-        geo = JSON.parse(lote.geojson);
+
+        const obj = JSON.parse(lote.geojson);
+
+        const feature = obj.geojson || obj;
+
+        if(
+          !feature.geometry ||
+          feature.geometry.type !== "Polygon"
+        ){
+          return;
+        }
+
+        const coords =
+          feature.geometry.coordinates[0];
+
+        let somaLat = 0;
+        let somaLng = 0;
+
+        coords.forEach(p => {
+
+          somaLng += Number(p[0]);
+          somaLat += Number(p[1]);
+
+        });
+
+        const centroLng =
+          somaLng / coords.length;
+
+        const centroLat =
+          somaLat / coords.length;
+
+        houses.push({
+
+          id: lote.id,
+
+          label: lote.nome,
+
+          bairro: "",
+
+          lat: centroLat,
+
+          lng: centroLng,
+
+          polygon: coords
+
+        });
+
       }
-      catch(e){
-        return;
+      catch(err){
+
+        console.error(
+          "Erro ao reconstruir lote:",
+          lote,
+          err
+        );
+
       }
-
-      const feature = geo.geojson || geo;
-
-      if(
-        !feature.geometry ||
-        feature.geometry.type !== "Polygon"
-      ){
-        return;
-      }
-
-      const coords =
-        feature.geometry.coordinates[0];
-
-      let somaLat = 0;
-      let somaLng = 0;
-
-      coords.forEach(p => {
-
-        somaLng += p[0];
-        somaLat += p[1];
-
-      });
-
-      houses.push({
-
-        id: lote.id,
-
-        label: lote.nome,
-
-        lat: somaLat / coords.length,
-
-        lng: somaLng / coords.length,
-
-        polygon: coords
-
-      });
 
     });
 
-    console.log("Casas reconstruídas:", houses);
+    console.log(
+      "Casas reconstruídas:",
+      houses
+    );
 
     renderHousesList();
 
     drawMap();
 
     updateStats();
+
+    if(houses.length){
+
+      const grupo = L.featureGroup();
+
+      houses.forEach(h => {
+
+        if(h.polygon){
+
+          grupo.addLayer(
+
+            L.polygon(
+              h.polygon.map(
+                p => [p[1], p[0]]
+              )
+            )
+
+          );
+
+        }
+
+      });
+
+      if(grupo.getLayers().length){
+
+        map.fitBounds(
+          grupo.getBounds(),
+          {
+            padding:[30,30]
+          }
+        );
+
+      }
+
+    }
 
   }
   catch(err){

@@ -1512,67 +1512,67 @@ async function carregarLotes(){
 
     houses = [];
 
-    lotes.forEach((lote, i) => {
+    lotes.forEach(lote => {
 
       let geo;
 
       try{
         geo = JSON.parse(lote.geojson);
       }
-      catch{
+      catch(e){
         return;
       }
 
+      const feature = geo.geojson || geo;
+
       if(
-        geo.geometry &&
-        geo.geometry.type === "Polygon"
+        !feature.geometry ||
+        feature.geometry.type !== "Polygon"
       ){
-
-        const pontos =
-          geo.geometry.coordinates[0];
-
-        let somaLat = 0;
-        let somaLng = 0;
-
-        pontos.forEach(p => {
-
-          somaLng += p[0];
-          somaLat += p[1];
-
-        });
-
-        houses.push({
-
-          id: lote.id || ("h"+i),
-
-          label: lote.nome || ("Lote "+(i+1)),
-
-          bairro: "",
-
-          lat: somaLat / pontos.length,
-
-          lng: somaLng / pontos.length,
-
-          polygon: pontos
-
-        });
-
+        return;
       }
+
+      const coords =
+        feature.geometry.coordinates[0];
+
+      let somaLat = 0;
+      let somaLng = 0;
+
+      coords.forEach(p => {
+
+        somaLng += p[0];
+        somaLat += p[1];
+
+      });
+
+      houses.push({
+
+        id: lote.id,
+
+        label: lote.nome,
+
+        lat: somaLat / coords.length,
+
+        lng: somaLng / coords.length,
+
+        polygon: coords
+
+      });
 
     });
 
-    console.log("Lotes carregados:", houses);
+    console.log("Casas reconstruídas:", houses);
 
     renderHousesList();
+
     drawMap();
+
     updateStats();
 
   }
   catch(err){
 
     console.error(err);
-
-    loadDemoHouses();
 
   }
 

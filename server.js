@@ -75,7 +75,7 @@ app.get("/lotes", (req, res) => {
     (err, rows) => {
 
       console.log("GET /lotes retornou:");
-      console.log(rows);
+      console.log(JSON.stringify(rows, null, 2));
 
       if (err) {
         return res.status(500).json({

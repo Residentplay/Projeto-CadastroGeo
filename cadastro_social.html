@@ -568,7 +568,7 @@ function setupUI(){
   const subs={colaborador:'Clique em um imóvel para preencher o formulário',assistente:'Clique em um imóvel cadastrado para ver a ficha',engenheiro:'Importe o GeoJSON do QGIS e monitore os cadastros'};
   document.getElementById('sidebar-title').textContent=titles[currentUser.role];
   document.getElementById('sidebar-sub').textContent=subs[currentUser.role];
-  loadDemoHouses();
+  carregarLotes();
 
   carregarCadastrosDoBanco();
 
@@ -925,15 +925,22 @@ async function salvarLotes(){
 
     const lotes = [];
 
-    drawnItems.eachLayer(layer => {
+    drawnItems.eachLayer((layer, i) => {
 
-      lotes.push(
-        layer.toGeoJSON()
-      );
+      const geojson = layer.toGeoJSON();
+
+      lotes.push({
+        id: geojson.properties?.id || ("lote_" + Date.now() + "_" + i),
+        nome: geojson.properties?.nome || ("Lote " + (i + 1)),
+        status: geojson.properties?.status || "livre",
+        geojson
+      });
 
     });
-    console.log(lotes);
-    const res = await fetch("/lotes", {
+
+    console.log("Enviando lotes:", lotes);
+
+    const res = await fetch("/lotes",{
       method:"POST",
       headers:{
         "Content-Type":"application/json"
@@ -943,9 +950,12 @@ async function salvarLotes(){
 
     const data = await res.json();
 
-    showToast(data.msg || "Lotes salvos!");
+    console.log("Resposta:", data);
 
-  }catch(err){
+    showToast("Lotes salvos com sucesso!");
+
+  }
+  catch(err){
 
     console.error(err);
 
@@ -1462,6 +1472,28 @@ async function carregarCadastro(casaId) {
     console.error(err);
 
     return {};
+
+  }
+
+}
+
+async function carregarLotes(){
+
+  try{
+
+    const res = await fetch("/lotes");
+
+    houses = await res.json();
+
+    renderHousesList();
+    drawMap();
+    updateStats();
+
+  }catch(err){
+
+    console.error(err);
+
+    loadDemoHouses();
 
   }
 

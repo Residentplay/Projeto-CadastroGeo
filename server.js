@@ -111,6 +111,9 @@ app.get("/lotes/:id", (req, res) => {
 // ==========================
 app.post("/lotes", (req, res) => {
 
+  console.log("POST /lotes recebido");
+  console.log(req.body);
+
   const lotes = req.body;
 
   if (!Array.isArray(lotes)) {

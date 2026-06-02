@@ -1158,6 +1158,8 @@ function importarKML(xml){
 
   houses = [];
 
+  drawnItems.clearLayers();
+
   const placemarks = xml.getElementsByTagName("Placemark");
 
   console.log("Placemarks encontrados:", placemarks.length);
@@ -1181,8 +1183,8 @@ function importarKML(xml){
         const partes = c.split(",");
 
         return [
-          parseFloat(partes[0]), // longitude
-          parseFloat(partes[1])  // latitude
+          parseFloat(partes[0]),
+          parseFloat(partes[1])
         ];
 
       });
@@ -1218,40 +1220,48 @@ function importarKML(xml){
 
     });
 
+    const polygonLayer = L.polygon(
+
+      pontos.map(p => [p[1], p[0]]),
+
+      {
+        color: "#2563eb",
+        weight: 2,
+        fillOpacity: 0.25
+      }
+
+    );
+
+    polygonLayer.feature = {
+      type: "Feature",
+      properties: {
+        id: "lote_" + i,
+        nome: name,
+        status: "livre"
+      }
+    };
+
+    drawnItems.addLayer(polygonLayer);
+
   });
 
   console.log("Casas carregadas:", houses);
 
+  console.log(
+    "Polígonos em drawnItems:",
+    drawnItems.getLayers().length
+  );
+
   renderHousesList();
   updateStats();
   drawMap();
+  
+  if(drawnItems.getLayers().length){
 
-  if(houses.length){
-
-    const grupo = L.featureGroup();
-
-    houses.forEach(h => {
-
-      if(h.polygon){
-
-        grupo.addLayer(
-          L.polygon(
-            h.polygon.map(p => [p[1], p[0]])
-          )
-        );
-
-      }
-
-    });
-
-    if(grupo.getLayers().length){
-
-      map.fitBounds(
-        grupo.getBounds(),
-        { padding:[30,30] }
-      );
-
-    }
+    map.fitBounds(
+      drawnItems.getBounds(),
+      { padding:[30,30] }
+    );
 
   }
 

@@ -471,7 +471,6 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 //
 // ESTADO GLOBAL
 //
-console.log("VERSAO 03/06/2026");
 let users = [
   {id:'u0', name:'Carlos Engenheiro', user:'engenheiro',  pass:'admin123',  role:'engenheiro',  active:true},
   {id:'u1', name:'João Silva',        user:'colaborador1', pass:'campo123',  role:'colaborador', active:true},
@@ -1524,13 +1523,13 @@ async function carregarLotes(){
 
   try{
 
-    console.log("Lote recebido:", lote);
+    console.log("Processando lote:", lote);
 
     const obj = JSON.parse(lote.geojson);
 
-    console.log("JSON parseado:", obj);
+    console.log("OBJ:", obj);
 
-    const feature = obj.geojson;
+    const feature = obj.geojson || obj;
 
     console.log("Feature:", feature);
 
@@ -1591,7 +1590,7 @@ async function carregarLotes(){
   }
 
 });
-
+    console.log("Lotes recebidos:", lotes);
     console.log(
       "Casas reconstruídas:",
       houses

@@ -116,6 +116,8 @@ app.post("/lotes", (req, res) => {
 
   const lotes = req.body;
 
+  console.log("RECEBIDO:", JSON.stringify(lotes, null, 2));
+
   if (!Array.isArray(lotes)) {
     return res.status(400).json({
       erro: "O corpo deve ser um array."
@@ -150,6 +152,13 @@ app.post("/lotes", (req, res) => {
         erro: err.message
       });
     }
+
+    db.all(
+    "SELECT * FROM lotes",
+    [],
+    (e, rows) => {
+
+      console.log("BANCO APÓS SALVAR:", rows);
 
     res.json({
       ok: true,

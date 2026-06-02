@@ -74,12 +74,14 @@ app.get("/lotes", (req, res) => {
     [],
     (err, rows) => {
 
-      if (err) {
-        return res.status(500).json({ erro: err.message });
-      }
-
       console.log("GET /lotes retornou:");
       console.log(rows);
+
+      if (err) {
+        return res.status(500).json({
+          erro: err.message
+        });
+      }
 
       res.json(rows);
 

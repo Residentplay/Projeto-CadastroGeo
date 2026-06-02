@@ -78,6 +78,9 @@ app.get("/lotes", (req, res) => {
         return res.status(500).json({ erro: err.message });
       }
 
+      console.log("GET /lotes retornou:");
+      console.log(rows);
+
       res.json(rows);
 
     }
@@ -154,7 +157,7 @@ app.post("/lotes", (req, res) => {
       lote.status ||
       "livre";
 
-      console.log("SALVANDO LOTE:", lote);
+      
 
     stmt.run(
       [

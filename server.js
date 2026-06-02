@@ -153,12 +153,7 @@ app.post("/lotes", (req, res) => {
       });
     }
 
-    db.all(
-    "SELECT * FROM lotes",
-    [],
-    (e, rows) => {
-
-      console.log("BANCO APÓS SALVAR:", rows);
+    console.log("BANCO APÓS SALVAR:", rows);
 
     res.json({
       ok: true,

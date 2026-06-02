@@ -1310,6 +1310,9 @@ function updateStats(){
 // MODAL CADASTRO
 //
 async function openHouse(h){
+
+  console.log("PASSOU 1");
+
   currentHouse=h;
   const done=!!cadastros[h.id];
   const viewOnly=(currentUser.role==='assistente')||(currentUser.role==='colaborador'&&done);
@@ -1319,7 +1322,13 @@ async function openHouse(h){
   viewOnly?modal.classList.add('view-only'):modal.classList.remove('view-only');
   const cadastro = await carregarCadastro(h.id);
 
+  console.log("PASSOU 2");
+  console.log(cadastro);
+
 if (cadastro && cadastro.casa_id) {
+
+  console.log("PASSOU 3");
+
   fillForm({
 
   end: cadastro.endereco,
@@ -1362,6 +1371,9 @@ if (cadastro && cadastro.casa_id) {
 });
 }
   else{
+
+    console.log("PASSOU 4");
+
     clearForm();
     document.getElementById('f-end').value=h.label;
     document.getElementById('f-bairro').value=h.bairro||'';
@@ -1372,7 +1384,12 @@ if (cadastro && cadastro.casa_id) {
   }
   document.querySelectorAll('.house-item').forEach(el=>el.classList.remove('selected'));
   const li=document.getElementById('li-'+h.id); if(li) li.classList.add('selected');
+
+  console.log("PASSOU 5");
+
   document.getElementById('modal-wrap').classList.add('open');
+
+  console.log("PASSOU 6");
 
   console.log("ABRINDO CASA:", h);
   console.log("LAT:", h.lat);

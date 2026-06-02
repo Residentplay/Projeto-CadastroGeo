@@ -112,16 +112,20 @@ app.get("/lotes/:id", (req, res) => {
 app.post("/lotes", (req, res) => {
 
   console.log("POST /lotes recebido");
-  console.log(req.body);
 
   const lotes = req.body;
 
-  console.log("RECEBIDO:", JSON.stringify(lotes, null, 2));
+  console.log(
+    "RECEBIDO:",
+    JSON.stringify(lotes, null, 2)
+  );
 
   if (!Array.isArray(lotes)) {
+
     return res.status(400).json({
       erro: "O corpo deve ser um array."
     });
+
   }
 
   const stmt = db.prepare(`
@@ -134,31 +138,85 @@ app.post("/lotes", (req, res) => {
     VALUES (?, ?, ?, ?)
   `);
 
-  lotes.forEach(lote => {
+  lotes.forEach((lote, i) => {
 
-    stmt.run([
-      lote.id,
-      lote.nome || "",
-      lote.status || "livre",
-      JSON.stringify(lote.geojson || lote)
-    ]);
+    console.log("SALVANDO LOTE:", lote);
+
+    const id =
+      lote.id ||
+      ("lote_" + Date.now() + "_" + i);
+
+    const nome =
+      lote.nome ||
+      ("Lote " + (i + 1));
+
+    const status =
+      lote.status ||
+      "livre";
+
+    stmt.run(
+      [
+        id,
+        nome,
+        status,
+        JSON.stringify(lote)
+      ],
+      err => {
+
+        if(err){
+
+          console.error(
+            "Erro ao salvar lote:",
+            err
+          );
+
+        }
+
+      }
+    );
 
   });
 
   stmt.finalize(err => {
 
-    if (err) {
+    if(err){
+
+      console.error(err);
+
       return res.status(500).json({
         erro: err.message
       });
+
     }
 
-    console.log("BANCO APÓS SALVAR:", rows);
+    db.all(
+      "SELECT * FROM lotes",
+      [],
+      (err, rows) => {
 
-    res.json({
-      ok: true,
-      total: lotes.length
-    });
+        if(err){
+
+          console.error(err);
+
+          return res.status(500).json({
+            erro: err.message
+          });
+
+        }
+
+        console.log(
+          "BANCO APÓS SALVAR:"
+        );
+
+        console.log(rows);
+
+        res.json({
+          ok: true,
+          total: lotes.length
+        });
+
+      }
+    );
 
   });
 

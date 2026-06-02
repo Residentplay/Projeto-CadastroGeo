@@ -1519,66 +1519,75 @@ async function carregarLotes(){
 
     lotes.forEach(lote => {
 
-      try{
+  try{
 
-        const obj = JSON.parse(lote.geojson);
+    console.log("Lote recebido:", lote);
 
-        const feature = obj.geojson || obj;
+    const obj = JSON.parse(lote.geojson);
 
-        if(
-          !feature.geometry ||
-          feature.geometry.type !== "Polygon"
-        ){
-          return;
-        }
+    console.log("JSON parseado:", obj);
 
-        const coords =
-          feature.geometry.coordinates[0];
+    const feature = obj.geojson;
 
-        let somaLat = 0;
-        let somaLng = 0;
+    console.log("Feature:", feature);
 
-        coords.forEach(p => {
+    if(!feature){
+      console.log("SEM FEATURE");
+      return;
+    }
 
-          somaLng += Number(p[0]);
-          somaLat += Number(p[1]);
+    if(!feature.geometry){
+      console.log("SEM GEOMETRY");
+      return;
+    }
 
-        });
+    console.log(
+      "Tipo:",
+      feature.geometry.type
+    );
 
-        const centroLng =
-          somaLng / coords.length;
+    const coords =
+      feature.geometry.coordinates[0];
 
-        const centroLat =
-          somaLat / coords.length;
+    console.log("Coords:", coords);
 
-        houses.push({
+    let somaLat = 0;
+    let somaLng = 0;
 
-          id: lote.id,
+    coords.forEach(p => {
 
-          label: lote.nome,
-
-          bairro: "",
-
-          lat: centroLat,
-
-          lng: centroLng,
-
-          polygon: coords
-
-        });
-
-      }
-      catch(err){
-
-        console.error(
-          "Erro ao reconstruir lote:",
-          lote,
-          err
-        );
-
-      }
+      somaLng += Number(p[0]);
+      somaLat += Number(p[1]);
 
     });
+
+    houses.push({
+
+      id: lote.id,
+
+      label: lote.nome,
+
+      lat: somaLat / coords.length,
+
+      lng: somaLng / coords.length,
+
+      polygon: coords
+
+    });
+
+    console.log("ADICIONOU CASA");
+
+  }
+  catch(err){
+
+    console.error(
+      "ERRO NO LOTE:",
+      err
+    );
+
+  }
+
+});
 
     console.log(
       "Casas reconstruídas:",

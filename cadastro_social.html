@@ -948,9 +948,11 @@ async function salvarLotes(){
       body:JSON.stringify(lotes)
     });
 
-    const data = await res.json();
+    console.log("Status:", res.status);
 
-    console.log("Resposta:", data);
+    const texto = await res.text();
+
+    console.log("Resposta bruta:", texto);
 
     showToast("Lotes salvos com sucesso!");
 

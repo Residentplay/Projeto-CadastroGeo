@@ -154,6 +154,8 @@ app.post("/lotes", (req, res) => {
       lote.status ||
       "livre";
 
+      console.log("SALVANDO LOTE:", lote);
+
     stmt.run(
       [
         id,

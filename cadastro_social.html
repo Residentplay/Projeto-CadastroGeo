@@ -1180,13 +1180,7 @@ function importarKML(xml){
 
   console.log("Placemarks encontrados:", placemarks.length);
 
-  placemarks.forEach((p,i)=>{
-  console.log(
-    "PLACEMARK",
-    i,
-    p.querySelector("name")?.textContent
-  );
-});
+  
 
   Array.from(placemarks).forEach((p, i) => {
 

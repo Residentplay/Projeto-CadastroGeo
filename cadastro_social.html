@@ -1324,10 +1324,12 @@ async function openHouse(h){
   viewOnly?modal.classList.add('view-only'):modal.classList.remove('view-only');
   const cadastro = await carregarCadastro(h.id);
 
+  console.log("CADASTRO CARREGADO:", cadastro);
+
   console.log("PASSOU 2");
   console.log(cadastro);
 
-if (cadastro && cadastro.casa_id) {
+if (cadastro && cadastro.lote_id) {
 
   console.log("PASSOU 3");
 

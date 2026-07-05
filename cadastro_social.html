@@ -303,6 +303,15 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     onchange="loadMapFile(this)"
     style="display:none"/>
 
+    <div class="search-box">
+    <input
+        id="search-house"
+        type="text"
+        placeholder="🔍 Buscar lote, endereço, morador ou CPF..."
+        oninput="filtrarLotes()"
+    >
+    </div>
+
 </div>
     <div class="topbar-right">
       <span class="role-pill" id="role-pill"></span>
@@ -336,16 +345,6 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         <span id="loc-text">Localizando sua posição GPS...</span>
       </div>
     </div>
-
-    <div class="search-box">
-    <input
-        id="search-house"
-        type="text"
-        placeholder="🔍 Buscar lote, endereço, morador ou CPF..."
-        oninput="filtrarLotes()"
-    >
-  </div>
-    
     <div id="sidebar">
       <div id="sidebar-header">
         <h3 id="sidebar-title">Imóveis no mapa</h3>

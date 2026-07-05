@@ -226,6 +226,14 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
  
 <!-- LOGIN -->
 <div id="screen-login">
+  <div class="search-box">
+    <input
+        id="search-house"
+        type="text"
+        placeholder="🔍 Buscar lote, endereço, morador ou CPF..."
+        oninput="filtrarLotes()"
+    >
+  </div>
   <div class="login-card">
     <div class="login-logo">
       <div class="login-logo-icon">🗺️</div>

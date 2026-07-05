@@ -130,17 +130,18 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
 
 .search-box{
-    margin-bottom:12px;
+    padding:10px;
+    border-bottom:1px solid var(--border);
 }
 
 .search-box input{
     width:100%;
-    padding:10px 14px;
+    padding:10px 12px;
+    border-radius:8px;
     border:1px solid var(--border);
-    border-radius:10px;
     background:var(--bg3);
     color:var(--text);
-    font-size:14px;
+    font-size:13px;
 }
 
 .search-box input:focus{
@@ -509,10 +510,14 @@ let users = [
   {id:'u2', name:'Ana Oliveira',      user:'assistente1',  pass:'social123', role:'assistente',  active:true},
 ];
 let currentUser = null;
+let lotes = [];
 let houses = [], cadastros = {}, activities = [];
 let currentHouse = null, confirmCb = null;
 let userLat = null, userLng = null;
 let map;
+let modoDesenho = "lote";
+let lotesLayer;
+let casasLayer;
 let markersLayer;
 let modoAtual = null;
 let anguloMapa = 0;
@@ -716,10 +721,15 @@ function initMap(){
     "Satélite": satelite
   }).addTo(map);
 
-  markersLayer = L.layerGroup().addTo(map);
-
   drawnItems = new L.FeatureGroup();
+
   map.addLayer(drawnItems);
+
+  lotesLayer = L.layerGroup().addTo(map);
+
+  casasLayer = L.layerGroup().addTo(map);
+
+  markersLayer = L.layerGroup().addTo(map);
 
 const drawControl = new L.Control.Draw({
   draw: {
@@ -1204,9 +1214,11 @@ function importarKML(xml){
 
   console.log("ENTROU EM importarKML");
 
+  lotes = [];
+
   houses = [];
 
-  drawnItems.clearLayers();
+  lotesLayer.clearLayers();
 
   const placemarks = xml.getElementsByTagName("Placemark");
 
@@ -1254,9 +1266,9 @@ function importarKML(xml){
     const centroLng = somaLng / pontos.length;
     const centroLat = somaLat / pontos.length;
 
-    houses.push({
+    const lote = {
 
-      id: "h" + i,
+      id: "lote_" + i,
 
       label: name,
 
@@ -1268,7 +1280,12 @@ function importarKML(xml){
 
       polygon: pontos
 
-    });
+    };
+
+    lotes.push(lote);
+
+    // TEMPORÁRIO
+    houses.push(lote);
 
     const polygonLayer = L.polygon(
 
@@ -1291,16 +1308,21 @@ function importarKML(xml){
       }
     };
 
-    drawnItems.addLayer(polygonLayer);
+    lotesLayer.addLayer(polygonLayer);
 
   });
 
-  console.log("Casas carregadas:", houses);
+  console.log("Lotes carregados:", lotes);
 
   console.log(
     "Polígonos em drawnItems:",
     drawnItems.getLayers().length
   );
+
+  // TEMPORÁRIO
+  // Enquanto o sistema usa houses para desenhar,
+  // copiamos os lotes para houses.
+  houses = [...lotes];
 
   renderHousesList();
   updateStats();
@@ -1319,17 +1341,41 @@ function importarKML(xml){
 
 }
  
-function renderHousesList(){
-  const list=document.getElementById('houses-list');
-  list.innerHTML='';
-  houses.forEach(h=>{
-    const done=!!cadastros[h.id];
-    const div=document.createElement('div');
-    div.className='house-item'; div.id='li-'+h.id;
-    div.innerHTML=`<div class="house-dot ${done?'cadastrado':'pendente'}"></div><div class="house-info"><strong>${h.label}</strong><span>${h.bairro||'Sem bairro'}</span></div><div class="house-badge ${done?'badge-cadastrado':'badge-pendente'}">${done?'Cadastrado':'Pendente'}</div>`;
-    div.onclick=()=>openHouse(h);
-    list.appendChild(div);
+function renderHousesList(lista = houses){
+
+  const el = document.getElementById("houses-list");
+
+  el.innerHTML = "";
+
+  lista.forEach(h=>{
+
+    const cadastro = cadastros[h.id] || {};
+
+    const item = document.createElement("div");
+
+    item.className="house-item";
+
+    item.id="li-"+h.id;
+
+    item.onclick=()=>openHouse(h);
+
+    item.innerHTML=`
+      <strong>${h.label}</strong><br>
+
+      <small>
+      ${cadastro.nome || ""}
+      </small><br>
+
+      <small>
+      ${cadastro.endereco || ""}
+      </small>
+
+    `;
+
+    el.appendChild(item);
+
   });
+
 }
  
 function updateStats(){

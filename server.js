@@ -62,6 +62,19 @@ db.serialize(() => {
     )
   `);
 
+  // NOVA TABELA
+  db.run(`
+    CREATE TABLE IF NOT EXISTS casas (
+      id TEXT PRIMARY KEY,
+      lote_id TEXT,
+      numero TEXT,
+      status TEXT,
+      latitude REAL,
+      longitude REAL,
+      geojson TEXT
+    )
+  `);
+
 });
 
 // ==========================
@@ -224,6 +237,109 @@ app.post("/lotes", (req, res) => {
 
       }
     );
+
+  });
+
+});
+
+// ==========================
+// LISTAR CASAS
+// ==========================
+app.get("/casas", (req, res) => {
+
+  db.all(
+    "SELECT * FROM casas",
+    [],
+    (err, rows) => {
+
+      if (err) {
+        return res.status(500).json({
+          erro: err.message
+        });
+      }
+
+      res.json(rows);
+
+    }
+  );
+
+});
+
+// ==========================
+// BUSCAR CASA POR ID
+// ==========================
+app.get("/casas/:id", (req, res) => {
+
+  db.get(
+    "SELECT * FROM casas WHERE id = ?",
+    [req.params.id],
+    (err, row) => {
+
+      if (err) {
+        return res.status(500).json({
+          erro: err.message
+        });
+      }
+
+      res.json(row || {});
+
+    }
+  );
+
+});
+
+// ==========================
+// SALVAR CASAS
+// ==========================
+app.post("/casas", (req, res) => {
+
+  const casas = req.body;
+
+  if (!Array.isArray(casas)) {
+    return res.status(400).json({
+      erro: "O corpo deve ser um array."
+    });
+  }
+
+  const stmt = db.prepare(`
+    INSERT OR REPLACE INTO casas (
+      id,
+      lote_id,
+      numero,
+      status,
+      latitude,
+      longitude,
+      geojson
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  casas.forEach(casa => {
+
+    stmt.run([
+      casa.id,
+      casa.lote_id,
+      casa.numero,
+      casa.status || "livre",
+      casa.latitude,
+      casa.longitude,
+      JSON.stringify(casa.geojson)
+    ]);
+
+  });
+
+  stmt.finalize(err => {
+
+    if (err) {
+      return res.status(500).json({
+        erro: err.message
+      });
+    }
+
+    res.json({
+      ok: true,
+      total: casas.length
+    });
 
   });
 

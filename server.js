@@ -293,56 +293,90 @@ app.get("/casas/:id", (req, res) => {
 // ==========================
 app.post("/casas", (req, res) => {
 
-    const casas = req.body;
+  const casas = req.body;
 
-    if (!Array.isArray(casas))
-        return res.status(400).json({
-            erro: "Lista inválida."
+  if (!Array.isArray(casas)) {
+    return res.status(400).json({
+      erro: "O corpo deve ser um array de casas."
+    });
+  }
+
+  if (casas.length === 0) {
+    return res.status(400).json({
+      erro: "Nenhuma casa foi enviada."
+    });
+  }
+
+  const stmt = db.prepare(`
+    INSERT OR REPLACE INTO casas (
+      id,
+      lote_id,
+      numero,
+      status,
+      latitude,
+      longitude,
+      geojson
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  let erroGravacao = null;
+
+  casas.forEach((casa, i) => {
+
+    stmt.run(
+      [
+        casa.id,
+        casa.lote_id || null,
+        casa.numero || casa.label || `Casa ${i + 1}`,
+        casa.status || "livre",
+        Number(casa.latitude ?? casa.lat),
+        Number(casa.longitude ?? casa.lng),
+        JSON.stringify(casa)
+      ],
+      err => {
+
+        if (err) {
+          console.error("Erro ao salvar casa:", err.message);
+          erroGravacao = err;
+        }
+
+      }
+    );
+
+  });
+
+  stmt.finalize(err => {
+
+    if (err || erroGravacao) {
+      return res.status(500).json({
+        erro: (err || erroGravacao).message
+      });
+    }
+
+    db.all(
+      "SELECT * FROM casas",
+      [],
+      (erroConsulta, rows) => {
+
+        if (erroConsulta) {
+          return res.status(500).json({
+            erro: erroConsulta.message
+          });
+        }
+
+        console.log("CASAS NO BANCO:", rows);
+
+        res.json({
+          ok: true,
+          quantidade: casas.length,
+          casas_salvas: rows.length
         });
 
-    const stmt = db.prepare(`
-        INSERT OR REPLACE INTO casas
-        (
-            id,
-            lote_id,
-            nome,
-            bairro,
-            latitude,
-            longitude,
-            geojson
-        )
-        VALUES
-        (?,?,?,?,?,?,?)
-    `);
+      }
+    );
 
-    casas.forEach(casa => {
-
-        stmt.run(
-
-            casa.id,
-
-            casa.lote_id || "",
-
-            casa.label || "",
-
-            casa.bairro || "",
-
-            casa.lat,
-
-            casa.lng,
-
-            JSON.stringify(casa)
-
-        );
-
-    });
-
-    stmt.finalize();
-
-    res.json({
-        ok: true,
-        quantidade: casas.length
-    });
+  });
 
 });
 

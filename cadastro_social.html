@@ -761,6 +761,28 @@ map.on(L.Draw.Event.CREATED, function (e) {
 
     casasLayer.addLayer(layer);
 
+    const centro = layer.getBounds().getCenter();
+
+    houses.push({
+
+        id: "casa_" + Date.now(),
+
+        label: "Nova Casa",
+
+        bairro: "",
+
+        lat: centro.lat,
+
+        lng: centro.lng,
+
+        polygon: layer.getLatLngs()[0].map(p => [p.lng, p.lat])
+
+    });
+
+    renderHousesList();
+
+    drawMap();
+
 }
 
   layer.on("click", function(){

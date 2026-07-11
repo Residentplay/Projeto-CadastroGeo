@@ -780,9 +780,27 @@ map.on(L.Draw.Event.CREATED, function (e) {
 
       const centro = layer.getBounds().getCenter();
 
+      let loteEncontrado = null;
+
+      lotes.forEach(lote => {
+
+        if (!lote.polygon || !lote.polygon.length) return;
+
+        const poligonoLote = L.polygon(
+          lote.polygon.map(p => [p[1], p[0]])
+        );
+
+        if (poligonoLote.getBounds().contains(centro)) {
+          loteEncontrado = lote;
+        }
+
+      });
+
       houses.push({
 
           id: "casa_" + Date.now(),
+
+          lote_id: loteEncontrado ? loteEncontrado.id : null,
 
           label: "Nova Casa",
 

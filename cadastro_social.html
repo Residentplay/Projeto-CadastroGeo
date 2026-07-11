@@ -756,6 +756,9 @@ map.addControl(drawControl);
 
 map.on(L.Draw.Event.CREATED, function (e) {
 
+  console.log("DRAW CREATED");
+  console.log("modoDesenho =", modoDesenho);
+
   const layer = e.layer;
 
   if (modoDesenho === "lote") {

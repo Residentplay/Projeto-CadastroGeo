@@ -761,39 +761,44 @@ map.on(L.Draw.Event.CREATED, function (e) {
 
   const layer = e.layer;
 
-  if (modoDesenho === "lote") {
+  const tipo = prompt(
 
-    lotesLayer.addLayer(layer);
+    "O que foi desenhado?\n\nDigite:\nL = Lote\nC = Casa"
 
-} else {
+);
 
-    console.log("ENTROU NO MODO CASA");
+  if (!tipo) return;
 
-    casasLayer.addLayer(layer);
+  if (tipo.toUpperCase() === "L") {
 
-    const centro = layer.getBounds().getCenter();
+      lotesLayer.addLayer(layer);
 
-    houses.push({
+  }
+  else if (tipo.toUpperCase() === "C") {
 
-        id: "casa_" + Date.now(),
+      casasLayer.addLayer(layer);
 
-        label: "Nova Casa",
+      const centro = layer.getBounds().getCenter();
 
-        bairro: "",
+      houses.push({
 
-        lat: centro.lat,
+          id: "casa_" + Date.now(),
 
-        lng: centro.lng,
+          label: "Nova Casa",
 
-        polygon: layer.getLatLngs()[0].map(p => [p.lng, p.lat])
+          bairro: "",
 
-    });
+          lat: centro.lat,
 
-    console.log("CASA ADICIONADA", houses);
+          lng: centro.lng,
 
-    renderHousesList();
+          polygon: layer.getLatLngs()[0].map(p => [p.lng, p.lat])
 
-    drawMap();
+      });
+
+      renderHousesList();
+
+      drawMap();
 
 }
 

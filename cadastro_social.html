@@ -1775,140 +1775,88 @@ async function carregarCasas() {
 
 async function carregarLotes(){
 
-  console.log("NOVA VERSAO carregarLotes");
-
   try{
 
     const res = await fetch("/lotes");
+    const dados = await res.json();
 
-    const lotes = await res.json();
+    lotes = [];
 
-    console.log("Resposta do servidor:", lotes);
-
-    houses = [];
-
-    lotes.forEach(lote => {
-
-  try{
-
-    console.log("Processando lote:", lote);
-
-    const obj = JSON.parse(lote.geojson);
-
-    console.log("OBJ:", obj);
-
-    const feature = obj.geojson || obj;
-
-    console.log("Feature:", feature);
-
-    if(!feature){
-      console.log("SEM FEATURE");
-      return;
+    if(lotesLayer){
+      lotesLayer.clearLayers();
     }
 
-    if(!feature.geometry){
-      console.log("SEM GEOMETRY");
-      return;
-    }
+    dados.forEach(lote => {
 
-    console.log(
-      "Tipo:",
-      feature.geometry.type
-    );
+      try{
 
-    const coords =
-      feature.geometry.coordinates[0];
+        const obj = JSON.parse(lote.geojson);
+        const feature = obj.geojson || obj;
 
-    console.log("Coords:", coords);
-
-    let somaLat = 0;
-    let somaLng = 0;
-
-    coords.forEach(p => {
-
-      somaLng += Number(p[0]);
-      somaLat += Number(p[1]);
-
-    });
-
-    lotes.push({
-
-      id: lote.id,
-
-      label: lote.nome,
-
-      lat: somaLat / coords.length,
-
-      lng: somaLng / coords.length,
-
-      polygon: coords
-
-    });
-
-    console.log("ADICIONOU CASA");
-
-  }
-  catch(err){
-
-    console.error(
-      "ERRO NO LOTE:",
-      err
-    );
-
-  }
-
-});
-    console.log("Lotes recebidos:", lotes);
-    console.log(
-      "Casas reconstruídas:",
-      houses
-    );
-
-    renderHousesList();
-
-    drawMap();
-
-    updateStats();
-
-    if(houses.length){
-
-      const grupo = L.featureGroup();
-
-      houses.forEach(h => {
-
-        if(h.polygon){
-
-          grupo.addLayer(
-
-            L.polygon(
-              h.polygon.map(
-                p => [p[1], p[0]]
-              )
-            )
-
-          );
-
+        if(
+          !feature.geometry ||
+          feature.geometry.type !== "Polygon"
+        ){
+          return;
         }
 
-      });
+        const coords = feature.geometry.coordinates[0];
 
-      if(grupo.getLayers().length){
+        let somaLat = 0;
+        let somaLng = 0;
 
-        map.fitBounds(
-          grupo.getBounds(),
+        coords.forEach(p => {
+          somaLng += Number(p[0]);
+          somaLat += Number(p[1]);
+        });
+
+        const loteReconstruido = {
+          id: lote.id,
+          label: lote.nome || "Lote",
+          status: lote.status || "livre",
+          lat: somaLat / coords.length,
+          lng: somaLng / coords.length,
+          polygon: coords
+        };
+
+        lotes.push(loteReconstruido);
+
+        const poly = L.polygon(
+          coords.map(p => [p[1], p[0]]),
           {
-            padding:[30,30]
+            color: "#2563eb",
+            fillColor: "#2563eb",
+            fillOpacity: 0.12,
+            weight: 3
           }
+        );
+
+        poly.bindPopup(`
+          <b>${loteReconstruido.label}</b><br>
+          Área do lote
+        `);
+
+        lotesLayer.addLayer(poly);
+
+      }
+      catch(err){
+
+        console.error(
+          "Erro ao reconstruir lote:",
+          lote,
+          err
         );
 
       }
 
-    }
+    });
+
+    console.log("Lotes carregados do banco:", lotes);
 
   }
   catch(err){
 
-    console.error(err);
+    console.error("Erro ao carregar lotes:", err);
 
   }
 

@@ -293,55 +293,56 @@ app.get("/casas/:id", (req, res) => {
 // ==========================
 app.post("/casas", (req, res) => {
 
-  const casas = req.body;
+    const casas = req.body;
 
-  if (!Array.isArray(casas)) {
-    return res.status(400).json({
-      erro: "O corpo deve ser um array."
+    if (!Array.isArray(casas))
+        return res.status(400).json({
+            erro: "Lista inválida."
+        });
+
+    const stmt = db.prepare(`
+        INSERT OR REPLACE INTO casas
+        (
+            id,
+            lote_id,
+            nome,
+            bairro,
+            latitude,
+            longitude,
+            geojson
+        )
+        VALUES
+        (?,?,?,?,?,?,?)
+    `);
+
+    casas.forEach(casa => {
+
+        stmt.run(
+
+            casa.id,
+
+            casa.lote_id || "",
+
+            casa.label || "",
+
+            casa.bairro || "",
+
+            casa.lat,
+
+            casa.lng,
+
+            JSON.stringify(casa)
+
+        );
+
     });
-  }
 
-  const stmt = db.prepare(`
-    INSERT OR REPLACE INTO casas (
-      id,
-      lote_id,
-      numero,
-      status,
-      latitude,
-      longitude,
-      geojson
-    )
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `);
-
-  casas.forEach(casa => {
-
-    stmt.run([
-      casa.id,
-      casa.lote_id,
-      casa.numero,
-      casa.status || "livre",
-      casa.latitude,
-      casa.longitude,
-      JSON.stringify(casa.geojson)
-    ]);
-
-  });
-
-  stmt.finalize(err => {
-
-    if (err) {
-      return res.status(500).json({
-        erro: err.message
-      });
-    }
+    stmt.finalize();
 
     res.json({
-      ok: true,
-      total: casas.length
+        ok: true,
+        quantidade: casas.length
     });
-
-  });
 
 });
 

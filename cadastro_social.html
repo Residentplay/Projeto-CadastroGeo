@@ -1074,13 +1074,37 @@ async function salvarLotes(){
 
 async function salvarCasas(){
 
-  console.log("Casas para salvar:");
+  try{
 
-  console.log(JSON.stringify(houses, null, 2));
+    console.log("Casas para salvar:");
+    console.log(houses);
 
-  console.log("Quantidade:", houses.length);
+    const res = await fetch("/casas",{
 
-  showToast("Função Salvar Casas criada.");
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify(houses)
+
+    });
+
+    const dados = await res.json();
+
+    console.log(dados);
+
+    showToast("Casas salvas com sucesso!");
+
+  }
+  catch(err){
+
+    console.error(err);
+
+    showToast("Erro ao salvar casas.", true);
+
+  }
 
 }
  

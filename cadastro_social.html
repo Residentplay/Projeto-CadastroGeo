@@ -1699,6 +1699,49 @@ async function carregarCadastro(casaId) {
 
 }
 
+async function carregarCasas(){
+
+  try{
+
+    const res = await fetch("/casas");
+
+    const dados = await res.json();
+
+    houses = [];
+
+    dados.forEach(casa =>{
+
+      const geo = JSON.parse(casa.geojson);
+
+      houses.push({
+
+        id: casa.id,
+
+        label: casa.numero || "Casa",
+
+        bairro: casa.bairro || "",
+
+        lat: casa.latitude,
+
+        lng: casa.longitude,
+
+        polygon: geo.polygon || geo.polygon || geo.polygon
+
+      });
+
+    });
+
+    drawMap();
+
+  }
+  catch(err){
+
+    console.error(err);
+
+  }
+
+}
+
 async function carregarLotes(){
 
   console.log("NOVA VERSAO carregarLotes");

@@ -1228,7 +1228,7 @@ function importarGeoJSON(gj){
       return;
     }
 
-    houses.push({
+    lotes.push({
       id:'h'+i,
       label:p.endereco || p.nome || p.name || ('Lote '+(i+1)),
       bairro:p.bairro || '',
@@ -1726,7 +1726,7 @@ async function carregarLotes(){
 
     });
 
-    houses.push({
+    lotes.push({
 
       id: lote.id,
 

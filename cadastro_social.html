@@ -610,7 +610,7 @@ async function setupUI(){
   const subs={colaborador:'Clique em um imóvel para preencher o formulário',assistente:'Clique em um imóvel cadastrado para ver a ficha',engenheiro:'Importe o GeoJSON do QGIS e monitore os cadastros'};
   document.getElementById('sidebar-title').textContent=titles[currentUser.role];
   document.getElementById('sidebar-sub').textContent=subs[currentUser.role];
-  
+
   await carregarLotes();
   await carregarCasas();
   await carregarCadastrosDoBanco();
@@ -909,6 +909,13 @@ function drawMap(){
   houses.forEach(h => {
 
     const cadastrado = !!cadastros[h.id];
+
+    console.log(
+      h.id,
+      "cadastrado:",
+      cadastrado,
+      cadastros[h.id]
+    );
 
     let corBorda = "#666";
     let corPreenchimento = "#666";

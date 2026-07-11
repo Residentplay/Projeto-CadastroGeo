@@ -614,6 +614,8 @@ function setupUI(){
 
   carregarCadastrosDoBanco();
 
+  carregarCasas();
+
   updateStats();
 }
  
@@ -1717,9 +1719,9 @@ async function carregarCadastro(casaId) {
 
 }
 
-async function carregarCasas(){
+async function carregarCasas() {
 
-  try{
+  try {
 
     const res = await fetch("/casas");
 
@@ -1727,34 +1729,39 @@ async function carregarCasas(){
 
     houses = [];
 
-    dados.forEach(casa =>{
+    dados.forEach(casa => {
 
-      const geo = JSON.parse(casa.geojson);
+      let geo = {};
+
+      try {
+        geo = JSON.parse(casa.geojson || "{}");
+      } catch (err) {
+        console.error("GeoJSON inválido da casa:", casa.id, err);
+      }
 
       houses.push({
-
         id: casa.id,
-
-        label: casa.numero || "Casa",
-
-        bairro: casa.bairro || "",
-
-        lat: casa.latitude,
-
-        lng: casa.longitude,
-
-        polygon: geo.polygon || geo.polygon || geo.polygon
-
+        lote_id: casa.lote_id,
+        label: casa.numero || geo.label || "Casa",
+        bairro: geo.bairro || "",
+        lat: Number(casa.latitude),
+        lng: Number(casa.longitude),
+        polygon: Array.isArray(geo.polygon) ? geo.polygon : []
       });
 
     });
 
+    console.log("Casas carregadas do banco:", houses);
+
+    renderHousesList();
+    updateStats();
     drawMap();
 
-  }
-  catch(err){
+  } catch (err) {
 
-    console.error(err);
+    console.error("Erro ao carregar casas:", err);
+
+    showToast("Erro ao carregar casas!", true);
 
   }
 

@@ -595,7 +595,7 @@ async function carregarCadastrosDoBanco() {
   }
 }
  
-function setupUI(){
+async function setupUI(){
   document.getElementById('user-name').textContent = currentUser.name;
   const av = document.getElementById('user-avatar');
   av.textContent = currentUser.name.split(' ').map(n=>n[0]).join('').slice(0,2);
@@ -610,11 +610,10 @@ function setupUI(){
   const subs={colaborador:'Clique em um imóvel para preencher o formulário',assistente:'Clique em um imóvel cadastrado para ver a ficha',engenheiro:'Importe o GeoJSON do QGIS e monitore os cadastros'};
   document.getElementById('sidebar-title').textContent=titles[currentUser.role];
   document.getElementById('sidebar-sub').textContent=subs[currentUser.role];
-  carregarLotes();
-
-  carregarCadastrosDoBanco();
-
-  carregarCasas();
+  
+  await carregarLotes();
+  await carregarCasas();
+  await carregarCadastrosDoBanco();
 
   updateStats();
 }

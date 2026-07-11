@@ -1597,7 +1597,7 @@ async function saveCadastro() {
 
   const cadastro = {
 
-    lote_id: currentHouse.id,
+    casa_id: currentHouse.id,
 
     endereco: document.getElementById('f-end').value,
     bairro: document.getElementById('f-bairro').value,
@@ -1678,11 +1678,6 @@ async function saveCadastro() {
 
   }
 
-  cadastros[currentHouse.id] = cadastro;
-
-  loteSelecionado = null;
-
-  drawMap();
 
 }
 

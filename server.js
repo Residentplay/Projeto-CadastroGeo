@@ -19,7 +19,7 @@ db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS cadastros (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      lote_id TEXT UNIQUE,
+      casa_id TEXT UNIQUE,
       endereco TEXT,
       bairro TEXT,
       latitude TEXT,
@@ -358,7 +358,7 @@ app.post("/cadastro", (req, res) => {
       db.run(
         `
         INSERT OR REPLACE INTO cadastros (
-          lote_id,
+          casa_id,
           endereco,
           bairro,
           latitude,
@@ -392,7 +392,7 @@ app.post("/cadastro", (req, res) => {
         )
         `,
         [
-          c.lote_id,
+          c.casa_id,
           c.endereco,
           c.bairro,
           c.latitude,
@@ -461,13 +461,13 @@ app.get("/cadastros", (req, res) => {
 });
 
 // ==========================
-// BUSCAR CADASTRO POR LOTE
+// BUSCAR CADASTRO POR CASA
 // ==========================
-app.get("/cadastro/:lote_id", (req, res) => {
+app.get("/cadastro/:casa_id", (req, res) => {
 
   db.get(
-    "SELECT * FROM cadastros WHERE lote_id = ?",
-    [req.params.lote_id],
+    "SELECT * FROM cadastros WHERE casa_id = ?",
+    [req.params.casa_id],
     (err, row) => {
 
       if (err) {

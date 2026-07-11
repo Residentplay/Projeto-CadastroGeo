@@ -764,6 +764,8 @@ map.on(L.Draw.Event.CREATED, function (e) {
 
 } else {
 
+    console.log("ENTROU NO MODO CASA");
+
     casasLayer.addLayer(layer);
 
     const centro = layer.getBounds().getCenter();
@@ -783,6 +785,8 @@ map.on(L.Draw.Event.CREATED, function (e) {
         polygon: layer.getLatLngs()[0].map(p => [p.lng, p.lat])
 
     });
+
+    console.log("CASA ADICIONADA", houses);
 
     renderHousesList();
 

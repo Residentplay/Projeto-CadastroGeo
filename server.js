@@ -49,8 +49,8 @@ db.serialize(() => {
   `);
 
   db.run(`
-    CREATE INDEX IF NOT EXISTS idx_lote_id
-    ON cadastros(lote_id)
+    CREATE INDEX IF NOT EXISTS idx_casa_id
+    ON cadastros(casa_id)
   `);
 
   db.run(`

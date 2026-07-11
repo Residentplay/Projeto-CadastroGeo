@@ -753,7 +753,15 @@ map.on(L.Draw.Event.CREATED, function (e) {
 
   const layer = e.layer;
 
-  drawnItems.addLayer(layer);
+  if (modoDesenho === "lote") {
+
+    lotesLayer.addLayer(layer);
+
+} else {
+
+    casasLayer.addLayer(layer);
+
+}
 
   layer.on("click", function(){
 

@@ -1740,7 +1740,9 @@ async function carregarCasas() {
       let geo = {};
 
       try {
-        geo = JSON.parse(casa.geojson || "{}");
+        geo = typeof casa.geojson === "string"
+          ? JSON.parse(casa.geojson)
+          : (casa.geojson || {});
       } catch (err) {
         console.error("GeoJSON inválido da casa:", casa.id, err);
       }

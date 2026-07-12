@@ -463,91 +463,120 @@ app.post("/casas", async (req, res) => {
 // ==========================
 // SALVAR CADASTRO
 // ==========================
-app.post("/cadastro", (req, res) => {
+app.post("/cadastro", async (req, res) => {
 
   const c = req.body;
 
-  
+  try {
 
-      db.run(
-        `
-        INSERT OR REPLACE INTO cadastros (
-          casa_id,
-          endereco,
-          bairro,
-          latitude,
-          longitude,
-          nome,
-          cpf,
-          nascimento,
-          sexo,
-          escolaridade,
-          telefone,
-          nis,
-          moradores,
-          menores,
-          idosos,
-          renda,
-          fonte_renda,
-          tipo_moradia,
-          material,
-          agua,
-          esgoto,
-          energia,
-          observacoes,
-          colaborador,
-          status,
-          data_cadastro
-        )
-        VALUES (
-          ?,?,?,?,?,?,?,?,?,?,
-          ?,?,?,?,?,?,?,?,?,?,
-          ?,?,?,?,?,?
-        )
-        `,
-        [
-          c.casa_id,
-          c.endereco,
-          c.bairro,
-          c.latitude,
-          c.longitude,
-          c.nome,
-          c.cpf,
-          c.nascimento,
-          c.sexo,
-          c.escolaridade,
-          c.telefone,
-          c.nis,
-          c.moradores,
-          c.menores,
-          c.idosos,
-          c.renda,
-          c.fonte_renda,
-          c.tipo_moradia,
-          c.material,
-          c.agua,
-          c.esgoto,
-          c.energia,
-          c.observacoes,
-          c.colaborador,
-          c.status,
-          c.data_cadastro
-        ],
-        function(err) {
+    const resultado = await pg.query(
+      `
+      INSERT INTO cadastros (
+        casa_id,
+        endereco,
+        bairro,
+        latitude,
+        longitude,
+        nome,
+        cpf,
+        nascimento,
+        sexo,
+        escolaridade,
+        telefone,
+        nis,
+        moradores,
+        menores,
+        idosos,
+        renda,
+        fonte_renda,
+        tipo_moradia,
+        material,
+        agua,
+        esgoto,
+        energia,
+        observacoes,
+        colaborador,
+        status,
+        data_cadastro
+      )
+      VALUES (
+        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,
+        $11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
+        $21,$22,$23,$24,$25,$26
+      )
+      ON CONFLICT (casa_id)
+      DO UPDATE SET
+        endereco = EXCLUDED.endereco,
+        bairro = EXCLUDED.bairro,
+        latitude = EXCLUDED.latitude,
+        longitude = EXCLUDED.longitude,
+        nome = EXCLUDED.nome,
+        cpf = EXCLUDED.cpf,
+        nascimento = EXCLUDED.nascimento,
+        sexo = EXCLUDED.sexo,
+        escolaridade = EXCLUDED.escolaridade,
+        telefone = EXCLUDED.telefone,
+        nis = EXCLUDED.nis,
+        moradores = EXCLUDED.moradores,
+        menores = EXCLUDED.menores,
+        idosos = EXCLUDED.idosos,
+        renda = EXCLUDED.renda,
+        fonte_renda = EXCLUDED.fonte_renda,
+        tipo_moradia = EXCLUDED.tipo_moradia,
+        material = EXCLUDED.material,
+        agua = EXCLUDED.agua,
+        esgoto = EXCLUDED.esgoto,
+        energia = EXCLUDED.energia,
+        observacoes = EXCLUDED.observacoes,
+        colaborador = EXCLUDED.colaborador,
+        status = EXCLUDED.status,
+        data_cadastro = EXCLUDED.data_cadastro
+      RETURNING id
+      `,
+      [
+        c.casa_id,
+        c.endereco,
+        c.bairro,
+        c.latitude,
+        c.longitude,
+        c.nome,
+        c.cpf,
+        c.nascimento,
+        c.sexo,
+        c.escolaridade,
+        c.telefone,
+        c.nis,
+        c.moradores,
+        c.menores,
+        c.idosos,
+        c.renda,
+        c.fonte_renda,
+        c.tipo_moradia,
+        c.material,
+        c.agua,
+        c.esgoto,
+        c.energia,
+        c.observacoes,
+        c.colaborador,
+        c.status,
+        c.data_cadastro
+      ]
+    );
 
-      if (err) {
-        return res.status(500).json({
-          erro: err.message
-        });
-      }
+    res.json({
+      success: true,
+      id: resultado.rows[0].id
+    });
 
-      res.json({
-        success: true,
-        id: this.lastID
-      });
+  } catch (erro) {
 
-    }
-  );
+    console.error("Erro ao salvar cadastro no PostgreSQL:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
 
 });
 

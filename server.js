@@ -311,23 +311,27 @@ app.post("/lotes", (req, res) => {
 // ==========================
 // LISTAR CASAS
 // ==========================
-app.get("/casas", (req, res) => {
+app.get("/casas", async (req, res) => {
 
-  db.all(
-    "SELECT * FROM casas",
-    [],
-    (err, rows) => {
+  try {
 
-      if (err) {
-        return res.status(500).json({
-          erro: err.message
-        });
-      }
+    const resultado = await pg.query(`
+      SELECT *
+      FROM casas
+      ORDER BY numero
+    `);
 
-      res.json(rows);
+    res.json(resultado.rows);
 
-    }
-  );
+  } catch (erro) {
+
+    console.error("Erro ao buscar casas:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
 
 });
 

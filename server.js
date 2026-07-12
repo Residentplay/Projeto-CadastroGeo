@@ -227,118 +227,76 @@ app.get("/lotes/:id", (req, res) => {
 // ==========================
 // SALVAR LOTES
 // ==========================
-app.post("/lotes", (req, res) => {
-
-  console.log("POST /lotes recebido");
+app.post("/lotes", async (req, res) => {
 
   const lotes = req.body;
 
-  console.log(
-    "RECEBIDO:",
-    JSON.stringify(lotes, null, 2)
-  );
-
   if (!Array.isArray(lotes)) {
-
     return res.status(400).json({
       erro: "O corpo deve ser um array."
     });
-
   }
 
-  const stmt = db.prepare(`
-    INSERT OR REPLACE INTO lotes (
-      id,
-      nome,
-      status,
-      geojson
-    )
-    VALUES (?, ?, ?, ?)
-  `);
+  try {
 
-  lotes.forEach((lote, i) => {
+    for (let i = 0; i < lotes.length; i++) {
 
-    console.log("SALVANDO LOTE:", lote);
+      const lote = lotes[i];
 
-    const id =
-      lote.id ||
-      ("lote_" + Date.now() + "_" + i);
+      const id =
+        lote.id ||
+        `lote_${Date.now()}_${i}`;
 
-    const nome =
-      lote.nome ||
-      ("Lote " + (i + 1));
+      const nome =
+        lote.nome ||
+        `Lote ${i + 1}`;
 
-    const status =
-      lote.status ||
-      "livre";
+      const status =
+        lote.status ||
+        "livre";
 
-      
-
-    stmt.run(
-      [
-        id,
-        nome,
-        status,
-        JSON.stringify(lote)
-      ],
-      err => {
-
-        if(err){
-
-          console.error(
-            "Erro ao salvar lote:",
-            err
-          );
-
-        }
-
-      }
-    );
-
-  });
-
-  stmt.finalize(err => {
-
-    if(err){
-
-      console.error(err);
-
-      return res.status(500).json({
-        erro: err.message
-      });
+      await pg.query(
+        `
+        INSERT INTO lotes (
+          id,
+          nome,
+          status,
+          geojson
+        )
+        VALUES ($1, $2, $3, $4)
+        ON CONFLICT (id)
+        DO UPDATE SET
+          nome = EXCLUDED.nome,
+          status = EXCLUDED.status,
+          geojson = EXCLUDED.geojson
+        `,
+        [
+          id,
+          nome,
+          status,
+          lote.geojson || lote
+        ]
+      );
 
     }
 
-    db.all(
-      "SELECT * FROM lotes",
-      [],
-      (err, rows) => {
+    res.json({
+      ok: true,
+      total: lotes.length
+    });
 
-        if(err){
+  } catch (erro) {
 
-          console.error(err);
-
-          return res.status(500).json({
-            erro: err.message
-          });
-
-        }
-
-        console.log(
-          "BANCO APÓS SALVAR:"
-        );
-
-        console.log(rows);
-
-        res.json({
-          ok: true,
-          total: lotes.length
-        });
-
-      }
+    console.error(
+      "Erro ao salvar lotes no PostgreSQL:",
+      erro
     );
 
-  });
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
 
 });
 

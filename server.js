@@ -610,23 +610,30 @@ app.get("/cadastros", async (req, res) => {
 // ==========================
 // BUSCAR CADASTRO POR CASA
 // ==========================
-app.get("/cadastro/:casa_id", (req, res) => {
+app.get("/cadastro/:casa_id", async (req, res) => {
 
-  db.get(
-    "SELECT * FROM cadastros WHERE casa_id = ?",
-    [req.params.casa_id],
-    (err, row) => {
+  try {
 
-      if (err) {
-        return res.status(500).json({
-          erro: err.message
-        });
-      }
+    const resultado = await pg.query(
+      `
+      SELECT *
+      FROM cadastros
+      WHERE casa_id = $1
+      `,
+      [req.params.casa_id]
+    );
 
-      res.json(row || {});
+    res.json(resultado.rows[0] || {});
 
-    }
-  );
+  } catch (erro) {
+
+    console.error("Erro ao buscar cadastro por casa:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
 
 });
 

@@ -357,7 +357,7 @@ app.get("/casas/:id", (req, res) => {
 // ==========================
 // SALVAR CASAS
 // ==========================
-app.post("/casas", (req, res) => {
+app.post("/casas", async (req, res) => {
 
   const casas = req.body;
 
@@ -367,82 +367,58 @@ app.post("/casas", (req, res) => {
     });
   }
 
-  if (casas.length === 0) {
-    return res.status(400).json({
-      erro: "Nenhuma casa foi enviada."
-    });
-  }
+  try {
 
-  const stmt = db.prepare(`
-    INSERT OR REPLACE INTO casas (
-      id,
-      lote_id,
-      numero,
-      status,
-      latitude,
-      longitude,
-      geojson
-    )
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `);
+    for (const casa of casas) {
 
-  let erroGravacao = null;
+      await pg.query(
+        `
+        INSERT INTO casas (
+          id,
+          lote_id,
+          numero,
+          status,
+          latitude,
+          longitude,
+          geojson
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        ON CONFLICT (id)
+        DO UPDATE SET
+          lote_id = EXCLUDED.lote_id,
+          numero = EXCLUDED.numero,
+          status = EXCLUDED.status,
+          latitude = EXCLUDED.latitude,
+          longitude = EXCLUDED.longitude,
+          geojson = EXCLUDED.geojson
+        `,
+        [
+          casa.id,
+          casa.lote_id || null,
+          casa.numero || casa.label || "Casa",
+          casa.status || "livre",
+          Number(casa.latitude ?? casa.lat),
+          Number(casa.longitude ?? casa.lng),
+          casa
+        ]
+      );
 
-  casas.forEach((casa, i) => {
-
-    stmt.run(
-      [
-        casa.id,
-        casa.lote_id || null,
-        casa.numero || casa.label || `Casa ${i + 1}`,
-        casa.status || "livre",
-        Number(casa.latitude ?? casa.lat),
-        Number(casa.longitude ?? casa.lng),
-        JSON.stringify(casa)
-      ],
-      err => {
-
-        if (err) {
-          console.error("Erro ao salvar casa:", err.message);
-          erroGravacao = err;
-        }
-
-      }
-    );
-
-  });
-
-  stmt.finalize(err => {
-
-    if (err || erroGravacao) {
-      return res.status(500).json({
-        erro: (err || erroGravacao).message
-      });
     }
 
-    db.all(
-      "SELECT * FROM casas",
-      [],
-      (erroConsulta, rows) => {
+    res.json({
+      ok: true,
+      quantidade: casas.length
+    });
 
-        if (erroConsulta) {
-          return res.status(500).json({
-            erro: erroConsulta.message
-          });
-        }
+  } catch (erro) {
 
-        console.log("CASAS NO BANCO:", rows);
+    console.error("Erro ao salvar casas no PostgreSQL:", erro);
 
-        res.json({
-          ok: true,
-          quantidade: casas.length,
-          casas_salvas: rows.length
-        });
+    res.status(500).json({
+      erro: erro.message
+    });
 
-      }
-    );
-
-  });
+  }
 
 });
 

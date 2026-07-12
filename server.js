@@ -50,6 +50,20 @@ async function iniciarPostgreSQL() {
       "Tabela PostgreSQL 'lotes' verificada/criada."
     );
 
+    await pg.query(`
+  CREATE TABLE IF NOT EXISTS casas (
+    id TEXT PRIMARY KEY,
+    lote_id TEXT,
+    numero TEXT,
+    status TEXT DEFAULT 'livre',
+    latitude DOUBLE PRECISION,
+    longitude DOUBLE PRECISION,
+    geojson JSONB NOT NULL
+  )
+`);
+
+console.log("Tabela PostgreSQL 'casas' verificada/criada.");
+
   } catch (erro) {
 
     console.error(

@@ -11,6 +11,27 @@ app.use(express.static(__dirname));
 
 const db = new sqlite3.Database("./cadastrogeo.db");
 
+const { Pool } = require("pg");
+
+const pg = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === "production"
+    ? { rejectUnauthorized: false }
+    : false
+});
+
+if (process.env.DATABASE_URL) {
+  pg.query("SELECT NOW()")
+    .then(resultado => {
+      console.log("PostgreSQL conectado:", resultado.rows[0]);
+    })
+    .catch(erro => {
+      console.error("Erro ao conectar ao PostgreSQL:", erro.message);
+    });
+} else {
+  console.log("DATABASE_URL não configurada. PostgreSQL será testado no Render.");
+}
+
 // ==========================
 // CRIAR TABELAS
 // ==========================

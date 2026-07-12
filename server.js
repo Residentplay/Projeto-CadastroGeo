@@ -583,23 +583,27 @@ app.post("/cadastro", async (req, res) => {
 // ==========================
 // LISTAR CADASTROS
 // ==========================
-app.get("/cadastros", (req, res) => {
+app.get("/cadastros", async (req, res) => {
 
-  db.all(
-    "SELECT * FROM cadastros",
-    [],
-    (err, rows) => {
+  try {
 
-      if (err) {
-        return res.status(500).json({
-          erro: err.message
-        });
-      }
+    const resultado = await pg.query(`
+      SELECT *
+      FROM cadastros
+      ORDER BY nome
+    `);
 
-      res.json(rows);
+    res.json(resultado.rows);
 
-    }
-  );
+  } catch (erro) {
+
+    console.error("Erro ao buscar cadastros:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
 
 });
 

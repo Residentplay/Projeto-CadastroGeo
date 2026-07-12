@@ -51,18 +51,52 @@ async function iniciarPostgreSQL() {
     );
 
     await pg.query(`
-  CREATE TABLE IF NOT EXISTS casas (
-    id TEXT PRIMARY KEY,
-    lote_id TEXT,
-    numero TEXT,
-    status TEXT DEFAULT 'livre',
-    latitude DOUBLE PRECISION,
-    longitude DOUBLE PRECISION,
-    geojson JSONB NOT NULL
-  )
-`);
+    CREATE TABLE IF NOT EXISTS casas (
+      id TEXT PRIMARY KEY,
+      lote_id TEXT,
+      numero TEXT,
+      status TEXT DEFAULT 'livre',
+      latitude DOUBLE PRECISION,
+      longitude DOUBLE PRECISION,
+      geojson JSONB NOT NULL
+    )
+  `);
 
-console.log("Tabela PostgreSQL 'casas' verificada/criada.");
+      console.log("Tabela PostgreSQL 'casas' verificada/criada.");
+
+     await pg.query(`
+      CREATE TABLE IF NOT EXISTS cadastros (
+        id SERIAL PRIMARY KEY,
+        casa_id TEXT UNIQUE,
+        endereco TEXT,
+        bairro TEXT,
+        latitude TEXT,
+        longitude TEXT,
+        nome TEXT,
+        cpf TEXT,
+        nascimento TEXT,
+        sexo TEXT,
+        escolaridade TEXT,
+        telefone TEXT,
+        nis TEXT,
+        moradores TEXT,
+        menores TEXT,
+        idosos TEXT,
+        renda TEXT,
+        fonte_renda TEXT,
+        tipo_moradia TEXT,
+        material TEXT,
+        agua TEXT,
+        esgoto TEXT,
+        energia TEXT,
+        observacoes TEXT,
+        colaborador TEXT,
+        status TEXT,
+        data_cadastro TEXT
+      )
+    `);
+
+  console.log("Tabela PostgreSQL 'cadastros' verificada/criada."); 
 
   } catch (erro) {
 

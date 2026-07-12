@@ -2,6 +2,7 @@ const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 const cors = require("cors");
+const { Pool } = require("pg");
 
 const app = express();
 
@@ -11,8 +12,6 @@ app.use(express.static(__dirname));
 
 const db = new sqlite3.Database("./cadastrogeo.db");
 
-const { Pool } = require("pg");
-
 const pg = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === "production"
@@ -20,17 +19,49 @@ const pg = new Pool({
     : false
 });
 
-if (process.env.DATABASE_URL) {
-  pg.query("SELECT NOW()")
-    .then(resultado => {
-      console.log("PostgreSQL conectado:", resultado.rows[0]);
-    })
-    .catch(erro => {
-      console.error("Erro ao conectar ao PostgreSQL:", erro.message);
-    });
-} else {
-  console.log("DATABASE_URL não configurada. PostgreSQL será testado no Render.");
+async function iniciarPostgreSQL() {
+
+  if (!process.env.DATABASE_URL) {
+    console.log(
+      "DATABASE_URL não configurada. PostgreSQL será iniciado apenas no Render."
+    );
+    return;
+  }
+
+  try {
+
+    const conexao = await pg.query("SELECT NOW()");
+
+    console.log(
+      "PostgreSQL conectado:",
+      conexao.rows[0]
+    );
+
+    await pg.query(`
+      CREATE TABLE IF NOT EXISTS lotes (
+        id TEXT PRIMARY KEY,
+        nome TEXT,
+        status TEXT DEFAULT 'livre',
+        geojson JSONB NOT NULL
+      )
+    `);
+
+    console.log(
+      "Tabela PostgreSQL 'lotes' verificada/criada."
+    );
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao iniciar PostgreSQL:",
+      erro.message
+    );
+
+  }
+
 }
+
+iniciarPostgreSQL();
 
 // ==========================
 // CRIAR TABELAS

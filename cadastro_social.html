@@ -1054,29 +1054,38 @@ async function salvarLotes(){
 
   try{
 
-    const lotes = [];
+    const lotesParaSalvar = [];
 
-    lotesLayer.eachLayer((layer, i) => {
+    lotes.forEach((lote, i) => {
 
-      const geojson = layer.toGeoJSON();
-
-      lotes.push({
-        id: geojson.properties?.id || ("lote_" + Date.now() + "_" + i),
-        nome: geojson.properties?.nome || ("Lote " + (i + 1)),
-        status: geojson.properties?.status || "livre",
-        geojson
+      lotesParaSalvar.push({
+        id: lote.id,
+        nome: lote.label || `Lote ${i + 1}`,
+        status: lote.status || "livre",
+        geojson: {
+          type: "Feature",
+          properties: {
+            id: lote.id,
+            nome: lote.label || `Lote ${i + 1}`,
+            status: lote.status || "livre"
+          },
+          geometry: {
+            type: "Polygon",
+            coordinates: [lote.polygon]
+          }
+        }
       });
 
     });
 
-    console.log("Enviando lotes:", lotes);
+    console.log("Enviando lotes:", lotesParaSalvar);
 
     const res = await fetch("/lotes",{
       method:"POST",
       headers:{
         "Content-Type":"application/json"
       },
-      body:JSON.stringify(lotes)
+      body:JSON.stringify(lotesParaSalvar)
     });
 
     console.log("Status:", res.status);

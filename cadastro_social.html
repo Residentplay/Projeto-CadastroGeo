@@ -805,15 +805,6 @@ map.on(L.Draw.Event.CREATED, function (e) {
 
       });
 
-      map.on(L.Draw.Event.EDITED, function(e){
-
-        e.layers.eachLayer(layer=>{
-
-          console.log("Casa editada:", layer);
-
-        });
-
-      });
 
       houses.push({
 
@@ -868,7 +859,18 @@ map.on(L.Draw.Event.CREATED, function (e) {
 
 });
 
+      map.on(L.Draw.Event.EDITED, function(e){
+
+        e.layers.eachLayer(layer=>{
+
+          console.log("Casa editada:", layer);
+
+        });
+
+      });
+
 }
+
 
 
 

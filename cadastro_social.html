@@ -805,16 +805,6 @@ map.on(L.Draw.Event.CREATED, function (e) {
 
       });
 
-      map.on(L.Draw.Event.EDITED, function(e){
-
-        e.layers.eachLayer(layer=>{
-
-          console.log("Casa editada:", layer);
-
-        });
-
-      });
-
       houses.push({
 
           id: "casa_" + Date.now(),
@@ -832,6 +822,17 @@ map.on(L.Draw.Event.CREATED, function (e) {
           polygon: layer.getLatLngs()[0].map(p => [p.lng, p.lat])
 
       });
+
+      map.on(L.Draw.Event.EDITED, function(e){
+
+        e.layers.eachLayer(layer=>{
+
+          console.log("Casa editada:", layer);
+
+        });
+
+      });
+
 
       renderHousesList();
 

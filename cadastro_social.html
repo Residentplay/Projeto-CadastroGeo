@@ -1510,6 +1510,17 @@ document.getElementById("search-house").addEventListener("input", function(){
 
   const busca = this.value.toLowerCase().trim();
 
+  if (busca === "") {
+
+    casasLayer.eachLayer(layer => {
+      layer.setStyle({
+        color: "#3388ff",
+        weight: 2
+      });
+    });
+
+  }
+
   const listaFiltrada = houses.filter(h => {
 
     const cadastro = cadastros[h.id] || {};

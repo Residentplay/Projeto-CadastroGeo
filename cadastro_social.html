@@ -865,6 +865,24 @@ map.on(L.Draw.Event.CREATED, function (e) {
 
           console.log("Casa editada:", layer);
 
+          const centro = layer.getBounds().getCenter();
+
+          const casa = houses.find(h =>
+            h.id === layer.casaId
+          );
+
+          if(!casa) return;
+
+          casa.lat = centro.lat;
+          casa.lng = centro.lng;
+
+          casa.polygon = layer.getLatLngs()[0].map(p => [
+            p.lng,
+            p.lat
+          ]);
+
+          console.log("Casa atualizada:", casa);
+
         });
 
       });
@@ -969,6 +987,8 @@ function drawMap(){
         }
 
       );
+
+      poly.casaId = h.id;
 
       poly.bindPopup(`
         <b>${h.label}</b><br>

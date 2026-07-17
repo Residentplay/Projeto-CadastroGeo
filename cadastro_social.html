@@ -1964,19 +1964,7 @@ async function carregarLotes(){
           Área do lote
         `);
 
-        poly.on("click", () => {
-
-            loteSelecionado = loteReconstruido.id;
-
-            drawMap();
-
-        });
-
-        if (loteSelecionado === loteReconstruido.id) {
-            drawnItems.addLayer(poly);
-        } else {
-            lotesLayer.addLayer(poly);
-        }
+        lotesLayer.addLayer(poly);
 
       }
       catch(err){

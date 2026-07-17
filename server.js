@@ -1,5 +1,4 @@
 const express = require("express");
-const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 const cors = require("cors");
 const { Pool } = require("pg");
@@ -9,8 +8,6 @@ const app = express();
 app.use(express.json({ limit: "50mb" }));
 app.use(cors());
 app.use(express.static(__dirname));
-
-const db = new sqlite3.Database("./cadastrogeo.db");
 
 const pg = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -114,68 +111,7 @@ iniciarPostgreSQL();
 // ==========================
 // CRIAR TABELAS
 // ==========================
-db.serialize(() => {
 
-  db.run(`
-    CREATE TABLE IF NOT EXISTS cadastros (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      casa_id TEXT UNIQUE,
-      endereco TEXT,
-      bairro TEXT,
-      latitude TEXT,
-      longitude TEXT,
-      nome TEXT,
-      cpf TEXT,
-      nascimento TEXT,
-      sexo TEXT,
-      escolaridade TEXT,
-      telefone TEXT,
-      nis TEXT,
-      moradores TEXT,
-      menores TEXT,
-      idosos TEXT,
-      renda TEXT,
-      fonte_renda TEXT,
-      tipo_moradia TEXT,
-      material TEXT,
-      agua TEXT,
-      esgoto TEXT,
-      energia TEXT,
-      observacoes TEXT,
-      colaborador TEXT,
-      status TEXT,
-      data_cadastro TEXT
-    )
-  `);
-
-  db.run(`
-    CREATE INDEX IF NOT EXISTS idx_casa_id
-    ON cadastros(casa_id)
-  `);
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS lotes (
-      id TEXT PRIMARY KEY,
-      nome TEXT,
-      status TEXT,
-      geojson TEXT
-    )
-  `);
-
-  // NOVA TABELA
-  db.run(`
-    CREATE TABLE IF NOT EXISTS casas (
-      id TEXT PRIMARY KEY,
-      lote_id TEXT,
-      numero TEXT,
-      status TEXT,
-      latitude REAL,
-      longitude REAL,
-      geojson TEXT
-    )
-  `);
-
-});
 
 // ==========================
 // LISTAR LOTES

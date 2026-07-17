@@ -1482,7 +1482,10 @@ function renderHousesList(lista = houses){
 
     item.id="li-"+h.id;
 
-    item.onclick=()=>openHouse(h);
+    item.onclick = () => {
+      document.getElementById("search-house").value = h.label;
+      openHouse(h);
+    };
 
     item.innerHTML=`
       <strong>${h.label}</strong><br>
@@ -1522,6 +1525,10 @@ document.getElementById("search-house").addEventListener("input", function(){
   });
 
   renderHousesList(listaFiltrada);
+
+  if(listaFiltrada.length === 1 && busca !== ""){
+    openHouse(listaFiltrada[0]);
+  }
 
 });
 
@@ -1633,6 +1640,24 @@ if(
 ){
   console.log("VAI PAN");
   map.panTo([h.lat, h.lng]);
+
+  casasLayer.eachLayer(layer => {
+
+    const casaId = layer.feature?.properties?.id || layer.casaId;
+
+    if(casaId === h.id){
+      layer.setStyle({
+        color: "#ffff00",
+        weight: 5
+      });
+    }else{
+      layer.setStyle({
+        color: "#3388ff",
+        weight: 2
+      });
+    }
+
+  });
 }
 
 console.log("DEPOIS DO PANTO");

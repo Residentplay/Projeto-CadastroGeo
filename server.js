@@ -210,21 +210,36 @@ app.get("/lotes", async (req, res) => {
 // ==========================
 // BUSCAR LOTE POR ID
 // ==========================
-app.get("/lotes/:id", (req, res) => {
+app.get("/lotes/:id", async (req, res) => {
 
-  db.get(
-    "SELECT * FROM lotes WHERE id = ?",
-    [req.params.id],
-    (err, row) => {
+  try {
 
-      if (err) {
-        return res.status(500).json({ erro: err.message });
-      }
+    const resultado = await pg.query(
+      `
+      SELECT *
+      FROM lotes
+      WHERE id = $1
+      `,
+      [req.params.id]
+    );
 
-      res.json(row || {});
-
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({
+        erro: "Lote não encontrado."
+      });
     }
-  );
+
+    res.json(resultado.rows[0]);
+
+  } catch (erro) {
+
+    console.error("Erro ao buscar lote:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
 
 });
 

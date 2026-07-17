@@ -785,7 +785,12 @@ map.on(L.Draw.Event.CREATED, function (e) {
   else if (tipo.toUpperCase() === "C") {
 
       casasLayer.addLayer(layer);
-      drawnItems.addLayer(layer);
+      
+      if(casaSelecionada === h.id){
+        drawnItems.addLayer(poly);
+      }else{
+        markersLayer.addLayer(poly);
+      }
 
       const centro = layer.getBounds().getCenter();
 

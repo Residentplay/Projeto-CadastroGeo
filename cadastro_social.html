@@ -1801,7 +1801,10 @@ async function carregarLotes(){
 
       try{
 
-        const obj = JSON.parse(lote.geojson);
+        const obj =
+          typeof lote.geojson === "string"
+            ? JSON.parse(lote.geojson)
+            : lote.geojson;
         const feature = obj.geojson || obj;
 
         if(

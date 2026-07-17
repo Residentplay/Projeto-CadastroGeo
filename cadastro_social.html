@@ -785,12 +785,7 @@ map.on(L.Draw.Event.CREATED, function (e) {
   else if (tipo.toUpperCase() === "C") {
 
       casasLayer.addLayer(layer);
-      
-      if(casaSelecionada === h.id){
-        drawnItems.addLayer(poly);
-      }else{
-        markersLayer.addLayer(poly);
-      }
+      drawnItems.addLayer(layer);
 
       const centro = layer.getBounds().getCenter();
 
@@ -1012,7 +1007,11 @@ function drawMap(){
 
       });
 
-      drawnItems.addLayer(poly);
+      if (casaSelecionada === h.id) {
+          drawnItems.addLayer(poly);
+      } else {
+          markersLayer.addLayer(poly);
+      }
 
     }
 

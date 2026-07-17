@@ -859,7 +859,7 @@ map.on(L.Draw.Event.CREATED, function (e) {
 
 });
 
-      map.on(L.Draw.Event.EDITED, function(e){
+      map.on(L.Draw.Event.EDITED, async function(e){
 
         e.layers.eachLayer(layer=>{
 
@@ -882,8 +882,10 @@ map.on(L.Draw.Event.CREATED, function (e) {
           ]);
 
           console.log("Casa atualizada:", casa);
+          
 
         });
+        await salvarCasas();
 
       });
 

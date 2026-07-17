@@ -362,6 +362,13 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         <p>Clique para carregar o arquivo GeoJSON exportado do QGIS</p>
  
       </div>
+
+      <input
+        type="text"
+        id="search-house"
+        placeholder="Pesquisar imóvel..."
+        style="width:100%;padding:8px;margin:10px 0;border:1px solid #ccc;border-radius:6px;">
+
       <div id="houses-list"></div>
     </div>
   </div>
@@ -1496,6 +1503,26 @@ function renderHousesList(lista = houses){
 
 }
  
+document.getElementById("search-house").addEventListener("input", function(){
+
+  const busca = this.value.toLowerCase().trim();
+
+  const listaFiltrada = houses.filter(h => {
+
+    const cadastro = cadastros[h.id] || {};
+
+    return (
+      (h.label || "").toLowerCase().includes(busca) ||
+      (cadastro.nome || "").toLowerCase().includes(busca) ||
+      (cadastro.endereco || "").toLowerCase().includes(busca)
+    );
+
+  });
+
+  renderHousesList(listaFiltrada);
+
+});
+
 function updateStats(){
   const done=Object.keys(cadastros).length;
   document.getElementById('stat-total').textContent=houses.length;

@@ -1957,12 +1957,18 @@ async function carregarLotes(){
           }
         );
 
+        poly.loteId = loteReconstruido.id;
+
         poly.bindPopup(`
           <b>${loteReconstruido.label}</b><br>
           Área do lote
         `);
 
-        lotesLayer.addLayer(poly);
+        if (loteSelecionado === loteReconstruido.id) {
+            drawnItems.addLayer(poly);
+        } else {
+            lotesLayer.addLayer(poly);
+        }
 
       }
       catch(err){

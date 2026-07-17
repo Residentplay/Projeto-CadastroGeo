@@ -349,23 +349,36 @@ app.get("/casas", async (req, res) => {
 // ==========================
 // BUSCAR CASA POR ID
 // ==========================
-app.get("/casas/:id", (req, res) => {
+app.get("/casas/:id", async (req, res) => {
 
-  db.get(
-    "SELECT * FROM casas WHERE id = ?",
-    [req.params.id],
-    (err, row) => {
+  try {
 
-      if (err) {
-        return res.status(500).json({
-          erro: err.message
-        });
-      }
+    const resultado = await pg.query(
+      `
+      SELECT *
+      FROM casas
+      WHERE id = $1
+      `,
+      [req.params.id]
+    );
 
-      res.json(row || {});
-
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({
+        erro: "Casa não encontrada."
+      });
     }
-  );
+
+    res.json(resultado.rows[0]);
+
+  } catch (erro) {
+
+    console.error("Erro ao buscar casa:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
 
 });
 

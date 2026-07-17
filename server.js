@@ -559,11 +559,12 @@ app.get("/cadastros", async (req, res) => {
 
   } catch (erro) {
 
-    console.error("Erro ao buscar cadastros:", erro);
+    console.error("ERRO COMPLETO GET /cadastros:", erro);
 
-    res.status(500).json({
-      erro: erro.message
-    });
+      res.status(500).json({
+        erro: String(erro),
+        codigo: erro.code || null
+      });
 
   }
 

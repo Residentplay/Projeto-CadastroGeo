@@ -180,26 +180,30 @@ db.serialize(() => {
 // ==========================
 // LISTAR LOTES
 // ==========================
-app.get("/lotes", (req, res) => {
+app.get("/lotes", async (req, res) => {
 
-  db.all(
-    "SELECT * FROM lotes",
-    [],
-    (err, rows) => {
+  try {
 
-      console.log("GET /lotes retornou:");
-      console.log(JSON.stringify(rows, null, 2));
+    const resultado = await pg.query(`
+      SELECT *
+      FROM lotes
+      ORDER BY nome
+    `);
 
-      if (err) {
-        return res.status(500).json({
-          erro: err.message
-        });
-      }
+    console.log("GET /lotes retornou:");
+    console.log(JSON.stringify(resultado.rows, null, 2));
 
-      res.json(rows);
+    res.json(resultado.rows);
 
-    }
-  );
+  } catch (erro) {
+
+    console.error("Erro ao buscar lotes no PostgreSQL:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
 
 });
 

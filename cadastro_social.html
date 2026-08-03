@@ -289,6 +289,17 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
   padding:6px 10px;
   font-size:12px;
 }
+
+#tab-relatorios .form-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+#tab-relatorios .btn{
+    width:auto;
+    padding:8px 12px;
+}
  
 /* CONFIRM */
 #confirm-wrap{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);align-items:center;justify-content:center;}
@@ -708,12 +719,43 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
     </div>
 
+    <div class="tab-page" id="tab-relatorios">
+
+      <div class="form-section-title">
+          📄 Relatórios
+      </div>
+
+      <div class="form-row c2">
+
+          <button
+              type="button"
+              class="btn btn-secondary"
+              id="btn-pdf">
+              📄 Gerar PDF
+          </button>
+
+          <button
+              type="button"
+              class="btn btn-secondary"
+              id="btn-excel">
+              📊 Exportar Excel
+          </button>
+
+      </div>
+
+    </div>
+
+    </div> <!-- fecha modal-body -->
+
     <div id="modal-foot">
       <button class="btn btn-ghost" onclick="closeModal()">Fechar</button>
-      <button class="btn btn-green" id="btn-save" onclick="saveCadastro()">💾 Salvar cadastro</button>
+      <button class="btn btn-green" id="btn-save" onclick="saveCadastro()">
+        💾 Salvar cadastro
+      </button>
     </div>
-  </div>
-</div>
+
+  </div><!-- fecha o modal -->
+</div><!-- fecha modal-wrap -->
  
 <!-- CONFIRM -->
 <div id="confirm-wrap">

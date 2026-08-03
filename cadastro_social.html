@@ -515,11 +515,11 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
     <div id="cadastro-tabs">
 
-      <button class="tab-btn active">
+      <button class="tab-btn active" onclick="mostrarAba('dados', this)">
         📋 Dados
       </button>
 
-      <button class="tab-btn">
+      <button class="tab-btn" onclick="mostrarAba('familia', this)">
         👨 Família
       </button>
 
@@ -1909,6 +1909,21 @@ if(
 }
 
 console.log("DEPOIS DO PANTO");
+
+}
+
+function mostrarAba(nome, botao){
+
+  document.querySelectorAll(".tab-page").forEach(aba => {
+    aba.classList.remove("active");
+  });
+
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  document.getElementById("tab-" + nome).classList.add("active");
+  botao.classList.add("active");
 
 }
 

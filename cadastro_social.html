@@ -2007,8 +2007,10 @@ function previewFotos() {
 
   const input = document.getElementById("f-fotos");
   const preview = document.getElementById("preview-fotos");
+  const galeria = document.getElementById("galeria-fotos");
 
   preview.innerHTML = "";
+  galeria.innerHTML = "";
 
   fotosCasa = [...input.files];
 
@@ -2025,6 +2027,10 @@ function previewFotos() {
     img.style.border = "1px solid #ccc";
 
     preview.appendChild(img);
+
+    const imgGaleria = img.cloneNode();
+
+    galeria.appendChild(imgGaleria);
 
   });
 

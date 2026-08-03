@@ -272,6 +272,10 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
     color:white;
 
+    box-shadow:0 2px 8px rgba(37,99,235,.35);
+
+    transform:translateY(-1px);
+
 }
 
 #tab-midia .form-row.c2{
@@ -536,7 +540,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     <div id="cadastro-tabs">
 
       <button class="tab-btn active" onclick="mostrarAba('dados', this)">
-        📋 Dados
+          📋 Dados
       </button>
 
       <button class="tab-btn" onclick="mostrarAba('familia', this)">
@@ -551,8 +555,8 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
           📍 Localização
       </button>
 
-      <button class="tab-btn">
-        📄 Relatórios
+      <button class="tab-btn" onclick="mostrarAba('relatorios', this)">
+          📄 Relatórios
       </button>
 
     </div>
@@ -584,7 +588,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         <div class="form-row c2">
           <div class="field"><label>Telefone</label><input id="f-tel" type="text" placeholder="(86) 99999-9999"/></div>
           <div class="field"><label>NIS / Bolsa Família</label><input id="f-nis" type="text" placeholder="NIS"/></div>
-        </div>
+        
       </div>
       <div class="form-section">
         <div class="form-section-title">Composição familiar</div>
@@ -644,6 +648,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         </div>
       </div>
     </div>
+    </div>
 
     <div class="tab-page" id="tab-midia">
       <div class="form-section-title">
@@ -666,8 +671,6 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
           🖼️ Galeria
         </button>
 
-    <div class="tab-page" id="tab-localizacao"></div>
-
         <button
           type="button"
           class="btn btn-secondary"
@@ -683,11 +686,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         </button>
 
       </div>
-    
-    </div>
-
                  
-
       <div
         id="galeria-fotos"
         style="
@@ -697,6 +696,14 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
           gap:10px;
         ">
       </div>
+
+    </div>
+
+    <div class="tab-page" id="tab-localizacao">
+
+        <div class="form-section-title">
+            📍 Localização
+        </div>
 
     </div>
 

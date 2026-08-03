@@ -215,15 +215,23 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .view-only .field input,.view-only .field select,.view-only .field textarea{background:var(--bg);color:var(--text2);pointer-events:none;}
 .view-only #btn-save{display:none;}
 #cadastro-tabs{
-  display:flex;
-  gap:8px;
-  padding:12px 18px;
-  border-bottom:1px solid var(--border);
-  background:var(--bg2);
-  overflow-x:auto;
-  flex-shrink:0;
-  position:relative;
-  z-index:2;
+
+    display:flex;
+
+    gap:6px;
+
+    padding:10px 16px;
+
+    border-bottom:1px solid var(--border);
+
+    background:var(--bg2);
+
+    overflow-x:auto;
+
+    flex-shrink:0;
+
+    scrollbar-width:none;
+
 }
 
 .tab-btn{
@@ -232,11 +240,13 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
     background:white;
 
-    padding:10px 18px;
+    padding:8px 12px;
 
-    border-radius:10px;
+    border-radius:8px;
 
     cursor:pointer;
+
+    font-size:12px;
 
     font-weight:600;
 
@@ -245,6 +255,8 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     transition:.2s;
 
     white-space:nowrap;
+
+    flex:0 0 auto;
 
 }
 

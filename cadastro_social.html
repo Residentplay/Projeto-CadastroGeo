@@ -1999,12 +1999,16 @@ function mostrarAba(nome, botao){
 
 }
 
+let fotosCasa = [];
+
 function previewFotos() {
 
   const input = document.getElementById("f-fotos");
   const preview = document.getElementById("preview-fotos");
 
   preview.innerHTML = "";
+
+  fotosCasa = [...input.files];
 
   [...input.files].forEach(file => {
 
@@ -2021,6 +2025,8 @@ function previewFotos() {
     preview.appendChild(img);
 
   });
+
+  console.log("Fotos da casa:", fotosCasa);
 
 }
  

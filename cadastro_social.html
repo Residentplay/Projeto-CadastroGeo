@@ -798,6 +798,7 @@ let markersLayer;
 let modoAtual = null;
 let anguloMapa = 0;
 let drawnItems;
+let fotosPorCasa = {};
  
 // Mapa canvas
 let cam = {lat:-5.0892, lng:-42.8016, zoom:15};
@@ -2056,6 +2057,10 @@ function closeModal(){
  
 async function saveCadastro() {
 
+  if (currentHouse) {
+    fotosPorCasa[currentHouse.id] = [...fotosCasa];
+  }
+
   if (!currentHouse) return;
 
   const cadastro = {
@@ -2141,6 +2146,7 @@ async function saveCadastro() {
 
   }
 
+  console.log("Fotos por casa:", fotosPorCasa);
 
 }
 

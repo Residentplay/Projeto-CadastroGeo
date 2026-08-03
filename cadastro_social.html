@@ -214,6 +214,57 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .field select option{background:var(--bg3);}
 .view-only .field input,.view-only .field select,.view-only .field textarea{background:var(--bg);color:var(--text2);pointer-events:none;}
 .view-only #btn-save{display:none;}
+#cadastro-tabs{
+
+    display:flex;
+
+    gap:8px;
+
+    padding:12px 18px;
+
+    border-bottom:1px solid #ddd;
+
+    background:#f8fafc;
+
+    overflow-x:auto;
+
+}
+
+.tab-btn{
+
+    border:none;
+
+    background:white;
+
+    padding:10px 18px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    color:#475569;
+
+    transition:.2s;
+
+    white-space:nowrap;
+
+}
+
+.tab-btn:hover{
+
+    background:#e2e8f0;
+
+}
+
+.tab-btn.active{
+
+    background:#2563eb;
+
+    color:white;
+
+}
  
 /* CONFIRM */
 #confirm-wrap{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);align-items:center;justify-content:center;}
@@ -239,6 +290,15 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
   #modal-wrap{align-items:flex-end;padding:0;}
   .form-row.c3{grid-template-columns:1fr 1fr;}
 }
+
+.tab-page{
+    display:none;
+}
+
+.tab-page.active{
+    display:block;
+}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -424,11 +484,61 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 <div id="modal-wrap">
   <div id="modal">
     <div id="modal-head">
-      <div><h2 id="modal-title">Cadastro Social</h2><div class="addr" id="modal-addr"></div></div>
-      <button id="modal-close" onclick="closeModal()">×</button>
+
+      <div>
+
+        <div style="
+          font-size:12px;
+          color:#64748b;
+          font-weight:600;
+          text-transform:uppercase;
+          letter-spacing:.08em;
+        ">
+          CadastroGeo Professional
+        </div>
+
+        <h2 id="modal-title">
+          Cadastro Social
+        </h2>
+
+        <div class="addr" id="modal-addr"></div>
+
+      </div>
+
+      <button
+        id="modal-close"
+        onclick="closeModal()">
+        ✕
+      </button>
+
     </div>
+
+    <div id="cadastro-tabs">
+
+      <button class="tab-btn active">
+        📋 Dados
+      </button>
+
+      <button class="tab-btn">
+        👨 Família
+      </button>
+
+      <button class="tab-btn">
+        📷 Mídia
+      </button>
+
+      <button class="tab-btn">
+        📍 Localização
+      </button>
+
+      <button class="tab-btn">
+        📄 Relatórios
+      </button>
+
+    </div>
+
     <div id="modal-body">
-      <div class="form-section">
+      <div class="tab-page active" id="tab-dados">
         <div class="form-section-title">Identificação do imóvel</div>
         <div class="form-row c2">
           <div class="field"><label>Endereço</label><input id="f-end" type="text" placeholder="Rua, número"/></div>
@@ -440,7 +550,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
           <div class="field"><label>Data do cadastro</label><input id="f-data" type="text" readonly/></div>
         </div>
       </div>
-      <div class="form-section">
+      <div class="tab-page" id="tab-familia">
         <div class="form-section-title">Responsável pela família</div>
         <div class="form-row c2">
           <div class="field"><label>Nome completo</label><input id="f-nome" type="text" placeholder="Nome do responsável"/></div>
@@ -495,6 +605,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
               accept="image/*"
               capture="environment"
               multiple
+              onchange="previewFotos()"
             >
 
             <div id="preview-fotos" style="
@@ -513,6 +624,61 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         </div>
       </div>
     </div>
+
+    <div class="form-section">
+
+      <div class="form-section-title">
+        📷 Mídia
+      </div>
+
+      <div class="form-row c2">
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="btn-foto">
+          📷 Tirar Foto
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          id="btn-galeria">
+          🖼️ Galeria
+        </button>
+
+      </div>
+
+      <div class="form-row c2" style="margin-top:10px;">
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          id="btn-localizacao">
+          📍 Minha Localização
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          id="btn-rota">
+          🧭 Ir até a Casa
+        </button>
+
+      </div>
+
+      <div
+        id="galeria-fotos"
+        style="
+          margin-top:15px;
+          display:flex;
+          flex-wrap:wrap;
+          gap:10px;
+        ">
+      </div>
+
+    </div>
+
     <div id="modal-foot">
       <button class="btn btn-ghost" onclick="closeModal()">Fechar</button>
       <button class="btn btn-green" id="btn-save" onclick="saveCadastro()">💾 Salvar cadastro</button>
@@ -1743,6 +1909,31 @@ if(
 }
 
 console.log("DEPOIS DO PANTO");
+
+}
+
+function previewFotos() {
+
+  const input = document.getElementById("f-fotos");
+  const preview = document.getElementById("preview-fotos");
+
+  preview.innerHTML = "";
+
+  [...input.files].forEach(file => {
+
+    const img = document.createElement("img");
+
+    img.src = URL.createObjectURL(file);
+
+    img.style.width = "120px";
+    img.style.height = "90px";
+    img.style.objectFit = "cover";
+    img.style.borderRadius = "8px";
+    img.style.border = "1px solid #ccc";
+
+    preview.appendChild(img);
+
+  });
 
 }
  

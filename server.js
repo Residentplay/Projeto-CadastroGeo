@@ -986,8 +986,34 @@ app.get("/dashboard", async (req, res) => {
       FROM atribuicoes
     `);
 
+    const pendentes = await pg.query(`
+      SELECT COUNT(*) AS total
+      FROM atribuicoes
+      WHERE status = 'pendente'
+    `);
+
+    const andamento = await pg.query(`
+      SELECT COUNT(*) AS total
+      FROM atribuicoes
+      WHERE status = 'em_andamento'
+    `);
+
+    const concluidas = await pg.query(`
+      SELECT COUNT(*) AS total
+      FROM atribuicoes
+      WHERE status = 'concluida'
+    `);
+
     res.json({
-      totalMissoes: Number(totalMissoes.rows[0].total)
+
+      totalMissoes: Number(totalMissoes.rows[0].total),
+
+      pendentes: Number(pendentes.rows[0].total),
+
+      andamento: Number(andamento.rows[0].total),
+
+      concluidas: Number(concluidas.rows[0].total)
+
     });
 
   }catch(err){

@@ -2143,28 +2143,31 @@ function carregarListaColaboradores() {
 
 }
 
-function carregarDashboard(){
+async function carregarDashboard(){
+
+  const res = await fetch("/dashboard");
+  const dadosDashboard = await res.json();
 
   document.getElementById("dashboard-resumo").innerHTML = `
   
     <div class="card">
-      <h3>🏠 Casas</h3>
-      <h1>${houses.length}</h1>
+      <h3>📍 Total de Missões</h3>
+      <h1>${dadosDashboard.totalMissoes}</h1>
     </div>
 
     <div class="card">
-      <h3>📋 Cadastros</h3>
-      <h1>${Object.keys(cadastros).length}</h1>
+      <h3>🟡 Pendentes</h3>
+      <h1>${dadosDashboard.pendentes}</h1>
     </div>
 
     <div class="card">
-      <h3>👷 Colaboradores</h3>
-      <h1>${users.filter(u => u.role==="colaborador" && u.active).length}</h1>
+      <h3>🔵 Em andamento</h3>
+      <h1>${dadosDashboard.andamento}</h1>
     </div>
 
     <div class="card">
-      <h3>📍 Missões</h3>
-      <h1>-</h1>
+      <h3>🟢 Concluídas</h3>
+      <h1>${dadosDashboard.concluidas}</h1>
     </div>
 
   `;

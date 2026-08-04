@@ -1049,6 +1049,13 @@ app.get("/dashboard/equipe", async (req, res) => {
 
       FROM atribuicoes
 
+      WHERE colaborador IN (
+        SELECT usuario
+        FROM usuarios
+        WHERE papel = 'colaborador'
+          AND ativo = TRUE
+      )
+
       GROUP BY colaborador
 
       ORDER BY colaborador

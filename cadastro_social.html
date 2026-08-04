@@ -708,6 +708,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
           type="button"
           class="btn btn-secondary"
           id="btn-localizacao">
+          onclick="obterMinhaLocalizacao()">
           📍 Minha Localização
         </button>
 
@@ -2021,11 +2022,48 @@ function arquivoParaBase64(arquivo) {
 
 }
 
+function obterMinhaLocalizacao() {
+
+  if (!navigator.geolocation) {
+    alert("Seu navegador não suporta GPS.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+
+    function(posicao) {
+
+      const lat = posicao.coords.latitude;
+      const lng = posicao.coords.longitude;
+
+      console.log("Minha localização:", lat, lng);
+
+    },
+
+    function(erro) {
+
+      console.error("Erro GPS:", erro);
+
+      alert("Não foi possível obter sua localização.");
+
+    },
+
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    }
+
+  );
+
+}
+
 async function carregarFotosCasa(casaId) {
 
   const galeria = document.getElementById("galeria-fotos");
 
-  galeria.innerHTML = "";
+  galeria.innerHTML = "<p>Carregando fotos...</p>";
+
 
   const res = await fetch("/fotos/" + casaId);
 

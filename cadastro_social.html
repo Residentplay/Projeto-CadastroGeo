@@ -301,6 +301,31 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     padding:8px 12px;
 }
 
+
+#modal-missao{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:30000;
+  background:rgba(0,0,0,.75);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+#modal-missao.open{
+  display:flex;
+}
+
+#modal-missao .modal{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:16px;
+  width:100%;
+  max-width:420px;
+  padding:20px;
+}
+
 @media (max-width: 1024px) and (pointer: coarse){
 
   #topbar{
@@ -361,6 +386,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
   }
 
 }
+
  
 /* CONFIRM */
 #confirm-wrap{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);align-items:center;justify-content:center;}

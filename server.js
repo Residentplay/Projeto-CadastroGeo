@@ -591,6 +591,57 @@ app.post("/usuario", async (req, res) => {
 
 });
 
+app.post("/login", async (req, res) => {
+
+  try {
+
+    const {
+      usuario,
+      senha
+    } = req.body;
+
+    const resultado = await pg.query(
+
+      `
+      SELECT
+        nome,
+        usuario,
+        papel,
+        ativo
+      FROM usuarios
+      WHERE usuario = $1
+        AND senha = $2
+      `,
+
+      [
+        usuario,
+        senha
+      ]
+
+    );
+
+    if (resultado.rows.length === 0) {
+
+      return res.status(401).json({
+        erro: "Usuário ou senha inválidos."
+      });
+
+    }
+
+    res.json(resultado.rows[0]);
+
+  } catch (erro) {
+
+    console.error("Erro no login:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
+
+});
+
 app.post("/fotos", async (req, res) => {
 
   try {

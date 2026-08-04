@@ -1632,9 +1632,37 @@ async function loadMapFile(input){
 
 async function atribuirCasa() {
 
-  const colaborador = prompt("Digite o usuário do colaborador:");
+  const colaboradores = users.filter(
+  usuario => usuario.role === "colaborador" && usuario.active
+  );
 
-  if (!colaborador) return;
+  if (!colaboradores.length) {
+    showToast("Nenhum colaborador cadastrado!", true);
+    return;
+  }
+
+  const lista = colaboradores
+    .map((usuario, indice) =>
+      `${indice + 1} - ${usuario.name}`
+    )
+    .join("\n");
+
+  const escolha = prompt(
+    "Escolha o colaborador:\n\n" + lista
+  );
+
+  const indice = Number(escolha) - 1;
+
+  if (
+    !Number.isInteger(indice) ||
+    indice < 0 ||
+    indice >= colaboradores.length
+  ) {
+    showToast("Colaborador inválido!", true);
+    return;
+  }
+
+  const colaborador = colaboradores[indice].user;
 
   const res = await fetch("/atribuir-casa", {
 

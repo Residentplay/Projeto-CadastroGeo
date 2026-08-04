@@ -1077,6 +1077,43 @@ app.get("/dashboard/equipe", async (req, res) => {
 });
 
 
+app.get("/dashboard/casas-atuais", async (req, res) => {
+
+  try{
+
+    const resultado = await pg.query(`
+
+      SELECT
+
+        colaborador,
+
+        casa_id,
+
+        status
+
+      FROM atribuicoes
+
+      WHERE status = 'em_andamento'
+
+      ORDER BY colaborador
+
+    `);
+
+    res.json(resultado.rows);
+
+  }catch(err){
+
+    console.error(err);
+
+    res.status(500).json({
+      erro: err.message
+    });
+
+  }
+
+});
+
+
 app.get("/", (req, res) => {
 
   res.sendFile(

@@ -2010,6 +2010,31 @@ if (cadastro && cadastro.casa_id) {
 
   console.log("PASSOU 5");
 
+  let btnAtribuir = document.getElementById("btn-atribuir");
+
+    if (!btnAtribuir) {
+
+      btnAtribuir = document.createElement("button");
+
+      btnAtribuir.id = "btn-atribuir";
+
+      btnAtribuir.className = "btn btn-green";
+
+      btnAtribuir.textContent = "👷 Atribuir ao colaborador";
+
+      btnAtribuir.style.marginTop = "10px";
+
+      btnAtribuir.onclick = () => atribuirCasa();
+
+      document.getElementById("modal-foot").prepend(btnAtribuir);
+
+    }
+
+    btnAtribuir.style.display =
+      currentUser.role === "engenheiro"
+        ? "inline-flex"
+        : "none";
+
   document.getElementById('modal-wrap').classList.add('open');
 
   console.log("PASSOU 6");

@@ -1883,6 +1883,15 @@ function fecharModalAtribuir(){
 
 }
 
+function navegarParaCasa(latitude, longitude){
+
+  const url =
+    `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+
+  window.open(url, "_blank");
+
+}
+
 function carregarListaColaboradores() {
 
   const lista = document.getElementById("lista-colaboradores");
@@ -2573,16 +2582,27 @@ async function carregarTelaMissoes(){
 
       card.innerHTML = `
 
-        <h3>🏠 ${missao.casa_id}</h3>
+        <h3>🏠 ${missao.numero || "Casa"}</h3>
 
-        <p>Status: ${missao.status}</p>
+        <p>
+          ${missao.endereco || "Endereço ainda não cadastrado"}
+        </p>
+
+        <p>
+          ${missao.bairro || ""}
+        </p>
+
+        <p>
+          Status: ${missao.status_missao || "pendente"}
+        </p>
 
         <button
           class="btn btn-primary"
-          onclick="irParaCasa('${missao.casa_id}')">
-
-          📍 Ir para a casa
-
+          onclick="navegarParaCasa(
+            ${missao.latitude},
+            ${missao.longitude}
+          )">
+          🧭 Navegar
         </button>
 
       `;

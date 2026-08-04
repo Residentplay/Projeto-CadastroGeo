@@ -2042,9 +2042,16 @@ function obterMinhaLocalizacao() {
 
     function(erro) {
 
-      console.error("Erro GPS:", erro);
+      console.error(
+        "Erro GPS:",
+        erro.code,
+        erro.message
+      );
 
-      alert("Não foi possível obter sua localização.");
+      alert(
+        "Erro ao obter localização: " +
+        erro.message
+      );
 
     },
 

@@ -537,6 +537,23 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
   </div>
 
   
+
+  <div id="view-missoes" style="display:none;flex:1;overflow:auto;padding:20px;">
+
+    <h2>📍 Minhas Missões</h2>
+
+    <div
+      id="lista-missoes"
+      style="
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+        margin-top:20px;
+      ">
+    </div>
+
+  </div>
+
  
   <!-- ADMIN -->
   <div id="view-admin">
@@ -1151,12 +1168,38 @@ async function setupUI(){
 // VIEWS
 //
 function switchView(v){
-  document.getElementById('view-map').style.display  = v==='map'   ? 'flex' : 'none';
-  document.getElementById('view-admin').style.display= v==='admin' ? 'flex' : 'none';
-  document.getElementById('nav-map').classList.toggle('active', v==='map');
-  document.getElementById('nav-admin').classList.toggle('active', v==='admin');
-  if(v==='map'){ initMap(); }
-  if(v==='admin'){ renderUsersTable(); renderActivity(); }
+
+  document.getElementById('view-map').style.display =
+    v === 'map' ? 'flex' : 'none';
+
+  document.getElementById('view-admin').style.display =
+    v === 'admin' ? 'flex' : 'none';
+
+  document.getElementById('view-missoes').style.display =
+    v === 'missoes' ? 'flex' : 'none';
+
+  document.getElementById('nav-map')
+    .classList.toggle('active', v === 'map');
+
+  document.getElementById('nav-admin')
+    .classList.toggle('active', v === 'admin');
+
+  document.getElementById('btn-missoes')
+    .classList.toggle('active', v === 'missoes');
+
+  if(v === 'map'){
+    initMap();
+  }
+
+  if(v === 'admin'){
+    renderUsersTable();
+    renderActivity();
+  }
+
+  if(v === 'missoes'){
+    carregarTelaMissoes();
+  }
+
 }
  
 //
@@ -2490,6 +2533,72 @@ async function carregarFotosCasa(casaId) {
     galeria.appendChild(img);
 
   });
+
+}
+
+async function carregarTelaMissoes(){
+
+  const lista = document.getElementById("lista-missoes");
+
+  lista.innerHTML = "<p>Carregando...</p>";
+
+  try{
+
+    const res = await fetch(
+      "/minhas-missoes/" + currentUser.user
+    );
+
+    const missoes = await res.json();
+
+    if(missoes.length === 0){
+
+      lista.innerHTML = `
+        <div class="empty-state">
+          <h3>📭 Nenhuma missão atribuída</h3>
+          <p>O engenheiro ainda não atribuiu nenhuma casa para você.</p>
+        </div>
+      `;
+
+      return;
+
+    }
+
+    lista.innerHTML = "";
+
+    missoes.forEach(missao =>{
+
+      const card = document.createElement("div");
+
+      card.className = "card";
+
+      card.innerHTML = `
+
+        <h3>🏠 ${missao.casa_id}</h3>
+
+        <p>Status: ${missao.status}</p>
+
+        <button
+          class="btn btn-primary"
+          onclick="irParaCasa('${missao.casa_id}')">
+
+          📍 Ir para a casa
+
+        </button>
+
+      `;
+
+      lista.appendChild(card);
+
+    });
+
+  }catch(err){
+
+    console.error(err);
+
+    lista.innerHTML =
+      "<p>Erro ao carregar missões.</p>";
+
+  }
 
 }
 

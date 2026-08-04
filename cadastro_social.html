@@ -2605,6 +2605,14 @@ async function carregarTelaMissoes(){
           🧭 Navegar
         </button>
 
+        <button
+          class="btn btn-secondary"
+          onclick="abrirCadastroMissao('${missao.casa_id}')">
+
+          📋 Abrir Cadastro
+
+        </button>
+
       `;
 
       lista.appendChild(card);
@@ -2619,6 +2627,39 @@ async function carregarTelaMissoes(){
       "<p>Erro ao carregar missões.</p>";
 
   }
+
+}
+
+async function abrirCadastroMissao(casaId){
+
+  const casa = houses.find(h => h.id === casaId);
+
+  if(!casa){
+
+    showToast("Casa não encontrada!", true);
+
+    return;
+
+  }
+
+    switchView("map");
+
+    setTimeout(async () => {
+
+        initMap();
+
+        map.setView(
+          [casa.lat, casa.lng],
+          21,
+          {
+            animate:true,
+            duration:1
+          }
+        );
+
+        await openHouse(casa);
+
+    },300);
 
 }
 

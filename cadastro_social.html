@@ -542,6 +542,19 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
     <h2>📍 Minhas Missões</h2>
 
+    <div style="margin:15px 0;">
+
+      <button
+        class="btn btn-primary"
+        style="width:100%;font-size:16px;"
+        onclick="iniciarTrabalho()">
+
+        ▶ Iniciar Trabalho
+
+      </button>
+
+    </div>
+
     <div
       id="lista-missoes"
       style="
@@ -916,6 +929,42 @@ justify-content:center;
   </div>
 </div>
 <div id="toast"></div>
+
+
+<!-- Modal Missão Concluída -->
+<div id="modal-missao" class="modal-wrap">
+
+  <div class="modal">
+
+    <h2>✅ Missão concluída</h2>
+
+    <p id="missao-msg">
+      Cadastro salvo com sucesso.
+    </p>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+
+      <button
+        class="btn btn-secondary"
+        onclick="voltarMissoes()">
+
+        📍 Voltar às Missões
+
+      </button>
+
+      <button
+        class="btn btn-primary"
+        onclick="proximaMissao()">
+
+        ➡ Próxima Casa
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -2486,6 +2535,26 @@ function arquivoParaBase64(arquivo) {
 
 }
 
+function voltarMissoes(){
+
+  document
+    .getElementById("modal-missao")
+    .classList.remove("open");
+
+  switchView("missoes");
+
+}
+
+function proximaMissao(){
+
+  document
+    .getElementById("modal-missao")
+    .classList.remove("open");
+
+  // Vamos implementar na próxima etapa
+
+}
+
 function obterMinhaLocalizacao() {
 
   if (!navigator.geolocation) {
@@ -2650,6 +2719,40 @@ async function carregarTelaMissoes(){
 
     lista.innerHTML =
       "<p>Erro ao carregar missões.</p>";
+
+  }
+
+}
+
+async function iniciarTrabalho(){
+
+  try{
+
+    const res = await fetch(
+      "/minhas-missoes/" + currentUser.user
+    );
+
+    const missoes = await res.json();
+
+    const primeira = missoes.find(
+      m => m.status_missao === "pendente"
+    );
+
+    if(!primeira){
+
+      showToast("Você não possui missões pendentes!");
+
+      return;
+
+    }
+
+    abrirCadastroMissao(primeira.casa_id);
+
+  }catch(err){
+
+    console.error(err);
+
+    showToast("Erro ao iniciar trabalho!", true);
 
   }
 
@@ -2894,7 +2997,7 @@ async function saveCadastro() {
 
     }
 
-    showToast('Cadastro salvo com sucesso!');
+    document.getElementById("modal-missao").classList.add("open");
 
   } catch (err) {
 

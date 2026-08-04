@@ -1112,13 +1112,20 @@ app.get("/dashboard/casas-atuais", async (req, res) => {
 
       SELECT
 
-        colaborador,
+        a.colaborador,
 
-        casa_id,
+        a.casa_id,
 
-        status
+        a.status,
 
-      FROM atribuicoes
+        c.numero,
+
+        c.lote_id
+
+      FROM atribuicoes a
+
+      INNER JOIN casas c
+      ON c.id = a.casa_id
 
       WHERE colaborador IN (
         SELECT usuario

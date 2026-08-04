@@ -1822,7 +1822,7 @@ function carregarListaColaboradores() {
 
     botao.onclick = () => {
 
-      console.log("Selecionado:", usuario);
+      confirmarAtribuicao(usuario.user);
 
     };
 
@@ -1852,7 +1852,51 @@ function carregarListaColaboradores() {
 
 }
 
+async function confirmarAtribuicao(colaborador){
 
+  try{
+
+    const res = await fetch("/atribuir-casa",{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+        casa_id: currentHouse.id,
+
+        colaborador: colaborador
+
+      })
+
+    });
+
+    const retorno = await res.json();
+
+    if(!res.ok){
+
+      showToast(retorno.erro || "Erro ao atribuir!", true);
+
+      return;
+
+    }
+
+    fecharModalAtribuir();
+
+    showToast("Casa atribuída com sucesso!");
+
+  }catch(err){
+
+    console.error(err);
+
+    showToast("Erro ao atribuir!", true);
+
+  }
+
+}
 
 function importarGeoJSON(gj){
 

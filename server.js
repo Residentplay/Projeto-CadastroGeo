@@ -93,6 +93,18 @@ async function iniciarPostgreSQL() {
       )
     `);
 
+      await pg.query(`
+        CREATE TABLE IF NOT EXISTS fotos (
+          id SERIAL PRIMARY KEY,
+          casa_id TEXT NOT NULL,
+          nome_arquivo TEXT,
+          tipo TEXT,
+          dados TEXT NOT NULL,
+          data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+
   console.log("Tabela PostgreSQL 'cadastros' verificada/criada."); 
 
   } catch (erro) {

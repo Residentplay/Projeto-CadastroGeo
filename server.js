@@ -563,6 +563,40 @@ app.post("/fotos", async (req, res) => {
 
 });
 
+app.get("/fotos/:casa_id", async (req, res) => {
+
+  try {
+
+    const resultado = await pg.query(
+      `
+      SELECT
+        id,
+        casa_id,
+        nome_arquivo,
+        tipo,
+        dados,
+        data_envio
+      FROM fotos
+      WHERE casa_id = $1
+      ORDER BY id
+      `,
+      [req.params.casa_id]
+    );
+
+    res.json(resultado.rows);
+
+  } catch (erro) {
+
+    console.error("Erro ao carregar fotos:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
+
+});
+
 // ==========================
 // LISTAR CADASTROS
 // ==========================

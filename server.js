@@ -1028,6 +1028,48 @@ app.get("/dashboard", async (req, res) => {
 
 });
 
+
+app.get("/dashboard/equipe", async (req, res) => {
+
+  try{
+
+    const resultado = await pg.query(`
+
+      SELECT
+
+        colaborador,
+
+        COUNT(*) AS total,
+
+        SUM(CASE WHEN status = 'pendente' THEN 1 ELSE 0 END) AS pendentes,
+
+        SUM(CASE WHEN status = 'em_andamento' THEN 1 ELSE 0 END) AS andamento,
+
+        SUM(CASE WHEN status = 'concluida' THEN 1 ELSE 0 END) AS concluidas
+
+      FROM atribuicoes
+
+      GROUP BY colaborador
+
+      ORDER BY colaborador
+
+    `);
+
+    res.json(resultado.rows);
+
+  }catch(err){
+
+    console.error(err);
+
+    res.status(500).json({
+      erro: err.message
+    });
+
+  }
+
+});
+
+
 app.get("/", (req, res) => {
 
   res.sendFile(

@@ -675,6 +675,35 @@ app.post("/atribuir-casa", async (req, res) => {
 
 });
 
+app.get("/usuarios", async (req, res) => {
+
+  try {
+
+    const resultado = await pg.query(`
+      SELECT
+        nome,
+        usuario,
+        senha,
+        papel,
+        ativo
+      FROM usuarios
+      ORDER BY nome
+    `);
+
+    res.json(resultado.rows);
+
+  } catch (erro) {
+
+    console.error(erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
+
+});
+
 app.get("/colaboradores", async (req, res) => {
 
   try {

@@ -976,6 +976,32 @@ app.get("/cadastro/:casa_id", async (req, res) => {
 // ==========================
 // PÁGINA PRINCIPAL
 // ==========================
+
+app.get("/dashboard", async (req, res) => {
+
+  try{
+
+    const totalMissoes = await pg.query(`
+      SELECT COUNT(*) AS total
+      FROM atribuicoes
+    `);
+
+    res.json({
+      totalMissoes: Number(totalMissoes.rows[0].total)
+    });
+
+  }catch(err){
+
+    console.error(err);
+
+    res.status(500).json({
+      erro: err.message
+    });
+
+  }
+
+});
+
 app.get("/", (req, res) => {
 
   res.sendFile(

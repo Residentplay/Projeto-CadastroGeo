@@ -2147,6 +2147,8 @@ async function carregarDashboard(){
 
   const res = await fetch("/dashboard");
   const dadosDashboard = await res.json();
+  const resEquipe = await fetch("/dashboard/equipe");
+  const dadosEquipe = await resEquipe.json();
 
   document.getElementById("dashboard-resumo").innerHTML = `
   
@@ -2179,20 +2181,41 @@ async function carregarDashboard(){
 
   const lista = document.getElementById("lista-equipe");
 
-  users
-    .filter(u => u.role === "colaborador" && u.active)
-    .forEach(u => {
+  dadosEquipe.forEach(item => {
 
-      lista.innerHTML += `
-        <div class="card" style="margin-top:10px;padding:15px;">
-          <strong>${u.name}</strong><br>
-          <span style="color:var(--text2);">
-            Aguardando atividade...
-          </span>
+    const usuario = users.find(
+      u => u.user === item.colaborador
+    );
+
+    const nome = usuario
+      ? usuario.name
+      : item.colaborador;
+
+    lista.innerHTML += `
+      <div class="card" style="margin-top:10px;padding:15px;">
+
+        <strong>${nome}</strong>
+
+        <div style="margin-top:8px;">
+          Total: ${item.total}
         </div>
-      `;
 
-    });
+        <div style="margin-top:4px;">
+          🟡 Pendentes: ${item.pendentes}
+        </div>
+
+        <div style="margin-top:4px;">
+          🔵 Em andamento: ${item.andamento}
+        </div>
+
+        <div style="margin-top:4px;">
+          🟢 Concluídas: ${item.concluidas}
+        </div>
+
+      </div>
+    `;
+
+  });
 
 }
 

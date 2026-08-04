@@ -199,21 +199,26 @@ app.get("/minhas-missoes/:colaborador", async (req, res) => {
     const { colaborador } = req.params;
 
     const resultado = await pg.query(
-
       `
       SELECT
-
         a.casa_id,
+        a.status AS status_missao,
         a.prioridade,
         a.data_atribuicao,
 
+        cs.numero,
+        cs.latitude,
+        cs.longitude,
+
         c.endereco,
         c.bairro,
-        c.latitude,
-        c.longitude,
-        c.status
+        c.nome,
+        c.status AS status_cadastro
 
       FROM atribuicoes a
+
+      INNER JOIN casas cs
+        ON cs.id = a.casa_id
 
       LEFT JOIN cadastros c
         ON c.casa_id = a.casa_id
@@ -221,11 +226,8 @@ app.get("/minhas-missoes/:colaborador", async (req, res) => {
       WHERE a.colaborador = $1
 
       ORDER BY a.data_atribuicao
-
       `,
-
       [colaborador]
-
     );
 
     res.json(resultado.rows);

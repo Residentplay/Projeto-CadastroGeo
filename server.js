@@ -1133,9 +1133,9 @@ app.get("/dashboard/casas-atuais", async (req, res) => {
         WHERE papel = 'colaborador'
           AND ativo = TRUE
       )
-      AND status = 'em_andamento'
+      AND a.status = 'em_andamento'
 
-      ORDER BY colaborador
+      ORDER BY a.colaborador
 
     `);
 

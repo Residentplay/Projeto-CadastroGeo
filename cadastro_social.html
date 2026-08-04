@@ -1527,13 +1527,26 @@ function drawMap(){
     let corBorda = "#666";
     let corPreenchimento = "#666";
 
-    // lote cadastrado
-    if(cadastrado){
+    if(h.statusMissao === "pendente"){
+      corBorda = "#2196f3";
+      corPreenchimento = "#2196f3";
+    }
+
+    if(h.statusMissao === "em_andamento"){
+      corBorda = "#ffd600";
+      corPreenchimento = "#ffd600";
+    }
+
+    if(h.statusMissao === "concluida"){
       corBorda = "#00cc44";
       corPreenchimento = "#00cc44";
     }
 
-    // lote selecionado
+    if(cadastrado && !h.statusMissao){
+      corBorda = "#00cc44";
+      corPreenchimento = "#00cc44";
+    }
+
     if(casaSelecionada === h.id){
       corBorda = "#ffff00";
       corPreenchimento = "#ffff00";
@@ -2558,6 +2571,18 @@ async function carregarTelaMissoes(){
     );
 
     const missoes = await res.json();
+
+    missoes.forEach(missao => {
+
+      const casa = houses.find(h =>
+        h.id === missao.casa_id
+      );
+
+      if(casa){
+        casa.statusMissao = missao.status_missao;
+      }
+
+    });
 
     if(missoes.length === 0){
 

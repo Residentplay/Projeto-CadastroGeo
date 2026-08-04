@@ -458,6 +458,13 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     <div class="topbar-logo"><div class="topbar-dot"></div>CadastroGeo</div>
     <div class="topbar-nav">
 
+  <button
+    class="nav-btn"
+    id="nav-dashboard"
+    onclick="switchView('dashboard')">
+    📊 Dashboard
+  </button>    
+
   <button class="nav-btn active" id="nav-map"
     onclick="switchView('map')">
     🗺 Mapa
@@ -524,6 +531,37 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
   </div>
  
   <!-- MAPA -->
+  <div
+    id="view-dashboard"
+    style="
+      display:none;
+      flex:1;
+      overflow:auto;
+      padding:20px;
+    ">
+
+    <h2>📊 Dashboard</h2>
+
+    <div
+      id="dashboard-resumo"
+      style="
+        display:grid;
+        grid-template-columns:repeat(4,1fr);
+        gap:12px;
+        margin-top:20px;
+      ">
+    </div>
+
+    <div
+      id="dashboard-equipe"
+      style="
+        margin-top:24px;
+      ">
+    </div>
+
+  </div>
+
+
   <div id="view-map">
     <div id="map-wrap">
       <div id="map"></div>
@@ -1269,6 +1307,9 @@ async function setupUI(){
 //
 function switchView(v){
 
+  document.getElementById('view-dashboard').style.display =
+    v === 'dashboard' ? 'flex' : 'none';
+
   document.getElementById('view-map').style.display =
     v === 'map' ? 'flex' : 'none';
 
@@ -1284,6 +1325,9 @@ function switchView(v){
   document.getElementById('nav-admin')
     .classList.toggle('active', v === 'admin');
 
+  document.getElementById('nav-dashboard')
+    .classList.toggle('active', v === 'dashboard');  
+
   document.getElementById('btn-missoes')
     .classList.toggle('active', v === 'missoes');
 
@@ -1298,6 +1342,10 @@ function switchView(v){
 
   if(v === 'missoes'){
     carregarTelaMissoes();
+  }
+
+  if(v === 'dashboard'){
+    carregarDashboard();
   }
 
 }
@@ -2078,6 +2126,39 @@ function carregarListaColaboradores() {
 
 }
 
+function carregarDashboard(){
+
+  document.getElementById("dashboard-resumo").innerHTML = `
+  
+    <div class="card">
+      <h3>🏠 Casas</h3>
+      <h1>${houses.length}</h1>
+    </div>
+
+    <div class="card">
+      <h3>📋 Cadastros</h3>
+      <h1>${Object.keys(cadastros).length}</h1>
+    </div>
+
+    <div class="card">
+      <h3>👷 Colaboradores</h3>
+      <h1>${users.filter(u => u.role==="colaborador" && u.active).length}</h1>
+    </div>
+
+    <div class="card">
+      <h3>📍 Missões</h3>
+      <h1>-</h1>
+    </div>
+
+  `;
+
+  document.getElementById("dashboard-equipe").innerHTML = `
+    <h2>Equipe</h2>
+    <p>Em breve...</p>
+  `;
+
+}
+
 async function confirmarAtribuicao(colaborador){
 
   try{
@@ -2618,7 +2699,7 @@ function proximaMissao(){
     .getElementById("modal-missao")
     .classList.remove("open");
 
-  // Vamos implementar na próxima etapa
+  iniciarTrabalho();
 
 }
 

@@ -116,9 +116,7 @@ async function iniciarPostgreSQL() {
 
   }
 
-}
-
-await pg.query(`
+  await pg.query(`
   CREATE TABLE IF NOT EXISTS atribuicoes (
     id SERIAL PRIMARY KEY,
     casa_id TEXT NOT NULL,
@@ -129,6 +127,10 @@ await pg.query(`
     data_conclusao TIMESTAMP
   )
 `);
+
+}
+
+
 
 iniciarPostgreSQL();
 

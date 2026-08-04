@@ -545,6 +545,52 @@ app.post("/cadastro", async (req, res) => {
 
 });
 
+app.post("/usuario", async (req, res) => {
+
+  try {
+
+    const {
+      nome,
+      usuario,
+      senha,
+      papel
+    } = req.body;
+
+    await pg.query(
+      `
+      INSERT INTO usuarios
+      (
+        nome,
+        usuario,
+        senha,
+        papel
+      )
+      VALUES ($1,$2,$3,$4)
+      `,
+      [
+        nome,
+        usuario,
+        senha,
+        papel
+      ]
+    );
+
+    res.json({
+      ok:true
+    });
+
+  } catch (erro) {
+
+    console.error(erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
+
+});
+
 app.post("/fotos", async (req, res) => {
 
   try {

@@ -128,6 +128,19 @@ async function iniciarPostgreSQL() {
   )
 `);
 
+await pg.query(`
+  CREATE TABLE IF NOT EXISTS usuarios (
+    id SERIAL PRIMARY KEY,
+    nome TEXT NOT NULL,
+    usuario TEXT UNIQUE NOT NULL,
+    senha TEXT NOT NULL,
+    papel TEXT NOT NULL,
+    ativo BOOLEAN DEFAULT TRUE
+  )
+`);
+
+console.log("Tabela PostgreSQL 'usuarios' verificada/criada.");
+
 }
 
 

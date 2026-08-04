@@ -192,6 +192,43 @@ app.get("/lotes", async (req, res) => {
 
 });
 
+app.get("/minhas-missoes/:colaborador", async (req, res) => {
+
+  try {
+
+    const { colaborador } = req.params;
+
+    const resultado = await pg.query(
+
+      `
+      SELECT
+        casa_id,
+        status,
+        prioridade,
+        data_atribuicao
+      FROM atribuicoes
+      WHERE colaborador = $1
+      ORDER BY data_atribuicao
+      `,
+
+      [colaborador]
+
+    );
+
+    res.json(resultado.rows);
+
+  } catch (erro) {
+
+    console.error(erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
+
+});
+
 // ==========================
 // BUSCAR LOTE POR ID
 // ==========================

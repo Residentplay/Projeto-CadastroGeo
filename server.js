@@ -616,6 +616,33 @@ app.post("/atribuir-casa", async (req, res) => {
 
 });
 
+app.get("/colaboradores", async (req, res) => {
+
+  try {
+
+    const resultado = await pg.query(`
+      SELECT
+        username,
+        name
+      FROM users
+      WHERE role = 'colaborador'
+      ORDER BY name
+    `);
+
+    res.json(resultado.rows);
+
+  } catch (erro) {
+
+    console.error("Erro ao listar colaboradores:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
+
+});
+
 app.get("/fotos/:casa_id", async (req, res) => {
 
   try {

@@ -821,6 +821,64 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
   </div><!-- fecha o modal -->
 
 </div><!-- fecha modal-wrap -->
+
+<div id="modal-atribuir" style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.6);
+z-index:30000;
+align-items:center;
+justify-content:center;
+">
+
+  <div style="
+    background:#fff;
+    width:95%;
+    max-width:420px;
+    border-radius:12px;
+    padding:20px;
+  ">
+
+    <h3>Atribuir casa</h3>
+
+    <input
+      id="busca-colaborador"
+      type="text"
+      placeholder="Digite o nome do colaborador..."
+      style="
+        width:100%;
+        padding:10px;
+        margin-top:10px;
+      "
+    >
+
+    <div
+      id="lista-colaboradores"
+      style="
+        margin-top:15px;
+        max-height:250px;
+        overflow:auto;
+      ">
+    </div>
+
+    <div style="
+      display:flex;
+      justify-content:flex-end;
+      margin-top:15px;
+    ">
+
+      <button
+        class="btn btn-ghost"
+        onclick="fecharModalAtribuir()">
+        Fechar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
  
 <!-- CONFIRM -->
 <div id="confirm-wrap">
@@ -1630,57 +1688,13 @@ async function loadMapFile(input){
 
 }
 
-async function atribuirCasa() {
+function atribuirCasa() {
 
-  const colaboradores = users.filter(
-  usuario => usuario.role === "colaborador" && usuario.active
-  );
+  document.getElementById("modal-atribuir").style.display = "flex";
 
-  if (!colaboradores.length) {
-    showToast("Nenhum colaborador cadastrado!", true);
-    return;
-  }
+  carregarListaColaboradores();
 
-  const lista = colaboradores
-    .map((usuario, indice) =>
-      `${indice + 1} - ${usuario.name}`
-    )
-    .join("\n");
-
-  const escolha = prompt(
-    "Escolha o colaborador:\n\n" + lista
-  );
-
-  const indice = Number(escolha) - 1;
-
-  if (
-    !Number.isInteger(indice) ||
-    indice < 0 ||
-    indice >= colaboradores.length
-  ) {
-    showToast("Colaborador inválido!", true);
-    return;
-  }
-
-  const colaborador = colaboradores[indice].user;
-
-  const res = await fetch("/atribuir-casa", {
-
-    method: "POST",
-
-    headers: {
-      "Content-Type": "application/json"
-    },
-
-    body: JSON.stringify({
-
-      casa_id: currentHouse.id,
-
-      colaborador: colaborador
-
-    })
-
-  });
+}
 
   const retorno = await res.json();
 
@@ -1694,7 +1708,70 @@ async function atribuirCasa() {
 
   }
 
+function fecharModalAtribuir(){
+
+  document.getElementById("modal-atribuir").style.display = "none";
+
 }
+
+function carregarListaColaboradores() {
+
+  const lista = document.getElementById("lista-colaboradores");
+
+  lista.innerHTML = "";
+
+  const colaboradores = users.filter(
+    usuario => usuario.role === "colaborador" && usuario.active
+  );
+
+  colaboradores.forEach(usuario => {
+
+    const botao = document.createElement("button");
+
+    botao.className = "btn btn-secondary";
+
+    botao.style.width = "100%";
+    botao.style.marginBottom = "8px";
+    botao.style.textAlign = "left";
+
+    botao.innerHTML =
+      "👤 <b>" + usuario.name + "</b><br><small>" +
+      usuario.user +
+      "</small>";
+
+    botao.onclick = () => {
+
+      console.log("Selecionado:", usuario);
+
+    };
+
+    lista.appendChild(botao);
+
+    document.getElementById("busca-colaborador").oninput = function () {
+
+      const texto = this.value.toLowerCase();
+
+      document.querySelectorAll("#lista-colaboradores button").forEach(botao => {
+
+        if (botao.innerText.toLowerCase().includes(texto)) {
+
+          botao.style.display = "";
+
+        } else {
+
+          botao.style.display = "none";
+
+        }
+
+      });
+
+    };
+
+  });
+
+}
+
+
 
 function importarGeoJSON(gj){
 

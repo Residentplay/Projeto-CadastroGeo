@@ -2700,6 +2700,12 @@ async function abrirCadastroMissao(casaId){
 
         });
 
+        casa.statusMissao = "em_andamento";
+
+        casaSelecionada = casa.id;
+
+        drawMap();
+
         await openHouse(casa);
 
     },300);

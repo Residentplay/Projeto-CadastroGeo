@@ -970,19 +970,75 @@ const AVATAR_BG  = {colaborador:'#1a7f37', assistente:'#1f6feb', engenheiro:'#9e
 //
 document.getElementById('inp-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
  
-function doLogin(){
+async function doLogin(){
+
   const u = document.getElementById('inp-user').value.trim();
   const p = document.getElementById('inp-pass').value;
-  const found = users.find(x=>x.user===u && x.pass===p && x.active);
-  if(!found){ document.getElementById('login-error').style.display='block'; return; }
-  currentUser = found;
-  document.getElementById('login-error').style.display='none';
-  document.getElementById('screen-login').style.display='none';
-  const app = document.getElementById('screen-app');
-  app.style.display='flex';
-  setupUI();
-  switchView('map');
-  startGPS();
+
+  try{
+
+    const res = await fetch("/login",{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+        usuario:u,
+        senha:p
+
+      })
+
+    });
+
+    if(!res.ok){
+
+      document.getElementById('login-error').style.display='block';
+      return;
+
+    }
+
+    const usuario = await res.json();
+
+    currentUser = {
+
+      id:"u"+Date.now(),
+
+      name:usuario.nome,
+
+      user:usuario.usuario,
+
+      role:usuario.papel,
+
+      active:usuario.ativo
+
+    };
+
+    document.getElementById('login-error').style.display='none';
+
+    document.getElementById('screen-login').style.display='none';
+
+    const app = document.getElementById('screen-app');
+
+    app.style.display='flex';
+
+    setupUI();
+
+    switchView('map');
+
+    startGPS();
+
+  }catch(err){
+
+    console.error(err);
+
+    showToast("Erro ao realizar login!",true);
+
+  }
+
 }
  
 function doLogout(){
@@ -1009,7 +1065,7 @@ async function carregarCadastrosDoBanco() {
     });
 
     await carregarUsuarios();
-    
+
     renderHousesList();
     drawMap();
     updateStats();

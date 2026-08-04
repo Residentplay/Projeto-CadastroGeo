@@ -556,6 +556,30 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     </div>
 
     <div
+        id="missao-atual-card"
+        style="
+          display:none;
+          margin-top:12px;
+          padding:14px;
+          border:1px solid var(--border);
+          border-radius:10px;
+          background:var(--bg3);
+        ">
+
+        <strong>📍 Você chegou ao destino?</strong>
+
+        <button
+          class="btn btn-secondary"
+          style="width:100%;margin-top:10px;"
+          onclick="abrirMissaoAtual()">
+
+          📋 Abrir Cadastro
+
+        </button>
+
+      </div>
+
+    <div
       id="lista-missoes"
       style="
         display:flex;
@@ -1016,6 +1040,7 @@ let currentUser = null;
 let lotes = [];
 let houses = [], cadastros = {}, activities = [];
 let currentHouse = null, confirmCb = null;
+let missaoAtual = null;
 let userLat = null, userLng = null;
 let map;
 let modoDesenho = "lote";
@@ -1954,6 +1979,22 @@ function navegarParaCasa(latitude, longitude){
 
 }
 
+function atualizarMissaoAtual(){
+
+  const card = document.getElementById("missao-atual-card");
+
+  if(missaoAtual){
+
+    card.style.display = "block";
+
+  }else{
+
+    card.style.display = "none";
+
+  }
+
+}
+
 function carregarListaColaboradores() {
 
   const lista = document.getElementById("lista-colaboradores");
@@ -2781,6 +2822,10 @@ async function iniciarTrabalho(){
 
         const maisProxima = pendentes[0];
 
+        missaoAtual = maisProxima.casa_id;
+
+        atualizarMissaoAtual();
+
         navegarParaCasa(
           maisProxima.latitude,
           maisProxima.longitude
@@ -2814,6 +2859,20 @@ async function iniciarTrabalho(){
     }
 
   );
+
+}
+
+function abrirMissaoAtual(){
+
+  if(!missaoAtual){
+
+    showToast("Nenhuma missão selecionada!", true);
+
+    return;
+
+  }
+
+  abrirCadastroMissao(missaoAtual);
 
 }
 

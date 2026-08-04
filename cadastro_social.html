@@ -905,6 +905,40 @@ let users = [
   {id:'u1', name:'João Silva',        user:'colaborador1', pass:'campo123',  role:'colaborador', active:true},
   {id:'u2', name:'Ana Oliveira',      user:'assistente1',  pass:'social123', role:'assistente',  active:true},
 ];
+
+async function carregarUsuarios() {
+
+  try {
+
+    const res = await fetch("/usuarios");
+
+    const lista = await res.json();
+
+    users.length = 0;
+
+    lista.forEach(u => {
+
+      users.push({
+        id: "u" + Date.now() + Math.random(),
+        name: u.nome,
+        user: u.usuario,
+        pass: u.senha,
+        role: u.papel,
+        active: u.ativo
+      });
+
+    });
+
+    renderUsersTable();
+
+  } catch (erro) {
+
+    console.error("Erro ao carregar usuários:", erro);
+
+  }
+
+}
+
 let currentUser = null;
 let lotes = [];
 let houses = [], cadastros = {}, activities = [];
@@ -974,6 +1008,8 @@ async function carregarCadastrosDoBanco() {
       cadastros[c.casa_id] = c;
     });
 
+    await carregarUsuarios();
+    
     renderHousesList();
     drawMap();
     updateStats();

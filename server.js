@@ -1120,7 +1120,13 @@ app.get("/dashboard/casas-atuais", async (req, res) => {
 
       FROM atribuicoes
 
-      WHERE status = 'em_andamento'
+      WHERE colaborador IN (
+        SELECT usuario
+        FROM usuarios
+        WHERE papel = 'colaborador'
+          AND ativo = TRUE
+      )
+      AND status = 'em_andamento'
 
       ORDER BY colaborador
 

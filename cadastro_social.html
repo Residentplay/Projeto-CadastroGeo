@@ -2657,6 +2657,24 @@ async function abrirCadastroMissao(casaId){
           }
         );
 
+        await fetch("/status-missao",{
+
+          method:"POST",
+
+          headers:{
+            "Content-Type":"application/json"
+          },
+
+          body:JSON.stringify({
+
+            casa_id:casaId,
+
+            status:"em_andamento"
+
+          })
+
+        });
+
         await openHouse(casa);
 
     },300);

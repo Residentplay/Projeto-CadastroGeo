@@ -607,6 +607,43 @@ app.post("/cadastro", async (req, res) => {
 
 });
 
+app.post("/status-missao", async (req, res) => {
+
+  try {
+
+    const { casa_id, status } = req.body;
+
+    await pg.query(
+
+      `
+      UPDATE atribuicoes
+      SET status = $1
+      WHERE casa_id = $2
+      `,
+
+      [
+        status,
+        casa_id
+      ]
+
+    );
+
+    res.json({
+      ok: true
+    });
+
+  } catch (erro) {
+
+    console.error(erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
+
+});
+
 app.post("/usuario", async (req, res) => {
 
   try {

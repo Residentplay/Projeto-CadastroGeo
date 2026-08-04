@@ -2149,6 +2149,8 @@ async function carregarDashboard(){
   const dadosDashboard = await res.json();
   const resEquipe = await fetch("/dashboard/equipe");
   const dadosEquipe = await resEquipe.json();
+  const resCasasAtuais = await fetch("/dashboard/casas-atuais");
+  const casasAtuais = await resCasasAtuais.json();
 
   document.getElementById("dashboard-resumo").innerHTML = `
   
@@ -2191,10 +2193,28 @@ async function carregarDashboard(){
       ? usuario.name
       : item.colaborador;
 
+    const casaAtual = casasAtuais.find(
+      casa => casa.colaborador === item.colaborador
+    );  
+
     lista.innerHTML += `
       <div class="card" style="margin-top:10px;padding:15px;">
 
         <strong>${nome}</strong>
+
+        ${casaAtual ? `
+          <div style="margin-top:8px;color:#ffd600;">
+            📍 Casa atual: ${casaAtual.casa_id}
+          </div>
+
+          <div style="margin-top:4px;color:#ffd600;">
+            🟡 Em andamento
+          </div>
+        ` : `
+          <div style="margin-top:8px;color:var(--text2);">
+            Sem missão em andamento
+          </div>
+        `}
 
         <div style="margin-top:8px;">
           Total: ${item.total}

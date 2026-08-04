@@ -518,6 +518,51 @@ app.post("/cadastro", async (req, res) => {
 
 });
 
+app.post("/fotos", async (req, res) => {
+
+  try {
+
+    const {
+      casa_id,
+      nome_arquivo,
+      tipo,
+      dados
+    } = req.body;
+
+    await pg.query(
+      `
+      INSERT INTO fotos (
+        casa_id,
+        nome_arquivo,
+        tipo,
+        dados
+      )
+      VALUES ($1, $2, $3, $4)
+      `,
+      [
+        casa_id,
+        nome_arquivo,
+        tipo,
+        dados
+      ]
+    );
+
+    res.json({
+      ok: true
+    });
+
+  } catch (erro) {
+
+    console.error("Erro ao salvar foto:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
+
+});
+
 // ==========================
 // LISTAR CADASTROS
 // ==========================

@@ -118,6 +118,18 @@ async function iniciarPostgreSQL() {
 
 }
 
+await pg.query(`
+  CREATE TABLE IF NOT EXISTS atribuicoes (
+    id SERIAL PRIMARY KEY,
+    casa_id TEXT NOT NULL,
+    colaborador TEXT NOT NULL,
+    status TEXT DEFAULT 'pendente',
+    prioridade INTEGER DEFAULT 0,
+    data_atribuicao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_conclusao TIMESTAMP
+  )
+`);
+
 iniciarPostgreSQL();
 
 // ==========================

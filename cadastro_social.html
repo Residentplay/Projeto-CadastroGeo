@@ -2004,6 +2004,21 @@ function mostrarAba(nome, botao){
 
 let fotosCasa = [];
 
+function arquivoParaBase64(arquivo) {
+
+  return new Promise((resolve, reject) => {
+
+    const leitor = new FileReader();
+
+    leitor.onload = () => resolve(leitor.result);
+    leitor.onerror = () => reject(leitor.error);
+
+    leitor.readAsDataURL(arquivo);
+
+  });
+
+}
+
 function previewFotos() {
 
   const input = document.getElementById("f-fotos");
@@ -2122,6 +2137,29 @@ async function saveCadastro() {
 
     if (!res.ok) {
       throw new Error(retorno.erro || 'Erro ao salvar');
+    }
+
+    if (currentHouse && fotosCasa.length) {
+
+      for (const foto of fotosCasa) {
+
+        const base64 = await arquivoParaBase64(foto);
+
+        await fetch("/fotos", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            casa_id: currentHouse.id,
+            nome_arquivo: foto.name,
+            tipo: foto.type,
+            dados: base64
+          })
+        });
+
+      }
+
     }
 
     cadastros[currentHouse.id] = cadastro;

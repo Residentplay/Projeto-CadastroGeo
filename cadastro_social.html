@@ -1879,6 +1879,8 @@ async function openHouse(h){
   viewOnly?modal.classList.add('view-only'):modal.classList.remove('view-only');
   const cadastro = await carregarCadastro(h.id);
 
+  await carregarFotosCasa(h.id);
+
   console.log("CADASTRO CARREGADO:", cadastro);
 
   console.log("PASSOU 2");
@@ -2014,6 +2016,34 @@ function arquivoParaBase64(arquivo) {
     leitor.onerror = () => reject(leitor.error);
 
     leitor.readAsDataURL(arquivo);
+
+  });
+
+}
+
+async function carregarFotosCasa(casaId) {
+
+  const galeria = document.getElementById("galeria-fotos");
+
+  galeria.innerHTML = "";
+
+  const res = await fetch("/fotos/" + casaId);
+
+  const fotos = await res.json();
+
+  fotos.forEach(foto => {
+
+    const img = document.createElement("img");
+
+    img.src = foto.dados;
+
+    img.style.width = "120px";
+    img.style.height = "90px";
+    img.style.objectFit = "cover";
+    img.style.borderRadius = "8px";
+    img.style.border = "1px solid #ccc";
+
+    galeria.appendChild(img);
 
   });
 

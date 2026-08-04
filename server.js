@@ -199,20 +199,23 @@ app.get("/minhas-missoes/:colaborador", async (req, res) => {
     const { colaborador } = req.params;
 
     const resultado = await pg.query(
-
       `
       SELECT
-        casa_id,
-        status,
-        prioridade,
-        data_atribuicao
-      FROM atribuicoes
-      WHERE colaborador = $1
-      ORDER BY data_atribuicao
+        a.casa_id,
+        a.status,
+        a.prioridade,
+        a.data_atribuicao,
+        c.label,
+        c.bairro,
+        c.lat,
+        c.lng
+      FROM atribuicoes a
+      INNER JOIN casas c
+        ON c.id = a.casa_id
+      WHERE a.colaborador = $1
+      ORDER BY a.data_atribuicao
       `,
-
       [colaborador]
-
     );
 
     res.json(resultado.rows);

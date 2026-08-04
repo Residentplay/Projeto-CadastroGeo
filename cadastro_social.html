@@ -2121,6 +2121,8 @@ async function saveCadastro() {
 
   try {
 
+    const casaIdAtual = currentHouse.id;
+
     const res = await fetch('/cadastro', {
 
       method: 'POST',
@@ -2139,7 +2141,7 @@ async function saveCadastro() {
       throw new Error(retorno.erro || 'Erro ao salvar');
     }
 
-    if (currentHouse && fotosCasa.length) {
+    if (casaIdAtual && fotosCasa.length) {
 
       for (const foto of fotosCasa) {
 
@@ -2151,7 +2153,7 @@ async function saveCadastro() {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            casa_id: currentHouse.id,
+            casa_id: casaIdAtual,
             nome_arquivo: foto.name,
             tipo: foto.type,
             dados: base64

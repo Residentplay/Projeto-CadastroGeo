@@ -1031,11 +1031,49 @@ async function doLogin(){
 
     startGPS();
 
+    await carregarMinhasMissoes();
+
   }catch(err){
 
     console.error(err);
 
     showToast("Erro ao realizar login!",true);
+
+  }
+
+}
+
+async function carregarMinhasMissoes(){
+
+  if(currentUser.role !== "colaborador"){
+    return;
+  }
+
+  try{
+
+    const res = await fetch(
+      "/minhas-missoes/" + currentUser.user
+    );
+
+    const missoes = await res.json();
+
+    const ids = missoes.map(m => m.casa_id);
+
+    houses = houses.filter(casa =>
+      ids.includes(casa.id)
+    );
+
+    renderHousesList();
+
+    drawMap();
+
+    updateStats();
+
+  }catch(err){
+
+    console.error(err);
+
+    showToast("Erro ao carregar missões!", true);
 
   }
 

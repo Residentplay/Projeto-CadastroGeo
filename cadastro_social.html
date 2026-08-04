@@ -2869,6 +2869,31 @@ async function saveCadastro() {
     drawMap();
     closeModal();
 
+    if (casaIdAtual) {
+
+      await fetch("/status-missao", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          casa_id: casaIdAtual,
+          status: "concluida"
+        })
+      });
+
+      const casaConcluida = houses.find(h => h.id === casaIdAtual);
+
+      if (casaConcluida) {
+        casaConcluida.statusMissao = "concluida";
+      }
+
+      casaSelecionada = null;
+
+      drawMap();
+
+    }
+
     showToast('Cadastro salvo com sucesso!');
 
   } catch (err) {

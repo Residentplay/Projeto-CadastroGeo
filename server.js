@@ -577,6 +577,45 @@ app.post("/fotos", async (req, res) => {
 
 });
 
+app.post("/atribuir-casa", async (req, res) => {
+
+  try {
+
+    const {
+      casa_id,
+      colaborador
+    } = req.body;
+
+    await pg.query(
+      `
+      INSERT INTO atribuicoes (
+        casa_id,
+        colaborador
+      )
+      VALUES ($1, $2)
+      `,
+      [
+        casa_id,
+        colaborador
+      ]
+    );
+
+    res.json({
+      ok: true
+    });
+
+  } catch (erro) {
+
+    console.error("Erro ao atribuir casa:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
+
+});
+
 app.get("/fotos/:casa_id", async (req, res) => {
 
   try {

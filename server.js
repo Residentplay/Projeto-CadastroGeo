@@ -613,19 +613,46 @@ app.post("/status-missao", async (req, res) => {
 
     const { casa_id, status } = req.body;
 
-    await pg.query(
+    if (status === "em_andamento") {
 
+      const resultado = await pg.query(
+        `
+        SELECT colaborador
+        FROM atribuicoes
+        WHERE casa_id = $1
+        LIMIT 1
+        `,
+        [casa_id]
+      );
+
+      if (resultado.rows.length === 0) {
+        return res.status(404).json({
+          erro: "Atribuição não encontrada."
+        });
+      }
+
+      const colaborador = resultado.rows[0].colaborador;
+
+      await pg.query(
+        `
+        UPDATE atribuicoes
+        SET status = 'pendente'
+        WHERE colaborador = $1
+          AND status = 'em_andamento'
+          AND casa_id <> $2
+        `,
+        [colaborador, casa_id]
+      );
+
+    }
+
+    await pg.query(
       `
       UPDATE atribuicoes
       SET status = $1
       WHERE casa_id = $2
       `,
-
-      [
-        status,
-        casa_id
-      ]
-
+      [status, casa_id]
     );
 
     res.json({

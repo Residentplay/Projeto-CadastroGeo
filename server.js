@@ -693,7 +693,7 @@ app.post("/usuario", async (req, res) => {
       (
         nome,
         usuario,
-        senhaCriptografada,
+        senha,
         papel
       )
       VALUES ($1,$2,$3,$4)
@@ -701,7 +701,7 @@ app.post("/usuario", async (req, res) => {
       [
         nome,
         usuario,
-        senha,
+        senhaCriptografada,
         papel
       ]
     );

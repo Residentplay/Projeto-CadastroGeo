@@ -1,10 +1,29 @@
 let activities = [];
 let users = [];
+let editingUserId = null;
 
 
 const ROLE_LABEL = {colaborador:'Colaborador de Campo', assistente:'Assistente Social', engenheiro:'Engenheiro'};
 const AVATAR_BG  = {colaborador:'#1a7f37', assistente:'#1f6feb', engenheiro:'#9e6a03'};
 
+
+window.editUser = function(id) {
+
+  const usuario = users.find(u => u.id === id);
+
+  if (!usuario) {
+    showToast("Usuário não encontrado.", true);
+    return;
+  }
+
+  editingUserId = id;
+
+  document.getElementById("new-name").value = usuario.name;
+  document.getElementById("new-user").value = usuario.user;
+  document.getElementById("new-pass").value = "";
+  document.getElementById("new-role").value = usuario.role;
+
+};
 
 
 window.addUser = async function(){

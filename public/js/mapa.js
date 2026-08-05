@@ -420,8 +420,6 @@ window.importarKML = function(xml){
 
   lotes = [];
 
-  houses = [];
-
   lotesLayer.clearLayers();
 
   const placemarks = xml.getElementsByTagName("Placemark");

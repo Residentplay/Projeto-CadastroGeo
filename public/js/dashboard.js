@@ -85,7 +85,7 @@ async function atualizarDashboard(){
 
 }
 
-async function carregarDashboard(){
+window.carregarDashboard = async function(){
 
   const res = await fetch("/dashboard");
   const dadosDashboard = await res.json();
@@ -140,4 +140,4 @@ async function carregarDashboard(){
 
   },10000);
 
-}
+};

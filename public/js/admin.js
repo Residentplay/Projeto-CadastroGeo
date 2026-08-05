@@ -287,7 +287,6 @@ window.carregarUsuarios = async function() {
         id: u.id,
         name: u.nome,
         user: u.usuario,
-        pass: u.senha,
         role: u.papel,
         active: u.ativo
       });

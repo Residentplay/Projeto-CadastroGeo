@@ -1,9 +1,5 @@
 let activities = [];
-let users = [
-  {id:'u0', name:'Carlos Engenheiro', user:'engenheiro',  pass:'admin123',  role:'engenheiro',  active:true},
-  {id:'u1', name:'João Silva',        user:'colaborador1', pass:'campo123',  role:'colaborador', active:true},
-  {id:'u2', name:'Ana Oliveira',      user:'assistente1',  pass:'social123', role:'assistente',  active:true},
-];
+let users = [];
 
 
 const ROLE_LABEL = {colaborador:'Colaborador de Campo', assistente:'Assistente Social', engenheiro:'Engenheiro'};

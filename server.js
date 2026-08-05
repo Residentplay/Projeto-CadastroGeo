@@ -3,6 +3,7 @@ const path = require("path");
 const cors = require("cors");
 const { Pool } = require("pg");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
@@ -684,13 +685,15 @@ app.post("/usuario", async (req, res) => {
       papel
     } = req.body;
 
+    const senhaCriptografada = await bcrypt.hash(senha, 10);
+
     await pg.query(
       `
       INSERT INTO usuarios
       (
         nome,
         usuario,
-        senha,
+        senhaCriptografada,
         papel
       )
       VALUES ($1,$2,$3,$4)
@@ -729,23 +732,17 @@ app.post("/login", async (req, res) => {
     } = req.body;
 
     const resultado = await pg.query(
-
       `
       SELECT
         nome,
         usuario,
+        senha,
         papel,
         ativo
       FROM usuarios
       WHERE usuario = $1
-        AND senha = $2
       `,
-
-      [
-        usuario,
-        senha
-      ]
-
+      [usuario]
     );
 
     if (resultado.rows.length === 0) {
@@ -754,6 +751,22 @@ app.post("/login", async (req, res) => {
         erro: "Usuário ou senha inválidos."
       });
 
+    }
+
+    const usuarioEncontrado = resultado.rows[0];
+
+    let senhaValida = false;
+
+    if (usuarioEncontrado.senha.startsWith("$2")) {
+      senhaValida = await bcrypt.compare(senha, usuarioEncontrado.senha);
+    } else {
+      senhaValida = senha === usuarioEncontrado.senha;
+    }
+
+    if (!senhaValida) {
+      return res.status(401).json({
+        erro: "Usuário ou senha inválidos."
+      });
     }
 
     const usuarioEncontrado = resultado.rows[0];

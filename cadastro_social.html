@@ -2154,7 +2154,7 @@ async function carregarDashboard(){
 
   document.getElementById("dashboard-resumo").innerHTML = `
 
-  renderizarEquipe(dadosEquipe, casasAtuais);
+  
   
     <div class="card">
       <h3>📍 Total de Missões</h3>
@@ -2183,6 +2183,7 @@ async function carregarDashboard(){
     <div id="lista-equipe"></div>
   `;
 
+  renderizarEquipe(dadosEquipe, casasAtuais);
   
 
   if(window.dashboardTimer){
@@ -2218,10 +2219,9 @@ async function atualizarDashboard(){
 
 function renderizarEquipe(dadosEquipe, casasAtuais){
 
+  const lista = document.getElementById("lista-equipe");
 
   lista.innerHTML = "";
-
-  const lista = document.getElementById("lista-equipe");
 
   dadosEquipe.forEach(item => {
 

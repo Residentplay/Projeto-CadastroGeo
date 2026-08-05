@@ -661,3 +661,306 @@ window.loadMapFile = async function(input){
   }
 
 };
+
+function latLngToTile(lat,lng,z){
+  const n = Math.pow(2,z);
+  const x = Math.floor((lng+180)/360*n);
+  const latR = lat*Math.PI/180;
+  const y = Math.floor((1-Math.log(Math.tan(latR)+1/Math.cos(latR))/Math.PI)/2*n);
+  return {x,y};
+}
+function tileToLatLng(tx,ty,z){
+  const n = Math.pow(2,z);
+  const lng = tx/n*360-180;
+  const latR = Math.atan(Math.sinh(Math.PI*(1-2*ty/n)));
+  return {lat:latR*180/Math.PI, lng};
+}
+function latLngToPixel(lat,lng,cx,cy,z,w,h){
+  const n = Math.pow(2,z);
+  const scale = 256;
+  const camTile = {
+    x:(cx+180)/360*n,
+    y:(1-Math.log(Math.tan(cx*Math.PI/180+Math.PI/2))/Math.PI)/2*n
+  };
+  // reuse camTile for cam center
+  const camX=(cam.lng+180)/360*n;
+  const camLatR=cam.lat*Math.PI/180;
+  const camY=(1-Math.log(Math.tan(camLatR)+1/Math.cos(camLatR))/Math.PI)/2*n;
+  const ptX=(lng+180)/360*n;
+  const ptLatR=lat*Math.PI/180;
+  const ptY=(1-Math.log(Math.tan(ptLatR)+1/Math.cos(ptLatR))/Math.PI)/2*n;
+  return {
+    px: w/2+(ptX-camX)*scale,
+    py: h/2+(ptY-camY)*scale
+  };
+}
+ 
+let canvasReady = false;
+
+function ativarDesenhoCasa(){
+
+  modoAtual = "desenho";
+
+  showToast("Modo desenho ativado");
+
+}
+
+function modoSelecao(){
+
+  modoAtual = "selecao";
+
+  showToast("Modo seleção ativado");
+
+}
+
+function dividirLotes(){
+
+  showToast("Ferramenta de divisão ativada");
+
+}
+
+
+
+
+
+
+function girarEsquerda(){
+
+  anguloMapa -= 5;
+
+  map.setBearing(anguloMapa);
+
+}
+
+function girarDireita(){
+
+  anguloMapa += 5;
+
+  map.setBearing(anguloMapa);
+
+}
+
+function resetarRotacao(){
+
+  anguloMapa = 0;
+
+  map.setBearing(0);
+
+}
+ 
+function resizeCanvas(){
+  const canvas=document.getElementById('map-canvas');
+  const wrap=document.getElementById('map-wrap');
+  canvas.width=wrap.clientWidth;
+  canvas.height=wrap.clientHeight;
+}
+ 
+function loadTile(url, cb){
+  if(tileCache[url]){ cb(tileCache[url]); return; }
+  if(pendingTiles[url]){ pendingTiles[url].push(cb); return; }
+  pendingTiles[url]=[cb];
+  const img=new Image();
+  img.crossOrigin='anonymous';
+  img.onload=()=>{ tileCache[url]=img; (pendingTiles[url]||[]).forEach(fn=>fn(img)); delete pendingTiles[url]; drawMap(); };
+  img.onerror=()=>{ delete pendingTiles[url]; };
+  img.src=url;
+}
+ 
+console.log(
+  "Casas reconstruídas:",
+  JSON.stringify(houses, null, 2)
+);
+
+
+ 
+//
+// GPS
+//
+function startGPS(){
+  if(!navigator.geolocation){ document.getElementById('loc-text').textContent='GPS não disponível.'; return; }
+  navigator.geolocation.watchPosition(pos=>{
+    userLat=pos.coords.latitude; userLng=pos.coords.longitude;
+    document.getElementById('loc-text').textContent=
+      `Você está aqui — ${userLat.toFixed(5)}, ${userLng.toFixed(5)} (precisão: ${Math.round(pos.coords.accuracy)}m)`;
+    drawMap();
+  }, ()=>{ document.getElementById('loc-text').textContent='Localizacao aproximada (GPS negado).'; }, {enableHighAccuracy:true, maximumAge:5000});
+}
+ 
+//
+// CASAS
+//
+
+
+async function salvarLotes(){
+
+  try{
+
+    const lotesParaSalvar = [];
+
+    lotes.forEach((lote, i) => {
+
+      lotesParaSalvar.push({
+        id: lote.id,
+        nome: lote.label || `Lote ${i + 1}`,
+        status: lote.status || "livre",
+        geojson: {
+          type: "Feature",
+          properties: {
+            id: lote.id,
+            nome: lote.label || `Lote ${i + 1}`,
+            status: lote.status || "livre"
+          },
+          geometry: {
+            type: "Polygon",
+            coordinates: [lote.polygon]
+          }
+        }
+      });
+
+    });
+
+    console.log("Enviando lotes:", lotesParaSalvar);
+
+    const res = await fetch("/lotes",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify(lotesParaSalvar)
+    });
+
+    console.log("Status:", res.status);
+
+    const texto = await res.text();
+
+    console.log("Resposta bruta:", texto);
+
+    showToast("Lotes salvos com sucesso!");
+
+  }
+  catch(err){
+
+    console.error(err);
+
+    showToast("Erro ao salvar lotes", true);
+
+  }
+
+}
+
+async function salvarCasas(){
+
+  try{
+
+    console.log("Casas para salvar:");
+    console.log(houses);
+
+    const res = await fetch("/casas",{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify(houses)
+
+    });
+
+    const dados = await res.json();
+
+    console.log(dados);
+
+    showToast("Casas salvas com sucesso!");
+
+  }
+  catch(err){
+
+    console.error(err);
+
+    showToast("Erro ao salvar casas.", true);
+
+  }
+
+}
+
+function importarGeoJSON(gj){
+
+  houses = [];
+
+  gj.features.forEach((f, i) => {
+
+    if(!f.geometry) return;
+
+    const p = f.properties || {};
+
+    let lat = null;
+    let lng = null;
+    let polygon = null;
+
+    if(f.geometry.type === "Polygon"){
+
+      polygon = f.geometry.coordinates[0];
+
+      let somaLat = 0;
+      let somaLng = 0;
+
+      polygon.forEach(coord => {
+
+        somaLng += coord[0];
+        somaLat += coord[1];
+
+      });
+
+      lng = somaLng / polygon.length;
+      lat = somaLat / polygon.length;
+
+    }
+
+    else if(f.geometry.type === "Point"){
+
+      lng = f.geometry.coordinates[0];
+      lat = f.geometry.coordinates[1];
+
+    }
+
+    else{
+      return;
+    }
+
+    lotes.push({
+      id:'h'+i,
+      label:p.endereco || p.nome || p.name || ('Lote '+(i+1)),
+      bairro:p.bairro || '',
+      lat,
+      lng,
+      polygon
+    });
+
+  });
+
+  console.log("Casas carregadas:", houses);
+
+  renderHousesList();
+  updateStats();
+  drawMap();
+
+  if(houses.length){
+
+    map.fitBounds(
+      L.geoJSON(gj).getBounds()
+    );
+
+  }
+
+  showToast("GeoJSON carregado!");
+
+}
+
+function updateStats(){
+  const done=Object.keys(cadastros).length;
+  document.getElementById('stat-total').textContent=houses.length;
+  document.getElementById('stat-done').textContent=done;
+  document.getElementById('stat-pend').textContent=houses.length-done;
+  document.getElementById('stat-users').textContent=users.filter(u=>u.role==='colaborador'&&u.active).length;
+}

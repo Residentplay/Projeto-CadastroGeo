@@ -144,15 +144,6 @@ await pg.query(`
 
 console.log("Tabela PostgreSQL 'usuarios' verificada/criada.");
 
-await pg.query(`
-INSERT INTO usuarios
-(nome, usuario, senha, papel)
-VALUES
-('Carlos Engenheiro','engenheiro','admin123','engenheiro'),
-('João Silva','colaborador1','campo123','colaborador'),
-('Ana Oliveira','assistente1','social123','assistente')
-ON CONFLICT (usuario) DO NOTHING;
-`);
 
 }
 

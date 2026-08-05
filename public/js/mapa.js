@@ -194,7 +194,7 @@ map.on(L.Draw.Event.CREATED, function (e) {
 
 };
 
-function drawMap(){
+window.drawMap = function(){
 
   if(!map || !markersLayer) return;
 
@@ -329,9 +329,9 @@ function drawMap(){
 
   console.log("Desenhando:", houses);
 
-}
+};
 
-function renderHousesList(lista = houses){
+window.renderHousesList = function(lista = houses){
 
   const el = document.getElementById("houses-list");
 

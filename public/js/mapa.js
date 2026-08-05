@@ -1,5 +1,21 @@
 // Mapa do CadastroGeo
 
+let map;
+let lotes = [];
+let houses = [];
+let drawnItems;
+let modoDesenho = "lote";
+let lotesLayer;
+let casasLayer;
+let markersLayer;
+let modoAtual = null;
+let anguloMapa = 0;
+let cam = {lat:-5.0892, lng:-42.8016, zoom:15};
+let dragging = false, dragStart = {x:0,y:0}, camStart = {lat:0,lng:0};
+let tileCache = {}, pendingTiles = {};
+let animFrame = null;
+let casaSelecionada = null;
+
 window.initMap = function(){
 
   if(map) return;
@@ -964,3 +980,149 @@ function updateStats(){
   document.getElementById('stat-pend').textContent=houses.length-done;
   document.getElementById('stat-users').textContent=users.filter(u=>u.role==='colaborador'&&u.active).length;
 }
+
+
+window.carregarCasas = async function() {
+
+  try {
+
+    const res = await fetch("/casas");
+
+    const dados = await res.json();
+
+    houses = [];
+
+    dados.forEach(casa => {
+
+      let geo = {};
+
+      try {
+        geo = typeof casa.geojson === "string"
+          ? JSON.parse(casa.geojson)
+          : (casa.geojson || {});
+      } catch (err) {
+        console.error("GeoJSON inválido da casa:", casa.id, err);
+      }
+
+      houses.push({
+        id: casa.id,
+        lote_id: casa.lote_id,
+        label: casa.numero || geo.label || "Casa",
+        bairro: geo.bairro || "",
+        lat: Number(casa.latitude),
+        lng: Number(casa.longitude),
+        polygon: Array.isArray(geo.polygon) ? geo.polygon : []
+      });
+
+    });
+
+    console.log("Casas carregadas do banco:", houses);
+
+    renderHousesList();
+    updateStats();
+    drawMap();
+
+  } catch (err) {
+
+    console.error("Erro ao carregar casas:", err);
+
+    showToast("Erro ao carregar casas!", true);
+
+  }
+
+};
+
+
+window.carregarLotes = async function(){
+
+  try{
+
+    const res = await fetch("/lotes");
+    const dados = await res.json();
+
+    lotes = [];
+
+    if(lotesLayer){
+      lotesLayer.clearLayers();
+    }
+
+    dados.forEach(lote => {
+
+      try{
+
+        const obj =
+          typeof lote.geojson === "string"
+            ? JSON.parse(lote.geojson)
+            : lote.geojson;
+        const feature = obj.geojson || obj;
+
+        if(
+          !feature.geometry ||
+          feature.geometry.type !== "Polygon"
+        ){
+          return;
+        }
+
+        const coords = feature.geometry.coordinates[0];
+
+        let somaLat = 0;
+        let somaLng = 0;
+
+        coords.forEach(p => {
+          somaLng += Number(p[0]);
+          somaLat += Number(p[1]);
+        });
+
+        const loteReconstruido = {
+          id: lote.id,
+          label: lote.nome || "Lote",
+          status: lote.status || "livre",
+          lat: somaLat / coords.length,
+          lng: somaLng / coords.length,
+          polygon: coords
+        };
+
+        lotes.push(loteReconstruido);
+
+        const poly = L.polygon(
+          coords.map(p => [p[1], p[0]]),
+          {
+            color: "#2563eb",
+            fillColor: "#2563eb",
+            fillOpacity: 0.12,
+            weight: 3
+          }
+        );
+
+        poly.loteId = loteReconstruido.id;
+
+        poly.bindPopup(`
+          <b>${loteReconstruido.label}</b><br>
+          Área do lote
+        `);
+
+        lotesLayer.addLayer(poly);
+
+      }
+      catch(err){
+
+        console.error(
+          "Erro ao reconstruir lote:",
+          lote,
+          err
+        );
+
+      }
+
+    });
+
+    console.log("Lotes carregados do banco:", lotes);
+
+  }
+  catch(err){
+
+    console.error("Erro ao carregar lotes:", err);
+
+  }
+
+};

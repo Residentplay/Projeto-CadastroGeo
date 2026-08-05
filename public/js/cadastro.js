@@ -1,3 +1,8 @@
+let fotosPorCasa = {};
+let cadastros = {};
+let currentHouse = null;
+
+
 window.openHouse = async function(h){
 
   console.log("PASSOU 1");
@@ -144,4 +149,315 @@ if(
 
 console.log("DEPOIS DO PANTO");
 
+};
+
+window.mostrarAba = function(nome, botao){
+
+  document.querySelectorAll(".tab-page").forEach(aba => {
+    aba.classList.remove("active");
+  });
+
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  document.getElementById("tab-" + nome).classList.add("active");
+  botao.classList.add("active");
+
+};
+
+let fotosCasa = [];
+
+
+window.arquivoParaBase64 = function(arquivo) {
+
+  return new Promise((resolve, reject) => {
+
+    const leitor = new FileReader();
+
+    leitor.onload = () => resolve(leitor.result);
+    leitor.onerror = () => reject(leitor.error);
+
+    leitor.readAsDataURL(arquivo);
+
+  });
+
+};
+
+
+window.carregarFotosCasa = async function(casaId) {
+
+  const galeria = document.getElementById("galeria-fotos");
+
+  galeria.innerHTML = "<p>Carregando fotos...</p>";
+
+
+  const res = await fetch("/fotos/" + casaId);
+
+  const fotos = await res.json();
+
+  fotos.forEach(foto => {
+
+    const img = document.createElement("img");
+
+    img.src = foto.dados;
+
+    img.style.width = "120px";
+    img.style.height = "90px";
+    img.style.objectFit = "cover";
+    img.style.borderRadius = "8px";
+    img.style.border = "1px solid #ccc";
+
+    galeria.appendChild(img);
+
+  });
+
+};
+
+
+window.previewFotos = function() {
+
+  const input = document.getElementById("f-fotos");
+  const preview = document.getElementById("preview-fotos");
+  const galeria = document.getElementById("galeria-fotos");
+
+  preview.innerHTML = "";
+  galeria.innerHTML = "";
+
+  fotosCasa = [...input.files];
+
+  [...input.files].forEach(file => {
+
+    const img = document.createElement("img");
+
+    img.src = URL.createObjectURL(file);
+
+    img.style.width = "120px";
+    img.style.height = "90px";
+    img.style.objectFit = "cover";
+    img.style.borderRadius = "8px";
+    img.style.border = "1px solid #ccc";
+
+    preview.appendChild(img);
+
+    const imgGaleria = img.cloneNode();
+
+    galeria.appendChild(imgGaleria);
+
+  });
+
+  console.log("Fotos da casa:", fotosCasa);
+
+};
+
+
+window.fillForm = function(c){
+  ['end','bairro','lat','lng','data','nome','cpf','nasc','sexo','esc','tel','nis','mor','men','ido','renda','fonte','tipo','mat','agua','esg','en','obs','colab','status'].forEach(k=>{
+    const el=document.getElementById('f-'+k); if(el) el.value=c[k]||'';
+  });
+};
+window.clearForm = function(){
+  ['end','bairro','lat','lng','data','nome','cpf','nasc','sexo','esc','tel','nis','mor','men','ido','renda','fonte','tipo','mat','agua','esg','en','obs','colab','status'].forEach(k=>{
+    const el=document.getElementById('f-'+k); if(el) el.value='';
+  });
+};
+window.closeModal = function(){
+  document.getElementById('modal-wrap').classList.remove('open');
+  document.querySelectorAll('.house-item').forEach(el=>el.classList.remove('selected'));
+  currentHouse=null;
+};
+
+
+window.saveCadastro = async function() {
+
+  if (currentHouse) {
+    fotosPorCasa[currentHouse.id] = [...fotosCasa];
+  }
+
+  if (!currentHouse) return;
+
+  const cadastro = {
+
+    casa_id: currentHouse.id,
+
+    endereco: document.getElementById('f-end').value,
+    bairro: document.getElementById('f-bairro').value,
+    latitude: document.getElementById('f-lat').value,
+    longitude: document.getElementById('f-lng').value,
+
+    nome: document.getElementById('f-nome').value,
+    cpf: document.getElementById('f-cpf').value,
+    nascimento: document.getElementById('f-nasc').value,
+    sexo: document.getElementById('f-sexo').value,
+    escolaridade: document.getElementById('f-esc').value,
+
+    telefone: document.getElementById('f-tel').value,
+    nis: document.getElementById('f-nis').value,
+
+    moradores: document.getElementById('f-mor').value,
+    menores: document.getElementById('f-men').value,
+    idosos: document.getElementById('f-ido').value,
+
+    renda: document.getElementById('f-renda').value,
+    fonte_renda: document.getElementById('f-fonte').value,
+
+    tipo_moradia: document.getElementById('f-tipo').value,
+    material: document.getElementById('f-mat').value,
+
+    agua: document.getElementById('f-agua').value,
+    esgoto: document.getElementById('f-esg').value,
+    energia: document.getElementById('f-en').value,
+
+    observacoes: document.getElementById('f-obs').value,
+
+    colaborador: document.getElementById('f-colab').value,
+    status: document.getElementById('f-status').value || 'Cadastrado',
+
+    data_cadastro: document.getElementById('f-data').value
+
+  };
+
+  try {
+
+    const casaIdAtual = currentHouse.id;
+
+    const res = await fetch('/cadastro', {
+
+      method: 'POST',
+
+      headers: {
+        'Content-Type': 'application/json'
+      },
+
+      body: JSON.stringify(cadastro)
+
+    });
+
+    const retorno = await res.json();
+
+    if (!res.ok) {
+      throw new Error(retorno.erro || 'Erro ao salvar');
+    }
+
+    if (casaIdAtual && fotosCasa.length) {
+
+      for (const foto of fotosCasa) {
+
+        const base64 = await arquivoParaBase64(foto);
+
+        await fetch("/fotos", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            casa_id: casaIdAtual,
+            nome_arquivo: foto.name,
+            tipo: foto.type,
+            dados: base64
+          })
+        });
+
+      }
+
+    }
+
+    cadastros[currentHouse.id] = cadastro;
+
+    activities.push({
+      ...cadastro,
+      time: new Date().toLocaleTimeString('pt-BR')
+    });
+
+    renderHousesList();
+    updateStats();
+    drawMap();
+    closeModal();
+
+    if (casaIdAtual) {
+
+      await fetch("/status-missao", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          casa_id: casaIdAtual,
+          status: "concluida"
+        })
+      });
+
+      const casaConcluida = houses.find(h => h.id === casaIdAtual);
+
+      if (casaConcluida) {
+        casaConcluida.statusMissao = "concluida";
+      }
+
+      casaSelecionada = null;
+
+      drawMap();
+
+    }
+
+    document.getElementById("modal-missao").classList.add("open");
+
+  } catch (err) {
+
+    console.error(err);
+
+    showToast('Erro ao salvar cadastro!', true);
+
+  }
+
+  console.log("Fotos por casa:", fotosPorCasa);
+
+};
+
+
+window.carregarCadastro = async function(casaId) {
+
+  try {
+
+    const res = await fetch(`/cadastro/${casaId}`);
+
+    return await res.json();
+
+  } catch (err) {
+
+    console.error(err);
+
+    return {};
+
+  }
+
+};
+
+
+window.carregarCadastrosDoBanco = async function() {
+
+  try {
+
+    const res = await fetch("/cadastros");
+
+    const dados = await res.json();
+
+    cadastros = {};
+
+    dados.forEach(c => {
+      cadastros[c.casa_id] = c;
+    });
+
+    await carregarUsuarios();
+
+    renderHousesList();
+    drawMap();
+    updateStats();
+
+  } catch (err) {
+
+    console.error(err);
+
+    showToast("Erro ao carregar cadastros!", true);
+
+  }
 };

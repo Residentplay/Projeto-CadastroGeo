@@ -95,6 +95,9 @@ window.setupUI = async function(){
 
 
 window.doLogout = function(){
+
+    localStorage.removeItem("token");
+
   cancelAnimationFrame(animFrame);
   currentUser = null;
   document.getElementById('screen-app').style.display='none';
@@ -139,6 +142,8 @@ window.doLogin = async function(){
     }
 
     const usuario = await res.json();
+
+    localStorage.setItem("token", usuario.token);
 
     currentUser = {
 

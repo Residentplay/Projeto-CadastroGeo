@@ -68,12 +68,49 @@ window.toggleUser = function(id){
 };
  
 window.deleteUser = function(id){
-  const u=users.find(x=>x.id===id);
-  if(!u||u.id===currentUser.id){ showToast('Não é possível remover sua própria conta.',true); return; }
-  openConfirm('Remover usuário','Deseja remover "'+u.name+'" permanentemente?',()=>{
-    users=users.filter(x=>x.id!==id); renderUsersTable(); updateStats();
-    showToast('Usuário removido.');
-  });
+
+  const u = users.find(x => x.id === id);
+
+  if (!u || u.id === currentUser.id) {
+    showToast("Não é possível remover sua própria conta.", true);
+    return;
+  }
+
+  openConfirm(
+    "Remover usuário",
+    'Deseja remover "' + u.name + '" permanentemente?',
+    async () => {
+
+      try {
+
+        const res = await fetch(`/usuario/${id}`, {
+          method: "DELETE"
+        });
+
+        const dados = await res.json();
+
+        if (!res.ok) {
+          throw new Error(dados.erro || "Erro ao excluir usuário.");
+        }
+
+        users = users.filter(x => x.id !== id);
+
+        renderUsersTable();
+        updateStats();
+
+        showToast("Usuário removido.");
+
+      } catch (erro) {
+
+        console.error(erro);
+
+        showToast("Erro ao remover usuário.", true);
+
+      }
+
+    }
+  );
+
 };
  
 window.togglePass = function(el, pass){

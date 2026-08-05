@@ -2158,22 +2158,22 @@ async function carregarDashboard(){
   
     <div class="card">
       <h3>📍 Total de Missões</h3>
-      <h1 id="dash-total">${dadosDashboard.totalMissoes}</h1>
+      <h1 id="dash-total">0</h1>
     </div>
 
     <div class="card">
       <h3>🟡 Pendentes</h3>
-      <h1 id="dash-pendentes">${dadosDashboard.pendentes}</h1>
+      <h1 id="dash-pendentes">0</h1>
     </div>
 
     <div class="card">
       <h3>🔵 Em andamento</h3>
-      <h1 id="dash-andamento">${dadosDashboard.andamento}</h1>
+      <h1 id="dash-andamento">0</h1>
     </div>
 
     <div class="card">
       <h3>🟢 Concluídas</h3>
-      <h1 id="dash-concluidas">${dadosDashboard.concluidas}</h1>
+      <h1 id="dash-concluidas">0</h1>
     </div>
 
   `;
@@ -2182,7 +2182,9 @@ async function carregarDashboard(){
     <h2>👷 Equipe</h2>
     <div id="lista-equipe"></div>
   `;
-
+  
+  renderizarResumo(dadosDashboard);
+  renderizarEquipe(dadosEquipe, casasAtuais);
   renderizarEquipe(dadosEquipe, casasAtuais);
   
 
@@ -2203,17 +2205,7 @@ async function atualizarDashboard(){
   const res = await fetch("/dashboard");
   const dadosDashboard = await res.json();
 
-  document.getElementById("dash-total").textContent =
-  dadosDashboard.totalMissoes;
-
-  document.getElementById("dash-pendentes").textContent =
-    dadosDashboard.pendentes;
-
-  document.getElementById("dash-andamento").textContent =
-    dadosDashboard.andamento;
-
-  document.getElementById("dash-concluidas").textContent =
-    dadosDashboard.concluidas;
+  renderizarResumo(dadosDashboard);
 
 }
 
@@ -2276,6 +2268,22 @@ function renderizarEquipe(dadosEquipe, casasAtuais){
     `;
 
   });
+
+}
+
+function renderizarResumo(dadosDashboard){
+
+  document.getElementById("dash-total").textContent =
+    dadosDashboard.totalMissoes;
+
+  document.getElementById("dash-pendentes").textContent =
+    dadosDashboard.pendentes;
+
+  document.getElementById("dash-andamento").textContent =
+    dadosDashboard.andamento;
+
+  document.getElementById("dash-concluidas").textContent =
+    dadosDashboard.concluidas;
 
 }
 

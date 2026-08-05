@@ -126,6 +126,7 @@ window.renderUsersTable = function(){
       <td><span class="role-pill role-${u.role}">${ROLE_LABEL[u.role]}</span></td>
       <td style="font-size:11px;color:${u.active?'#3fb950':'#7d8590'}">${u.active?'✓ Ativo':'✗ Inativo'}</td>
       <td><div class="td-actions">
+        <button class="btn btn-primary btn-sm" onclick="editUser(${u.id})">Editar</button>
         <button class="btn btn-ghost btn-sm" onclick="toggleUser(${u.id})">${u.active?'Desativar':'Ativar'}</button>
         <button class="btn btn-red btn-sm" onclick="deleteUser(${u.id})">Remover</button>
       </div></td>

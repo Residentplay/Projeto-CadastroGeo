@@ -2153,25 +2153,27 @@ async function carregarDashboard(){
   const casasAtuais = await resCasasAtuais.json();
 
   document.getElementById("dashboard-resumo").innerHTML = `
+
+  renderizarEquipe(dadosEquipe, casasAtuais);
   
     <div class="card">
       <h3>📍 Total de Missões</h3>
-      <h1>${dadosDashboard.totalMissoes}</h1>
+      <h1 id="dash-total">${dadosDashboard.totalMissoes}</h1>
     </div>
 
     <div class="card">
       <h3>🟡 Pendentes</h3>
-      <h1>${dadosDashboard.pendentes}</h1>
+      <h1 id="dash-pendentes">${dadosDashboard.pendentes}</h1>
     </div>
 
     <div class="card">
       <h3>🔵 Em andamento</h3>
-      <h1>${dadosDashboard.andamento}</h1>
+      <h1 id="dash-andamento">${dadosDashboard.andamento}</h1>
     </div>
 
     <div class="card">
       <h3>🟢 Concluídas</h3>
-      <h1>${dadosDashboard.concluidas}</h1>
+      <h1 id="dash-concluidas">${dadosDashboard.concluidas}</h1>
     </div>
 
   `;
@@ -2180,6 +2182,44 @@ async function carregarDashboard(){
     <h2>👷 Equipe</h2>
     <div id="lista-equipe"></div>
   `;
+
+  
+
+  if(window.dashboardTimer){
+    clearInterval(window.dashboardTimer);
+  }
+
+  window.dashboardTimer = setInterval(() => {
+
+    atualizarDashboard();
+
+  },10000);
+
+}
+
+async function atualizarDashboard(){
+
+  const res = await fetch("/dashboard");
+  const dadosDashboard = await res.json();
+
+  document.getElementById("dash-total").textContent =
+  dadosDashboard.totalMissoes;
+
+  document.getElementById("dash-pendentes").textContent =
+    dadosDashboard.pendentes;
+
+  document.getElementById("dash-andamento").textContent =
+    dadosDashboard.andamento;
+
+  document.getElementById("dash-concluidas").textContent =
+    dadosDashboard.concluidas;
+
+}
+
+function renderizarEquipe(dadosEquipe, casasAtuais){
+
+
+  lista.innerHTML = "";
 
   const lista = document.getElementById("lista-equipe");
 
@@ -2204,7 +2244,7 @@ async function carregarDashboard(){
 
         ${casaAtual ? `
           <div style="margin-top:8px;color:#ffd600;">
-            📍 Casa atual: ${casaAtual.casa_id}
+            📍 Casa atual: ${casaAtual.numero || casaAtual.casa_id}
           </div>
 
           <div style="margin-top:4px;color:#ffd600;">

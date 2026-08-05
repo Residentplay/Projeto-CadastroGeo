@@ -1,3 +1,5 @@
+// Dashboard do CadastroGeo
+
 function renderizarResumo(dadosDashboard){
 
   document.getElementById("dash-total").textContent =

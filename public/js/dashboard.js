@@ -75,3 +75,12 @@ function renderizarEquipe(dadosEquipe, casasAtuais){
   });
 
 }
+
+async function atualizarDashboard(){
+
+  const res = await fetch("/dashboard");
+  const dadosDashboard = await res.json();
+
+  renderizarResumo(dadosDashboard);
+
+}

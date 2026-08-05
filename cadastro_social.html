@@ -2200,14 +2200,7 @@ async function carregarDashboard(){
 
 }
 
-async function atualizarDashboard(){
 
-  const res = await fetch("/dashboard");
-  const dadosDashboard = await res.json();
-
-  renderizarResumo(dadosDashboard);
-
-}
 
 
 

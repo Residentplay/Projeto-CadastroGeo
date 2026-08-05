@@ -193,3 +193,140 @@ map.on(L.Draw.Event.CREATED, function (e) {
       });
 
 };
+
+function drawMap(){
+
+  if(!map || !markersLayer) return;
+
+  markersLayer.clearLayers();
+  drawnItems.clearLayers();
+
+  houses.forEach(h => {
+
+    const cadastrado = !!cadastros[h.id];
+
+    console.log(
+      h.id,
+      "cadastrado:",
+      cadastrado,
+      cadastros[h.id]
+    );
+
+    let corBorda = "#666";
+    let corPreenchimento = "#666";
+
+    if(h.statusMissao === "pendente"){
+      corBorda = "#2196f3";
+      corPreenchimento = "#2196f3";
+    }
+
+    if(h.statusMissao === "em_andamento"){
+      corBorda = "#ffd600";
+      corPreenchimento = "#ffd600";
+    }
+
+    if(h.statusMissao === "concluida"){
+      corBorda = "#00cc44";
+      corPreenchimento = "#00cc44";
+    }
+
+    if(cadastrado && !h.statusMissao){
+      corBorda = "#00cc44";
+      corPreenchimento = "#00cc44";
+    }
+
+    if(casaSelecionada === h.id){
+      corBorda = "#ffff00";
+      corPreenchimento = "#ffff00";
+    }
+
+    // Se veio polígono do KML
+    if(h.polygon && h.polygon.length){
+
+      const poly = L.polygon(
+
+        h.polygon.map(p => [p[1], p[0]]),
+
+        {
+          color: corBorda,
+          fillColor: corPreenchimento,
+          fillOpacity: 0.90,
+          weight: casaSelecionada === h.id ? 4 : 2
+        }
+
+      );
+
+      poly.casaId = h.id;
+
+      poly.bindPopup(`
+        <b>${h.label}</b><br>
+        ${cadastrado ? '✅ Cadastrado' : '⏳ Pendente'}
+      `);
+
+      poly.on("click", () => {
+
+        casaSelecionada = h.id;
+
+        drawMap();
+
+        openHouse(h);
+
+      });
+
+      if (casaSelecionada === h.id) {
+          drawnItems.addLayer(poly);
+      } else {
+          markersLayer.addLayer(poly);
+      }
+
+    }
+
+    // Se for ponto normal (GeoJSON Point)
+    else{
+
+      if(
+        h.lat == null ||
+        h.lng == null
+      ){
+        console.warn(
+          "Casa sem coordenadas:",
+          h
+        );
+        return;
+      }
+
+      const marker = L.circleMarker(
+        [h.lat, h.lng],
+        {
+          radius: casaSelecionada === h.id ? 12 : 8,
+          color: corBorda,
+          fillColor: corPreenchimento,
+          fillOpacity: 1,
+          weight: 2
+        }
+      );
+
+      marker.bindPopup(`
+        <b>${h.label}</b><br>
+        ${cadastrado ? '✅ Cadastrado' : '⏳ Pendente'}
+      `);
+
+      marker.on("click", () => {
+
+        casaSelecionada = h.id;
+
+        drawMap();
+
+        openHouse(h);
+
+      });
+
+      markersLayer.addLayer(marker);
+
+    }
+
+  });
+
+  console.log("Desenhando:", houses);
+
+}

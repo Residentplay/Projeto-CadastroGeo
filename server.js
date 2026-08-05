@@ -798,6 +798,43 @@ app.post("/login", async (req, res) => {
 
 });
 
+app.delete("/usuario/:id", async (req, res) => {
+
+  try {
+
+    const { id } = req.params;
+
+    const resultado = await pg.query(
+      `
+      DELETE FROM usuarios
+      WHERE id = $1
+      RETURNING id
+      `,
+      [id]
+    );
+
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({
+        erro: "Usuário não encontrado."
+      });
+    }
+
+    res.json({
+      ok: true
+    });
+
+  } catch (erro) {
+
+    console.error("Erro ao excluir usuário:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
+
+});
+
 app.post("/fotos", async (req, res) => {
 
   try {

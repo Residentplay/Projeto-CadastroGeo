@@ -769,7 +769,6 @@ app.post("/login", async (req, res) => {
       });
     }
 
-    const usuarioEncontrado = resultado.rows[0];
 
     const token = jwt.sign(
       {

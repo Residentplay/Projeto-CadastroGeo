@@ -864,7 +864,7 @@ async function salvarLotes(){
 
 }
 
-async function salvarCasas(){
+window.salvarCasas = async function(){
 
   try{
 
@@ -898,7 +898,7 @@ async function salvarCasas(){
 
   }
 
-}
+};
 
 function importarGeoJSON(gj){
 

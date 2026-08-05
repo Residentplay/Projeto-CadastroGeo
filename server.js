@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const { Pool } = require("pg");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 
@@ -755,7 +756,23 @@ app.post("/login", async (req, res) => {
 
     }
 
-    res.json(resultado.rows[0]);
+    const usuarioEncontrado = resultado.rows[0];
+
+    const token = jwt.sign(
+      {
+        usuario: usuarioEncontrado.usuario,
+        papel: usuarioEncontrado.papel
+      },
+      process.env.JWT_SECRET || "chave-temporaria",
+      {
+        expiresIn: "8h"
+      }
+    );
+
+    res.json({
+      ...usuarioEncontrado,
+      token
+    });
 
   } catch (erro) {
 

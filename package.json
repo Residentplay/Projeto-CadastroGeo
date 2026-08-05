@@ -14,7 +14,7 @@
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "pg": "^8.22.0",
-    "sqlite3": "^5.1.7"
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.22.0"
   }
 }

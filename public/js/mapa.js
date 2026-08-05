@@ -414,7 +414,7 @@ document.getElementById("search-house").addEventListener("input", function(){
 
 });
 
-window.importarKML = function(){
+window.importarKML = function(xml){
 
   console.log("ENTROU EM importarKML");
 

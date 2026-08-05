@@ -128,7 +128,6 @@ window.renderUsersTable = function(){
       <td style="font-weight:500;opacity:${u.active?1:.45}">${u.name}</td>
       <td class="td-user">${u.user}</td>
       <td class="td-pass" onclick="togglePass(this,'${u.pass}')">••••••</td>
-      <td><span class="role-pill role-${u.role}">${ROLE_LABEL[u.role]}</span></td>
       <td style="font-size:11px;color:${u.active?'#3fb950':'#7d8590'}">${u.active?'✓ Ativo':'✗ Inativo'}</td>
       <td><div class="td-actions">
         <button class="btn btn-ghost btn-sm" onclick="toggleUser(${u.id})">${u.active?'Desativar':'Ativar'}</button>

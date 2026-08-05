@@ -414,11 +414,13 @@ document.getElementById("search-house").addEventListener("input", function(){
 
 });
 
-window.importarKML = function(xml){
+window.importarKML = async function(xml){
 
   console.log("ENTROU EM importarKML");
 
   lotes = [];
+
+  houses = [];
 
   lotesLayer.clearLayers();
 
@@ -526,9 +528,14 @@ window.importarKML = function(xml){
   // copiamos os lotes para houses.
   //houses = [...lotes];
 
-  renderHousesList();
-  updateStats();
-  drawMap();
+    await salvarLotes();
+
+    await carregarLotes();
+    await carregarCasas();
+
+    renderHousesList();
+    updateStats();
+    drawMap();
   
   if(drawnItems.getLayers().length){
 

@@ -1167,37 +1167,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
-
-app.get("/corrigir-atribuicoes", async (req, res) => {
-
-  try {
-
-    const resultado = await pg.query(`
-      UPDATE atribuicoes a
-      SET status = 'pendente'
-      WHERE a.status = 'em_andamento'
-        AND a.id NOT IN (
-          SELECT MAX(id)
-          FROM atribuicoes
-          WHERE status = 'em_andamento'
-          GROUP BY colaborador
-        )
-      RETURNING id, colaborador, casa_id, status
-    `);
-
-    res.json({
-      corrigidas: resultado.rowCount,
-      registros: resultado.rows
-    });
-
-  } catch (erro) {
-
-    console.error(erro);
-
-    res.status(500).json({
-      erro: erro.message
-    });
-
-  }
-
-});

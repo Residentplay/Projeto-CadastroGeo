@@ -284,7 +284,7 @@ window.carregarUsuarios = async function() {
     lista.forEach(u => {
 
       users.push({
-        id: "u" + Date.now() + Math.random(),
+        id: u.id,
         name: u.nome,
         user: u.usuario,
         pass: u.senha,

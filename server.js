@@ -925,9 +925,9 @@ app.get("/usuarios", async (req, res) => {
 
     const resultado = await pg.query(`
       SELECT
+        id,
         nome,
         usuario,
-        senha,
         papel,
         ativo
       FROM usuarios

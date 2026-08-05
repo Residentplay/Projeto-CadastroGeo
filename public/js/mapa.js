@@ -330,3 +330,86 @@ function drawMap(){
   console.log("Desenhando:", houses);
 
 }
+
+function renderHousesList(lista = houses){
+
+  const el = document.getElementById("houses-list");
+
+  el.innerHTML = "";
+
+  lista.forEach(h=>{
+
+    const cadastro = cadastros[h.id] || {};
+
+    const item = document.createElement("div");
+
+    item.className="house-item";
+
+    item.id="li-"+h.id;
+
+    item.onclick = () => {
+      document.getElementById("search-house").value = h.label;
+      openHouse(h);
+    };
+
+    item.innerHTML=`
+      <strong>${h.label}</strong><br>
+
+      <small>
+      ${cadastro.nome || ""}
+      </small><br>
+
+      <small>
+      ${cadastro.endereco || ""}
+      </small>
+
+    `;
+
+    el.appendChild(item);
+
+  });
+
+}
+ 
+document.getElementById("search-house").addEventListener("input", function(){
+
+  const busca = this.value.toLowerCase().trim();
+
+  if (busca === "") {
+
+    document.getElementById("sidebar-sub").textContent =
+      "Clique em um imóvel para abrir o cadastro"; 
+
+    casasLayer.eachLayer(layer => {
+      layer.setStyle({
+        color: "#3388ff",
+        weight: 2
+      });
+    });
+
+  }
+
+  const listaFiltrada = houses.filter(h => {
+
+    const cadastro = cadastros[h.id] || {};
+
+    return (
+  (h.label || "").toLowerCase().includes(busca) ||
+    (cadastro.nome || "").toLowerCase().includes(busca) ||
+    (cadastro.endereco || "").toLowerCase().includes(busca) ||
+    (cadastro.cpf || "").toLowerCase().includes(busca) ||
+    (cadastro.bairro || "").toLowerCase().includes(busca)
+  );
+
+  });
+
+  renderHousesList(listaFiltrada);
+
+  document.getElementById("sidebar-sub").textContent =
+  `${listaFiltrada.length} imóvel(is) encontrado(s)`;
+
+  if(listaFiltrada.length === 1 && busca !== ""){
+    openHouse(listaFiltrada[0]);
+  }
+
+});

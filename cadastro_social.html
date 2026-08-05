@@ -2143,62 +2143,7 @@ function carregarListaColaboradores() {
 
 }
 
-async function carregarDashboard(){
 
-  const res = await fetch("/dashboard");
-  const dadosDashboard = await res.json();
-  const resEquipe = await fetch("/dashboard/equipe");
-  const dadosEquipe = await resEquipe.json();
-  const resCasasAtuais = await fetch("/dashboard/casas-atuais");
-  const casasAtuais = await resCasasAtuais.json();
-
-  document.getElementById("dashboard-resumo").innerHTML = `
-
-  
-  
-    <div class="card">
-      <h3>📍 Total de Missões</h3>
-      <h1 id="dash-total">0</h1>
-    </div>
-
-    <div class="card">
-      <h3>🟡 Pendentes</h3>
-      <h1 id="dash-pendentes">0</h1>
-    </div>
-
-    <div class="card">
-      <h3>🔵 Em andamento</h3>
-      <h1 id="dash-andamento">0</h1>
-    </div>
-
-    <div class="card">
-      <h3>🟢 Concluídas</h3>
-      <h1 id="dash-concluidas">0</h1>
-    </div>
-
-  `;
-
-  document.getElementById("dashboard-equipe").innerHTML = `
-    <h2>👷 Equipe</h2>
-    <div id="lista-equipe"></div>
-  `;
-  
-  renderizarResumo(dadosDashboard);
-  renderizarEquipe(dadosEquipe, casasAtuais);
-  renderizarEquipe(dadosEquipe, casasAtuais);
-  
-
-  if(window.dashboardTimer){
-    clearInterval(window.dashboardTimer);
-  }
-
-  window.dashboardTimer = setInterval(() => {
-
-    atualizarDashboard();
-
-  },10000);
-
-}
 
 
 

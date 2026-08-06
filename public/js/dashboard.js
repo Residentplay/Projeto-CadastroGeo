@@ -1,24 +1,65 @@
 // Dashboard do CadastroGeo
 
+function animarNumero(id, valorFinal){
+
+  const elemento = document.getElementById(id);
+
+  if(!elemento) return;
+
+  let valorAtual = 0;
+
+  const incremento = Math.max(1, Math.ceil(valorFinal / 30));
+
+  const timer = setInterval(() => {
+
+    valorAtual += incremento;
+
+    if(valorAtual >= valorFinal){
+
+      valorAtual = valorFinal;
+
+      clearInterval(timer);
+
+    }
+
+    elemento.textContent = valorAtual;
+
+  },20);
+
+}
+
+
 function renderizarResumo(dadosDashboard){
 
-  document.getElementById("dash-casas").textContent =
-    dadosDashboard.totalCasas;
+  animarNumero(
+    "dash-casas",
+    dadosDashboard.totalCasas
+  );
 
-  document.getElementById("dash-colaboradores").textContent =
-    dadosDashboard.totalColaboradores;
+  animarNumero(
+    "dash-colaboradores",
+    dadosDashboard.totalColaboradores
+  );
 
-  document.getElementById("dash-total").textContent =
-    dadosDashboard.totalMissoes;
+  animarNumero(
+    "dash-total",
+    dadosDashboard.totalMissoes
+  );
 
-  document.getElementById("dash-pendentes").textContent =
-    dadosDashboard.pendentes;
+  animarNumero(
+    "dash-pendentes",
+    dadosDashboard.pendentes
+  );
 
-  document.getElementById("dash-andamento").textContent =
-    dadosDashboard.andamento;
+  animarNumero(
+    "dash-andamento",
+    dadosDashboard.andamento
+  );
 
-  document.getElementById("dash-concluidas").textContent =
-    dadosDashboard.concluidas;
+  animarNumero(
+    "dash-concluidas",
+    dadosDashboard.concluidas
+  );
 
 }
 

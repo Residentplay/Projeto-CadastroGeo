@@ -325,9 +325,7 @@ window.saveCadastro = async function() {
 
       method: 'POST',
 
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: authHeaders(true),
 
       body: JSON.stringify(cadastro)
 

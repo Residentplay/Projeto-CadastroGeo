@@ -529,7 +529,7 @@ app.post("/casas", autenticarToken, async (req, res) => {
 // ==========================
 // SALVAR CADASTRO
 // ==========================
-app.post("/cadastro", async (req, res) => {
+app.post("/cadastro", autenticarToken, async (req, res) => {
 
   const c = req.body;
 

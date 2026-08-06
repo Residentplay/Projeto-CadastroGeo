@@ -192,7 +192,9 @@ window.carregarFotosCasa = async function(casaId) {
   galeria.innerHTML = "<p>Carregando fotos...</p>";
 
 
-  const res = await fetch("/fotos/" + casaId);
+  const res = await fetch("/fotos/" + casaId, {
+    headers: authHeaders()
+  });
 
   const fotos = await res.json();
 
@@ -374,9 +376,7 @@ window.saveCadastro = async function() {
 
       await fetch("/status-missao", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: authHeaders(true),
         body: JSON.stringify({
           casa_id: casaIdAtual,
           status: "concluida"
@@ -414,7 +414,9 @@ window.carregarCadastro = async function(casaId) {
 
   try {
 
-    const res = await fetch(`/cadastro/${casaId}`);
+    const res = await fetch(`/cadastro/${casaId}`, {
+      headers: authHeaders()
+    });
 
     return await res.json();
 

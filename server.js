@@ -1103,7 +1103,7 @@ app.get("/colaboradores", async (req, res) => {
 
 });
 
-app.get("/fotos/:casa_id", async (req, res) => {
+app.get("/fotos/:casaId", autenticarToken, async (req, res) => {
 
   try {
 
@@ -1168,7 +1168,7 @@ app.get("/cadastro", autenticarToken, async (req, res) => {
 // ==========================
 // BUSCAR CADASTRO POR CASA
 // ==========================
-app.get("/cadastro/:casa_id", async (req, res) => {
+app.get("/cadastro/:casa_id", autenticarToken, async (req, res) => {
 
   try {
 

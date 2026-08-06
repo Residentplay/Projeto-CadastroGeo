@@ -16,7 +16,7 @@ window.openHouse = async function(h){
   viewOnly?modal.classList.add('view-only'):modal.classList.remove('view-only');
   const cadastro = await carregarCadastro(h.id);
 
-  await carregarFotosCasa(h.id);
+  
 
   console.log("CADASTRO CARREGADO:", cadastro);
 
@@ -80,6 +80,9 @@ if (cadastro && cadastro.casa_id) {
     document.getElementById('f-data').value=new Date().toLocaleDateString('pt-BR');
     document.getElementById('f-colab').value=currentUser.name;
   }
+
+  await carregarFotosCasa(h.id);
+  
   document.querySelectorAll('.house-item').forEach(el=>el.classList.remove('selected'));
   const li=document.getElementById('li-'+h.id); if(li) li.classList.add('selected');
 

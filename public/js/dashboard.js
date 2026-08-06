@@ -2,6 +2,9 @@
 
 function renderizarResumo(dadosDashboard){
 
+  document.getElementById("dash-casas").textContent =
+    dadosDashboard.totalCasas;
+
   document.getElementById("dash-total").textContent =
     dadosDashboard.totalMissoes;
 
@@ -106,7 +109,11 @@ window.carregarDashboard = async function(){
 
   document.getElementById("dashboard-resumo").innerHTML = `
 
-  
+
+    <div class="card">
+      <h3>🏠 Total de Casas</h3>
+      <h1 id="dash-casas">0</h1>
+    </div>
   
     <div class="card">
       <h3>📍 Total de Missões</h3>

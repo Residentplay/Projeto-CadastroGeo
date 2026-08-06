@@ -172,7 +172,70 @@ window.carregarDashboard = async function(){
   
   renderizarResumo(dadosDashboard);
   renderizarEquipe(dadosEquipe, casasAtuais);
+
+
+  renderizarResumo(dadosDashboard);
+
   renderizarEquipe(dadosEquipe, casasAtuais);
+
+  // COLE O CÓDIGO DO GRÁFICO AQUI
+  const ctx = document.getElementById("grafico-missoes");
+
+  if (ctx) {
+
+    new Chart(ctx, {
+
+      type: "doughnut",
+
+      data: {
+
+        labels: [
+          "Pendentes",
+          "Em andamento",
+          "Concluídas"
+        ],
+
+        datasets: [{
+
+          data: [
+            dadosDashboard.pendentes,
+            dadosDashboard.andamento,
+            dadosDashboard.concluidas
+          ],
+
+          backgroundColor: [
+            "#f59e0b",
+            "#3b82f6",
+            "#22c55e"
+          ],
+
+          borderWidth: 0
+
+        }]
+
+      },
+
+      options: {
+
+        responsive: true,
+
+        maintainAspectRatio: false,
+
+        plugins: {
+
+          legend: {
+
+            position: "bottom"
+
+          }
+
+        }
+
+      }
+
+    });
+
+  }
   
 
   if(window.dashboardTimer){

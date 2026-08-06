@@ -398,7 +398,7 @@ app.post("/lotes", async (req, res) => {
 // ==========================
 // LISTAR CASAS
 // ==========================
-app.get("/casas", async (req, res) => {
+app.get("/casas", autenticarToken, async (req, res) => {
 
   try {
 

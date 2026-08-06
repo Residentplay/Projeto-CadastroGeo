@@ -986,7 +986,11 @@ window.carregarCasas = async function() {
 
   try {
 
-    const res = await fetch("/casas");
+    const res = await fetch("/casas", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
 
     const dados = await res.json();
 

@@ -871,15 +871,16 @@ window.salvarCasas = async function(){
     console.log("Casas para salvar:");
     console.log(houses);
 
-    const res = await fetch("/casas",{
+    const res = await fetch("/casas", {
 
-      method:"POST",
+      method: "POST",
 
-      headers:{
-        "Content-Type":"application/json"
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`
       },
 
-      body:JSON.stringify(houses)
+      body: JSON.stringify(houses)
 
     });
 

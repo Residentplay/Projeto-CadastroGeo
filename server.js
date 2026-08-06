@@ -461,7 +461,7 @@ app.get("/casas/:id", async (req, res) => {
 // ==========================
 // SALVAR CASAS
 // ==========================
-app.post("/casas", async (req, res) => {
+app.post("/casas", autenticarToken, async (req, res) => {
 
   const casas = req.body;
 

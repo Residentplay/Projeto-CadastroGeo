@@ -231,7 +231,7 @@ app.get("/lotes", autenticarToken, async (req, res) => {
 
 });
 
-app.get("/minhas-missoes/:colaborador", async (req, res) => {
+app.get("/minhas-missoes/:colaborador", autenticarToken, async (req, res) => {
 
   try {
 
@@ -646,7 +646,7 @@ app.post("/cadastro", autenticarToken, async (req, res) => {
 
 });
 
-app.post("/status-missao", async (req, res) => {
+app.post("/status-missao", autenticarToken, async (req, res) => {
 
   try {
 
@@ -1008,7 +1008,7 @@ app.post("/fotos", autenticarToken, async (req, res) => {
 
 });
 
-app.post("/atribuir-casa", async (req, res) => {
+app.post("/atribuir-casa", autenticarToken, async (req, res) => {
 
   try {
 

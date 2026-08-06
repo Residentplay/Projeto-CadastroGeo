@@ -265,9 +265,7 @@ window.abrirCadastroMissao = async function(casaId){
 
           method:"POST",
 
-          headers:{
-            "Content-Type":"application/json"
-          },
+          headers: authHeaders(true),
 
           body:JSON.stringify({
 
@@ -318,7 +316,10 @@ window.carregarMinhasMissoes = async function(){
   try{
 
     const res = await fetch(
-      "/minhas-missoes/" + currentUser.user
+      "/minhas-missoes/" + currentUser.user,
+      {
+        headers: authHeaders()
+      }
     );
 
     const missoes = await res.json();

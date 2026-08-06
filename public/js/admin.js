@@ -212,9 +212,7 @@ window.confirmarAtribuicao = async function(colaborador){
 
       method:"POST",
 
-      headers:{
-        "Content-Type":"application/json"
-      },
+      headers: authHeaders(true),
 
       body:JSON.stringify({
 

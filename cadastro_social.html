@@ -605,45 +605,39 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
   </div>
  
   <!-- MAPA -->
+  <h2>📊 Dashboard</h2>
+
+<div
+  id="dashboard-layout"
+  style="
+    display:grid;
+    grid-template-columns:180px minmax(420px,1fr) 280px;
+    gap:20px;
+    align-items:start;
+    margin-top:20px;
+  "
+>
+
   <div
-    id="view-dashboard"
+    id="dashboard-resumo"
     style="
-      display:none;
-      flex:1;
-      overflow:auto;
-      padding:20px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
     ">
+  </div>
 
-    <h2>📊 Dashboard</h2>
+  <div style="display:flex; flex-direction:column; gap:20px;">
 
-    <div
-      id="dashboard-resumo"
-      style="
-        display:grid;
-        grid-template-columns:repeat(4,1fr);
-        gap:12px;
-        margin-top:20px;
-      ">
-    </div>
+    <div id="dashboard-graficos"></div>
 
-    <div style="display:flex; flex-direction:column; gap:20px; flex:1;">
-
-      <div id="dashboard-graficos"></div>
-
-      <div
-      id="dashboard-equipe"
-      style="
-        margin-top:24px;
-      ">
-    </div>
-
-      <div id="dashboard-ranking"></div>
-
-    </div>
-
-    
+    <div id="dashboard-ranking"></div>
 
   </div>
+
+  <div id="dashboard-equipe"></div>
+
+</div>
 
 
   <div id="view-map">

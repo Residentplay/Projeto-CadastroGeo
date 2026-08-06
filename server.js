@@ -5,6 +5,49 @@ const { Pool } = require("pg");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
+
+
+function autenticarToken(req, res, next) {
+
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({
+      erro: "Token não informado."
+    });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({
+      erro: "Token inválido."
+    });
+  }
+
+  try {
+
+    const usuario = jwt.verify(
+      token,
+      process.env.JWT_SECRET || "chave-temporaria"
+    );
+
+    req.usuario = usuario;
+
+    next();
+
+  } catch (erro) {
+
+    return res.status(401).json({
+      erro: "Token inválido ou expirado."
+    });
+
+  }
+
+}
+
+
+
 const app = express();
 
 app.use(express.json({ limit: "50mb" }));
@@ -18,6 +61,8 @@ const pg = new Pool({
     ? { rejectUnauthorized: false }
     : false
 });
+
+
 
 async function iniciarPostgreSQL() {
 
@@ -1002,7 +1047,7 @@ app.post("/atribuir-casa", async (req, res) => {
 
 });
 
-app.get("/usuarios", async (req, res) => {
+app.get("/usuarios", autenticarToken, async (req, res) => {
 
   try {
 

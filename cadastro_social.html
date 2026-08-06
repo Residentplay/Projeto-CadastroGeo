@@ -327,11 +327,39 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 }
 
 #dashboard-resumo .card{
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:18px;
-  min-height:110px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+  min-height: 120px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  transition: .25s;
+  cursor: default;
+}
+
+#dashboard-resumo .card:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(0,0,0,.18);
+}
+
+#dashboard-resumo .card-casas{
+  border-left: 5px solid #3b82f6;
+}
+
+#dashboard-resumo .card-missoes{
+  border-left: 5px solid #8b5cf6;
+}
+
+#dashboard-resumo .card-pendentes{
+  border-left: 5px solid #f59e0b;
+}
+
+#dashboard-resumo .card-andamento{
+  border-left: 5px solid #06b6d4;
+}
+
+#dashboard-resumo .card-concluidas{
+  border-left: 5px solid #22c55e;
 }
 
 #dashboard-resumo .card h3{

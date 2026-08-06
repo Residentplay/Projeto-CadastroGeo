@@ -110,27 +110,27 @@ window.carregarDashboard = async function(){
   document.getElementById("dashboard-resumo").innerHTML = `
 
 
-    <div class="card">
+    <div class="card card-casas">
       <h3>🏠 Total de Casas</h3>
       <h1 id="dash-casas">0</h1>
     </div>
   
-    <div class="card">
+    <div class="card card-missoes">
       <h3>📍 Total de Missões</h3>
       <h1 id="dash-total">0</h1>
     </div>
 
-    <div class="card">
+    <div class="card card-pendentes">
       <h3>🟡 Pendentes</h3>
       <h1 id="dash-pendentes">0</h1>
     </div>
 
-    <div class="card">
+    <div class="card card-andamento">
       <h3>🔵 Em andamento</h3>
       <h1 id="dash-andamento">0</h1>
     </div>
 
-    <div class="card">
+    <div class="card card-concluidas">
       <h3>🟢 Concluídas</h3>
       <h1 id="dash-concluidas">0</h1>
     </div>

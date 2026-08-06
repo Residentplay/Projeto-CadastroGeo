@@ -1042,7 +1042,10 @@ window.carregarLotes = async function(){
 
   try{
 
-    const res = await fetch("/lotes");
+    const res = await fetch("/lotes", {
+      headers: authHeaders()
+    });
+
     const dados = await res.json();
 
     lotes = [];

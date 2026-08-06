@@ -204,7 +204,7 @@ iniciarPostgreSQL();
 // ==========================
 // LISTAR LOTES
 // ==========================
-app.get("/lotes", async (req, res) => {
+app.get("/lotes", autenticarToken, async (req, res) => {
 
   try {
 

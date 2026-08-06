@@ -2,6 +2,21 @@ let currentUser = null;
 let confirmCb = null;
 
 
+window.authHeaders = function(contentType = false) {
+
+  const headers = {
+    Authorization: `Bearer ${localStorage.getItem("token")}`
+  };
+
+  if (contentType) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  return headers;
+
+};
+
+
 window.openConfirm = function(title, msg, cb){
   document.getElementById('confirm-title').textContent=title;
   document.getElementById('confirm-msg').textContent=msg;

@@ -665,6 +665,9 @@ app.post("/status-missao", async (req, res) => {
 
 });
 
+
+
+
 app.post("/usuario", async (req, res) => {
 
   try {
@@ -712,6 +715,95 @@ app.post("/usuario", async (req, res) => {
   }
 
 });
+
+
+
+
+app.put("/usuario/:id", async (req, res) => {
+
+  try {
+
+    const { id } = req.params;
+
+    const {
+      nome,
+      usuario,
+      senha,
+      papel
+    } = req.body;
+
+    let resultado;
+
+    if (senha) {
+
+      const senhaCriptografada = await bcrypt.hash(senha, 10);
+
+      resultado = await pg.query(
+        `
+        UPDATE usuarios
+        SET
+          nome = $1,
+          usuario = $2,
+          senha = $3,
+          papel = $4
+        WHERE id = $5
+        RETURNING id
+        `,
+        [
+          nome,
+          usuario,
+          senhaCriptografada,
+          papel,
+          id
+        ]
+      );
+
+    } else {
+
+      resultado = await pg.query(
+        `
+        UPDATE usuarios
+        SET
+          nome = $1,
+          usuario = $2,
+          papel = $3
+        WHERE id = $4
+        RETURNING id
+        `,
+        [
+          nome,
+          usuario,
+          papel,
+          id
+        ]
+      );
+
+    }
+
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({
+        erro: "Usuário não encontrado."
+      });
+    }
+
+    res.json({
+      ok: true
+    });
+
+  } catch (erro) {
+
+    console.error("Erro ao atualizar usuário:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
+
+});
+
+
+
 
 app.post("/login", async (req, res) => {
 

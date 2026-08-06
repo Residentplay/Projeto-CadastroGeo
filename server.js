@@ -1208,6 +1208,13 @@ app.get("/dashboard", autenticarToken, async (req, res) => {
       FROM atribuicoes
     `);
 
+    const totalColaboradores = await pg.query(`
+      SELECT COUNT(*) AS total
+      FROM usuarios
+      WHERE papel = 'colaborador'
+        AND ativo = true
+    `);
+
     const totalCasas = await pg.query(`
       SELECT COUNT(*) AS total
       FROM casas
@@ -1232,6 +1239,10 @@ app.get("/dashboard", autenticarToken, async (req, res) => {
     `);
 
     res.json({
+
+      totalColaboradores: Number(
+        totalColaboradores.rows[0].total
+      ),
 
       totalCasas: Number(totalCasas.rows[0].total),
 

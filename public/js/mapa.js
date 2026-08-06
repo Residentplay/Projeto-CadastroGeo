@@ -837,8 +837,6 @@ async function salvarLotes(){
 
     lotes.forEach((lote, i) => {
 
-       console.log("POLÍGONO DO LOTE:", lote.polygon);
-
       lotesParaSalvar.push({
         id: lote.id,
         nome: lote.label || `Lote ${i + 1}`,
@@ -1057,8 +1055,6 @@ window.carregarCasas = async function() {
 
 window.carregarLotes = async function(){
 
-  console.log("ENTROU EM carregarLotes");
-
   try{
 
     const res = await fetch("/lotes", {
@@ -1066,8 +1062,6 @@ window.carregarLotes = async function(){
     });
 
     const dados = await res.json();
-
-    console.log("DADOS RECEBIDOS DE /lotes:", dados);
 
     lotes = [];
 

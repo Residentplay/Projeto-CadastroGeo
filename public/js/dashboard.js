@@ -136,6 +136,52 @@ async function atualizarDashboard(){
 
 }
 
+
+
+function renderizarRanking(dadosRanking){
+
+  const container = document.getElementById("dashboard-ranking");
+
+  if(!container) return;
+
+  if(!dadosRanking.length){
+
+    container.innerHTML = `
+      <p style="opacity:.6">
+        Nenhum cadastro concluído ainda.
+      </p>
+    `;
+
+    return;
+
+  }
+
+  const medalhas = ["🥇", "🥈", "🥉"];
+
+  container.innerHTML = dadosRanking.map((item, i) => {
+
+    const posicao = medalhas[i] || `${i + 1}º`;
+
+    return `
+      <div class="ranking-item">
+        <span class="ranking-posicao">${posicao}</span>
+
+        <span class="ranking-nome">
+          ${item.colaborador}
+        </span>
+
+        <strong class="ranking-total">
+          ${item.total}
+        </strong>
+      </div>
+    `;
+
+  }).join("");
+
+}
+
+
+
 window.carregarDashboard = async function(){
 
   const res = await fetch("/dashboard", {
@@ -150,6 +196,12 @@ window.carregarDashboard = async function(){
     headers: authHeaders()
   });
   const casasAtuais = await resCasasAtuais.json();
+
+  const resRanking = await fetch("/dashboard/ranking", {
+    headers: authHeaders()
+  });
+
+  const dadosRanking = await resRanking.json();
 
   document.getElementById("dashboard-resumo").innerHTML = `
 
@@ -213,6 +265,7 @@ window.carregarDashboard = async function(){
   
   renderizarResumo(dadosDashboard);
   renderizarEquipe(dadosEquipe, casasAtuais);
+  renderizarRanking(dadosRanking);
 
 
   renderizarResumo(dadosDashboard);

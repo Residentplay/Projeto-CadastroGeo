@@ -1317,6 +1317,36 @@ app.get("/dashboard/equipe", autenticarToken, async (req, res) => {
 });
 
 
+app.get("/dashboard/ranking", autenticarToken, async (req, res) => {
+
+  try {
+
+    const resultado = await pg.query(`
+      SELECT
+        colaborador,
+        COUNT(*) AS total
+      FROM cadastro
+      WHERE colaborador IS NOT NULL
+        AND colaborador <> ''
+      GROUP BY colaborador
+      ORDER BY total DESC
+    `);
+
+    res.json(resultado.rows);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      erro: err.message
+    });
+
+  }
+
+});
+
+
 app.get("/dashboard/casas-atuais", autenticarToken, async (req, res) => {
 
   try{

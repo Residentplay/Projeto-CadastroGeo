@@ -764,7 +764,7 @@ app.post("/usuario", autenticarToken, async (req, res) => {
 
 
 
-app.put("/usuario/:id", async (req, res) => {
+app.put("/usuario/:id", autenticarToken, async (req, res) => {
 
   try {
 
@@ -926,7 +926,7 @@ app.post("/login", async (req, res) => {
 
 });
 
-app.delete("/usuario/:id", async (req, res) => {
+app.delete("/usuario/:id", autenticarToken, async (req, res) => {
 
   try {
 

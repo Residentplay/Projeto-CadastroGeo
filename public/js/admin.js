@@ -135,7 +135,10 @@ window.deleteUser = function(id){
       try {
 
         const res = await fetch(`/usuario/${id}`, {
-          method: "DELETE"
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
         });
 
         const dados = await res.json();

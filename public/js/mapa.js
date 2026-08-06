@@ -815,6 +815,8 @@ async function salvarLotes(){
 
     lotes.forEach((lote, i) => {
 
+       console.log("POLÍGONO DO LOTE:", lote.polygon);
+
       lotesParaSalvar.push({
         id: lote.id,
         nome: lote.label || `Lote ${i + 1}`,

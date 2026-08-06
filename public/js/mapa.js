@@ -837,12 +837,10 @@ async function salvarLotes(){
 
     console.log("Enviando lotes:", lotesParaSalvar);
 
-    const res = await fetch("/lotes",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify(lotesParaSalvar)
+    const res = await fetch("/lotes", {
+      method: "POST",
+      headers: authHeaders(true),
+      body: JSON.stringify(lotesParaSalvar)
     });
 
     console.log("Status:", res.status);

@@ -437,7 +437,9 @@ window.carregarCadastrosDoBanco = async function() {
 
   try {
 
-    const res = await fetch("/cadastros");
+    const res = await fetch("/cadastro", {
+      headers: authHeaders()
+    });
 
     const dados = await res.json();
 

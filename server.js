@@ -322,7 +322,7 @@ app.get("/lotes/:id", async (req, res) => {
 // ==========================
 // SALVAR LOTES
 // ==========================
-app.post("/lotes", async (req, res) => {
+app.post("/lotes", autenticarToken, async (req, res) => {
 
   const lotes = req.body;
 
@@ -1140,7 +1140,7 @@ app.get("/fotos/:casa_id", async (req, res) => {
 // ==========================
 // LISTAR CADASTROS
 // ==========================
-app.get("/cadastros", async (req, res) => {
+app.get("/cadastro", autenticarToken, async (req, res) => {
 
   try {
 

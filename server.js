@@ -286,7 +286,7 @@ app.get("/minhas-missoes/:colaborador", autenticarToken, async (req, res) => {
 // ==========================
 // BUSCAR LOTE POR ID
 // ==========================
-app.get("/lotes/:id", async (req, res) => {
+app.get("/lotes/:id", autenticarToken, async (req, res) => {
 
   try {
 
@@ -425,7 +425,7 @@ app.get("/casas", autenticarToken, async (req, res) => {
 // ==========================
 // BUSCAR CASA POR ID
 // ==========================
-app.get("/casas/:id", async (req, res) => {
+app.get("/casas/:id", autenticarToken, async (req, res) => {
 
   try {
 
@@ -1076,7 +1076,7 @@ app.get("/usuarios", autenticarToken, async (req, res) => {
 
 });
 
-app.get("/colaboradores", async (req, res) => {
+app.get("/colaboradores", autenticarToken, async (req, res) => {
 
   try {
 
@@ -1208,6 +1208,11 @@ app.get("/dashboard", autenticarToken, async (req, res) => {
       FROM atribuicoes
     `);
 
+    const totalCasas = await pg.query(`
+      SELECT COUNT(*) AS total
+      FROM casas
+    `);
+
     const pendentes = await pg.query(`
       SELECT COUNT(*) AS total
       FROM atribuicoes
@@ -1227,6 +1232,8 @@ app.get("/dashboard", autenticarToken, async (req, res) => {
     `);
 
     res.json({
+
+      totalCasas: Number(totalCasas.rows[0].total),
 
       totalMissoes: Number(totalMissoes.rows[0].total),
 

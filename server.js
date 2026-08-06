@@ -1120,7 +1120,7 @@ app.get("/fotos/:casaId", autenticarToken, async (req, res) => {
       WHERE casa_id = $1
       ORDER BY id
       `,
-      [req.params.casa_id]
+      [req.params.casaId]
     );
 
     res.json(resultado.rows);

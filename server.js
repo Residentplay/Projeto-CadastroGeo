@@ -713,7 +713,7 @@ app.post("/status-missao", async (req, res) => {
 
 
 
-app.post("/usuario", async (req, res) => {
+app.post("/usuario", autenticarToken, async (req, res) => {
 
   try {
 

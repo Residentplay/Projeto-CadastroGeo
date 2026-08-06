@@ -98,7 +98,29 @@ map.on(L.Draw.Event.CREATED, function (e) {
 
   if (tipo.toUpperCase() === "L") {
 
-      lotesLayer.addLayer(layer);
+    lotesLayer.addLayer(layer);
+
+    const pontos = layer.getLatLngs()[0].map(p => [
+      p.lng,
+      p.lat
+    ]);
+
+    const centro = layer.getBounds().getCenter();
+
+    const novoLote = {
+      id: "lote_" + Date.now(),
+      label: "Lote " + (lotes.length + 1),
+      status: "livre",
+      lat: centro.lat,
+      lng: centro.lng,
+      polygon: pontos
+    };
+
+    lotes.push(novoLote);
+
+    layer.loteId = novoLote.id;
+
+    console.log("Lote manual adicionado:", novoLote);
 
   }
   else if (tipo.toUpperCase() === "C") {
@@ -1109,6 +1131,16 @@ window.carregarLotes = async function(){
         `);
 
         lotesLayer.addLayer(poly);
+
+        console.log(
+          "Polígono adicionado:",
+          poly.getBounds()
+        );
+
+        console.log(
+          "Quantidade de lotes na camada:",
+          lotesLayer.getLayers().length
+        );
 
       }
       catch(err){

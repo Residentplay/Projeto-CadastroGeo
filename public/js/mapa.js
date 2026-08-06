@@ -943,7 +943,7 @@ function importarGeoJSON(gj){
     }
 
     lotes.push({
-      id:'h'+i,
+      id: 'lote_' + Date.now() + '_' + i,
       label:p.endereco || p.nome || p.name || ('Lote '+(i+1)),
       bairro:p.bairro || '',
       lat,

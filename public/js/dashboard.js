@@ -219,6 +219,44 @@ window.carregarDashboard = async function(){
 
   renderizarEquipe(dadosEquipe, casasAtuais);
 
+  const textoCentro = {
+    id: "textoCentro",
+
+    afterDraw(chart) {
+
+      const {
+        ctx,
+        chartArea: { left, right, top, bottom }
+      } = chart;
+
+      ctx.save();
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 28px Arial";
+
+      ctx.fillText(
+        dadosDashboard.totalMissoes,
+        (left + right) / 2,
+        (top + bottom) / 2 - 8
+      );
+
+      ctx.fillStyle = "#8b949e";
+      ctx.font = "12px Arial";
+
+      ctx.fillText(
+        "Total de Missões",
+        (left + right) / 2,
+        (top + bottom) / 2 + 20
+      );
+
+      ctx.restore();
+
+    }
+  };
+
   // COLE O CÓDIGO DO GRÁFICO AQUI
   const ctx = document.getElementById("grafico-missoes");
 
@@ -272,7 +310,9 @@ window.carregarDashboard = async function(){
 
         }
 
-      }
+      },
+
+      plugins: [textoCentro]
 
     });
 

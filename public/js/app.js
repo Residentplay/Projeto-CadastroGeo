@@ -105,6 +105,12 @@ window.setupUI = async function(){
   await carregarCasas();
   await carregarCadastrosDoBanco();
 
+  lotesLayer.eachLayer(layer => {
+    if (layer.bringToFront) {
+      layer.bringToFront();
+    }
+  });
+
   updateStats();
 };
 

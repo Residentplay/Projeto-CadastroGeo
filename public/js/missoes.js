@@ -141,7 +141,10 @@ window.iniciarTrabalho = async function(){
         const minhaLng = posicao.coords.longitude;
 
         const res = await fetch(
-          "/minhas-missoes/" + currentUser.user
+          "/minhas-missoes/" + currentUser.user,
+          {
+            headers: authHeaders()
+          }
         );
 
         const missoes = await res.json();

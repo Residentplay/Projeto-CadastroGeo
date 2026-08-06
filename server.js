@@ -1199,7 +1199,7 @@ app.get("/cadastro/:casa_id", async (req, res) => {
 // PÁGINA PRINCIPAL
 // ==========================
 
-app.get("/dashboard", async (req, res) => {
+app.get("/dashboard", autenticarToken, async (req, res) => {
 
   try{
 
@@ -1251,7 +1251,7 @@ app.get("/dashboard", async (req, res) => {
 });
 
 
-app.get("/dashboard/equipe", async (req, res) => {
+app.get("/dashboard/equipe", autenticarToken, async (req, res) => {
 
   try{
 
@@ -1299,7 +1299,7 @@ app.get("/dashboard/equipe", async (req, res) => {
 });
 
 
-app.get("/dashboard/casas-atuais", async (req, res) => {
+app.get("/dashboard/casas-atuais", autenticarToken, async (req, res) => {
 
   try{
 

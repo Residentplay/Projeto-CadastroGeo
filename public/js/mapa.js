@@ -873,10 +873,7 @@ window.salvarCasas = async function(){
 
       method: "POST",
 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      },
+      headers: authHeaders(true),
 
       body: JSON.stringify(houses)
 
@@ -986,9 +983,7 @@ window.carregarCasas = async function() {
   try {
 
     const res = await fetch("/casas", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      }
+      headers: authHeaders()
     });
 
     const dados = await res.json();

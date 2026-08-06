@@ -59,10 +59,7 @@ window.addUser = async function(){
 
     method: metodo,
 
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`
-    },
+    headers: authHeaders(true),
 
     body: JSON.stringify({
 
@@ -136,9 +133,7 @@ window.deleteUser = function(id){
 
         const res = await fetch(`/usuario/${id}`, {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
+          headers: authHeaders()
         });
 
         const dados = await res.json();
@@ -327,12 +322,9 @@ window.carregarUsuarios = async function() {
 
   try {
 
-    const token = localStorage.getItem("token");
 
     const res = await fetch("/usuarios", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: authHeaders()
     });
 
     if (!res.ok) {

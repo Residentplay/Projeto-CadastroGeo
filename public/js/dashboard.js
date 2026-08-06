@@ -80,7 +80,9 @@ function renderizarEquipe(dadosEquipe, casasAtuais){
 
 async function atualizarDashboard(){
 
-  const res = await fetch("/dashboard");
+  const res = await fetch("/dashboard", {
+    headers: authHeaders()
+  });
   const dadosDashboard = await res.json();
 
   renderizarResumo(dadosDashboard);
@@ -89,11 +91,17 @@ async function atualizarDashboard(){
 
 window.carregarDashboard = async function(){
 
-  const res = await fetch("/dashboard");
+  const res = await fetch("/dashboard", {
+    headers: authHeaders()
+  });
   const dadosDashboard = await res.json();
-  const resEquipe = await fetch("/dashboard/equipe");
+  const resEquipe = await fetch("/dashboard/equipe", {
+    headers: authHeaders()
+  });
   const dadosEquipe = await resEquipe.json();
-  const resCasasAtuais = await fetch("/dashboard/casas-atuais");
+  const resCasasAtuais = await fetch("/dashboard/casas-atuais", {
+    headers: authHeaders()
+  });
   const casasAtuais = await resCasasAtuais.json();
 
   document.getElementById("dashboard-resumo").innerHTML = `

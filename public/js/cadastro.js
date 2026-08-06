@@ -198,6 +198,8 @@ window.carregarFotosCasa = async function(casaId) {
 
   const fotos = await res.json();
 
+  galeria.innerHTML = "";
+
   fotos.forEach(foto => {
 
     const img = document.createElement("img");

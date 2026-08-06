@@ -963,7 +963,7 @@ app.delete("/usuario/:id", autenticarToken, async (req, res) => {
 
 });
 
-app.post("/fotos", async (req, res) => {
+app.post("/fotos", autenticarToken, async (req, res) => {
 
   try {
 

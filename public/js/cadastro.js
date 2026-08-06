@@ -345,9 +345,7 @@ window.saveCadastro = async function() {
 
         await fetch("/fotos", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: authHeaders(true),
           body: JSON.stringify({
             casa_id: casaIdAtual,
             nome_arquivo: foto.name,

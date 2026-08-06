@@ -325,7 +325,17 @@ window.carregarUsuarios = async function() {
 
   try {
 
-    const res = await fetch("/usuarios");
+    const token = localStorage.getItem("token");
+
+    const res = await fetch("/usuarios", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error("Não foi possível carregar os usuários.");
+    }
 
     const lista = await res.json();
 

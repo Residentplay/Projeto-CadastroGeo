@@ -5,6 +5,9 @@ function renderizarResumo(dadosDashboard){
   document.getElementById("dash-casas").textContent =
     dadosDashboard.totalCasas;
 
+  document.getElementById("dash-colaboradores").textContent =
+    dadosDashboard.totalColaboradores;
+
   document.getElementById("dash-total").textContent =
     dadosDashboard.totalMissoes;
 
@@ -114,6 +117,11 @@ window.carregarDashboard = async function(){
       <h3>🏠 Total de Casas</h3>
       <h1 id="dash-casas">0</h1>
     </div>
+
+    <div class="card card-colaboradores">
+      <h3>👷 Colaboradores</h3>
+      <h1 id="dash-colaboradores">0</h1>
+    </div>
   
     <div class="card card-missoes">
       <h3>📍 Total de Missões</h3>
@@ -135,6 +143,26 @@ window.carregarDashboard = async function(){
       <h1 id="dash-concluidas">0</h1>
     </div>
 
+  `;
+
+  document.getElementById("dashboard-graficos").innerHTML = `
+    <div class="dashboard-grafico">
+      <h3>Distribuição das Missões</h3>
+
+      <div class="grafico-container">
+        <canvas id="grafico-missoes"></canvas>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("dashboard-graficos").innerHTML = `
+    <div class="dashboard-grafico">
+      <h3>Distribuição das Missões</h3>
+
+      <div class="grafico-container">
+        <canvas id="grafico-missoes"></canvas>
+      </div>
+    </div>
   `;
 
   document.getElementById("dashboard-equipe").innerHTML = `

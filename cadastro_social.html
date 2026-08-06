@@ -337,6 +337,10 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
   cursor: default;
 }
 
+#dashboard-resumo .card-colaboradores{
+  border-left: 5px solid #ec4899;
+}
+
 #dashboard-resumo .card:hover{
   transform: translateY(-4px);
   box-shadow: 0 14px 32px rgba(0,0,0,.18);
@@ -595,6 +599,11 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         gap:12px;
         margin-top:20px;
       ">
+    </div>
+
+    <div 
+      id="dashboard-graficos"
+       style="margin-top:25px;">
     </div>
 
     <div
@@ -1108,6 +1117,9 @@ justify-content:center;
 document.getElementById('modal-wrap').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
 document.getElementById('confirm-wrap').addEventListener('click',function(e){ if(e.target===this) closeConfirm(); });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script src="/js/dashboard.js"></script>
 <script src="/js/mapa.js"></script>
 <script src="/js/cadastro.js"></script>

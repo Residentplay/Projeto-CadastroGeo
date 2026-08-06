@@ -1125,6 +1125,19 @@ window.carregarLotes = async function(){
 
     console.log("Lotes carregados do banco:", lotes);
 
+    if (lotesLayer && lotesLayer.getLayers().length > 0) {
+
+      const grupo = L.featureGroup(lotesLayer.getLayers());
+
+      map.fitBounds(
+        grupo.getBounds(),
+        {
+          padding: [30, 30]
+        }
+      );
+
+    }
+
   }
   catch(err){
 

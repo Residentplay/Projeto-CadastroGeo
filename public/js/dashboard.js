@@ -258,7 +258,7 @@ window.carregarDashboard = async function(){
   };
 
   // COLE O CÓDIGO DO GRÁFICO AQUI
-  const ctx = document.getElementById("grafico-missoes");
+ const ctx = document.getElementById("grafico-missoes");
 
   if (ctx) {
 
@@ -304,7 +304,24 @@ window.carregarDashboard = async function(){
 
           legend: {
 
-            position: "bottom"
+            position: "bottom",
+
+            labels: {
+
+              color: "#ffffff",
+
+              font: {
+                size: 13,
+                weight: "bold"
+              },
+
+              padding: 18,
+
+              usePointStyle: true,
+
+              pointStyle: "circle"
+
+            }
 
           }
 

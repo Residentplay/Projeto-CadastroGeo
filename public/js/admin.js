@@ -26,17 +26,38 @@ window.editUser = function(id) {
 };
 
 
+
+
 window.addUser = async function(){
   const name=document.getElementById('new-name').value.trim();
   const user=document.getElementById('new-user').value.trim();
   const pass=document.getElementById('new-pass').value.trim();
   const role=document.getElementById('new-role').value;
-  if(!name||!user||!pass){ showToast('Preencha todos os campos!',true); return; }
-  if(users.find(u=>u.user===user)){ showToast('Usuário já existe!',true); return; }
+  if (!name || !user || (!editingUserId && !pass)) {
+    showToast("Preencha todos os campos!", true);
+    return;
+  }
 
-  const res = await fetch("/usuario", {
+  const usuarioDuplicado = users.find(u =>
+    u.user === user && u.id !== editingUserId
+  );
 
-    method: "POST",
+  if (usuarioDuplicado) {
+    showToast("Usuário já existe!", true);
+    return;
+  }
+
+  const url = editingUserId
+    ? `/usuario/${editingUserId}`
+    : "/usuario";
+
+  const metodo = editingUserId
+    ? "PUT"
+    : "POST";
+
+  const res = await fetch(url, {
+
+    method: metodo,
 
     headers: {
       "Content-Type": "application/json"
@@ -66,12 +87,24 @@ window.addUser = async function(){
 
   }
 
-  users.push({id:'u'+Date.now(),name,user,pass,role,active:true});
-  document.getElementById('new-name').value='';
-  document.getElementById('new-user').value='';
-  document.getElementById('new-pass').value='';
-  renderUsersTable(); updateStats();
-  showToast('Usuário "'+name+'" cadastrado!');
+  const editando = editingUserId !== null;
+
+  await carregarUsuarios();
+
+  editingUserId = null;
+
+  document.getElementById("new-name").value = "";
+  document.getElementById("new-user").value = "";
+  document.getElementById("new-pass").value = "";
+  document.getElementById("new-role").value = "colaborador";
+
+  showToast(
+    editando
+      ? "Usuário atualizado!"
+      : 'Usuário "' + name + '" cadastrado!'
+  );
+
+
 };
 
 
@@ -82,6 +115,8 @@ window.toggleUser = function(id){
   showToast(u.active?'Usuário ativado.':'Usuário desativado.');
 };
  
+
+
 window.deleteUser = function(id){
 
   const u = users.find(x => x.id === id);

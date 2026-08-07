@@ -1345,7 +1345,7 @@ app.get("/dashboard/ranking", autenticarToken, async (req, res) => {
       SELECT
         colaborador,
         COUNT(*) AS total
-      FROM cadastro
+      FROM cadastros
       WHERE colaborador IS NOT NULL
         AND colaborador <> ''
       GROUP BY colaborador

@@ -740,6 +740,55 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
   </div>
 
+  <div
+    id="view-relatorios"
+    style="
+      display:none;
+      flex:1;
+      overflow:auto;
+      padding:20px;
+      align-self:stretch;
+      position:relative;
+    "
+  >
+
+    <h2>📑 Relatórios</h2>
+
+    <div
+      id="relatorios-menu"
+      style="
+        display:grid;
+        grid-template-columns:repeat(2, minmax(220px, 1fr));
+        gap:16px;
+        margin-top:20px;
+        max-width:700px;
+      "
+    >
+
+      <div class="card relatorio-opcao">
+        <h3>📅 Diário</h3>
+        <p>Consultar o fechamento de um dia específico.</p>
+      </div>
+
+      <div class="card relatorio-opcao">
+        <h3>📆 Mensal</h3>
+        <p>Ver os resultados consolidados de um mês.</p>
+      </div>
+
+      <div class="card relatorio-opcao">
+        <h3>📈 Anual</h3>
+        <p>Consultar produtividade e resultados de um ano inteiro.</p>
+      </div>
+
+      <div class="card relatorio-opcao">
+        <h3>📊 Personalizado</h3>
+        <p>Escolher uma data inicial e uma data final.</p>
+      </div>
+
+    </div>
+
+  </div>
+
 
   <div id="view-map">
     <div id="map-wrap">
@@ -880,52 +929,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
   </div>
 </div>
 
-<div
-  id="view-relatorios"
-  style="
-    display:none;
-    flex:1;
-    overflow:auto;
-    padding:20px;
-  "
->
 
-  <h2>📑 Relatórios</h2>
-
-  <div
-    id="relatorios-menu"
-    style="
-      display:grid;
-      grid-template-columns:repeat(2, minmax(220px, 1fr));
-      gap:16px;
-      margin-top:20px;
-      max-width:700px;
-    "
-  >
-
-    <div class="card relatorio-opcao">
-      <h3>📅 Diário</h3>
-      <p>Consultar o fechamento de um dia específico.</p>
-    </div>
-
-    <div class="card relatorio-opcao">
-      <h3>📆 Mensal</h3>
-      <p>Ver os resultados consolidados de um mês.</p>
-    </div>
-
-    <div class="card relatorio-opcao">
-      <h3>📈 Anual</h3>
-      <p>Consultar produtividade e resultados de um ano inteiro.</p>
-    </div>
-
-    <div class="card relatorio-opcao">
-      <h3>📊 Personalizado</h3>
-      <p>Escolher uma data inicial e uma data final.</p>
-    </div>
-
-  </div>
-
-</div>
  
 <!-- MODAL CADASTRO -->
 <div id="modal-wrap">

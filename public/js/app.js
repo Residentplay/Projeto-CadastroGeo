@@ -370,6 +370,49 @@ window.consultarRelatorioDiario = async function(){
 
 window.exportarRelatorioPDF = function(){
 
-    alert("Exportando PDF...");
+  const elemento =
+    document.getElementById("resultado-relatorio-diario");
+
+  if(!elemento || !elemento.innerHTML.trim()){
+
+    showToast(
+      "Consulte um relatório antes de exportar.",
+      true
+    );
+
+    return;
+  }
+
+  const data =
+    document.getElementById("relatorio-data").value;
+
+  const opcoes = {
+
+    margin: 10,
+
+    filename:
+      `CadastroGeo_Relatorio_Diario_${data}.pdf`,
+
+    image: {
+      type: "jpeg",
+      quality: 0.98
+    },
+
+    html2canvas: {
+      scale: 2
+    },
+
+    jsPDF: {
+      unit: "mm",
+      format: "a4",
+      orientation: "portrait"
+    }
+
+  };
+
+  html2pdf()
+    .set(opcoes)
+    .from(elemento)
+    .save();
 
 };

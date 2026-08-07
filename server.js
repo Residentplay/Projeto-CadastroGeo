@@ -1499,6 +1499,38 @@ app.post("/relatorios/fechar-dia", autenticarToken, async (req, res) => {
         contagem.rows[0]
       );
 
+      const resumo = contagem.rows[0];
+
+      await pg.query(
+        `
+        INSERT INTO relatorios_diarios (
+          data_relatorio,
+          ano,
+          mes,
+          dia,
+          colaborador,
+          nome_colaborador,
+          total,
+          pendentes,
+          andamento,
+          concluidas
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+        `,
+        [
+          dataRelatorio,
+          ano,
+          mes,
+          dia,
+          colaborador.usuario,
+          colaborador.nome,
+          Number(resumo.total),
+          Number(resumo.pendentes),
+          Number(resumo.andamento),
+          Number(resumo.concluidas)
+        ]
+      );
+
     }
 
     console.log(
@@ -1516,33 +1548,6 @@ app.post("/relatorios/fechar-dia", autenticarToken, async (req, res) => {
 
     res.status(500).json({
       erro: err.message
-    });
-
-  }
-
-});
-
-
-app.get("/atualizar-relatorios-nome", async (req, res) => {
-
-  try {
-
-    await pg.query(`
-      ALTER TABLE relatorios_diarios
-      ADD COLUMN IF NOT EXISTS nome_colaborador VARCHAR(150);
-    `);
-
-    res.json({
-      ok: true,
-      mensagem: "Coluna nome_colaborador adicionada."
-    });
-
-  } catch (erro) {
-
-    console.error(erro);
-
-    res.status(500).json({
-      erro: erro.message
     });
 
   }

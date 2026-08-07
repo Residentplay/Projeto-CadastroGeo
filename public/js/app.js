@@ -257,6 +257,14 @@ window.abrirRelatorioDiario = function(){
           Consultar
         </button>
 
+        <button
+            class="btn"
+            onclick="exportarRelatorioPDF()"
+            style="margin-left:10px;"
+        >
+            📄 Exportar PDF
+        </button>
+
       </div>
 
       <div
@@ -356,5 +364,12 @@ window.consultarRelatorioDiario = async function(){
     showToast("Erro ao consultar relatório.", true);
 
   }
+
+};
+
+
+window.exportarRelatorioPDF = function(){
+
+    alert("Exportando PDF...");
 
 };

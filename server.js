@@ -1478,6 +1478,29 @@ app.post("/relatorios/fechar-dia", autenticarToken, async (req, res) => {
       ORDER BY nome
     `);
 
+    for (const colaborador of colaboradores.rows) {
+
+      const contagem = await pg.query(
+        `
+        SELECT
+          COUNT(*) AS total,
+          COUNT(*) FILTER (WHERE status = 'pendente') AS pendentes,
+          COUNT(*) FILTER (WHERE status = 'em_andamento') AS andamento,
+          COUNT(*) FILTER (WHERE status = 'concluida') AS concluidas
+        FROM atribuicoes
+        WHERE colaborador = $1
+        `,
+        [colaborador.usuario]
+      );
+
+      console.log(
+        "RESUMO:",
+        colaborador.usuario,
+        contagem.rows[0]
+      );
+
+    }
+
     console.log(
       "COLABORADORES DO RELATÓRIO:",
       colaboradores.rows

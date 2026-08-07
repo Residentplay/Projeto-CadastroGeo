@@ -937,16 +937,33 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
       <div
         class="card relatorio-opcao"
-        onclick="abrirRelatorioAnual()"
-        style="cursor:pointer;"
-      >
+        onclick="abrirRelatorioDiario()">
+
         <h3>📅 Diário</h3>
-        <p>Consultar o fechamento de um dia específico.</p>
-      </div>
+
+        <p>
+        Consultar o fechamento de um dia específico.
+        </p>
+
+        <div style="
+        margin-top:22px;
+        display:flex;
+        justify-content:flex-end;
+        ">
+
+        <button class="btn btn-primary">
+
+        Abrir →
+
+        </button>
+
+        </div>
+
+        </div>
 
       <div
         class="card relatorio-opcao"
-        onclick="abrirRelatorioAnual()"
+        onclick="abrirRelatorioMensal()"
         style="cursor:pointer;"
       >
         <h3>📆 Mensal</h3>

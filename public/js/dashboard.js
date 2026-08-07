@@ -286,7 +286,7 @@ window.carregarDashboard = async function(){
         <button
           class="btn"
           id="btn-relatorios"
-          onclick="switchView('relatorios')"
+          onclick="mostrarMenuRelatorios()"
         >
          <h3> 📑 Relatórios </h3>
         </button>

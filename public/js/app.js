@@ -577,7 +577,7 @@ window.abrirRelatorioMensal = function(){
 
     <button
       class="btn"
-      onclick="switchView('relatorios')"
+      onclick="mostrarMenuRelatorios()"
       style="margin-bottom:20px;"
     >
       ← Voltar
@@ -967,7 +967,7 @@ window.abrirRelatorioAnual = function(){
 
     <button
       class="btn"
-      onclick="switchView('relatorios')"
+      onclick="mostrarMenuRelatorios()"
       style="margin-bottom:20px;"
     >
       ← Voltar
@@ -1297,3 +1297,46 @@ window.exportarRelatorioAnualPDF = async function(){
     .save();
 
 };
+
+
+window.mostrarMenuRelatorios = function(){
+
+  const menu = document.getElementById("relatorios-menu");
+
+  menu.style.display = "grid";
+  menu.style.gridTemplateColumns = "repeat(2, minmax(220px,1fr))";
+  menu.style.maxWidth = "700px";
+  menu.style.width = "";
+
+  menu.innerHTML = `
+
+    <div
+      class="card relatorio-opcao"
+      onclick="abrirRelatorioDiario()"
+      style="cursor:pointer;"
+    >
+      <h3>📅 Diário</h3>
+      <p>Consultar o fechamento de um dia específico.</p>
+    </div>
+
+    <div
+      class="card relatorio-opcao"
+      onclick="abrirRelatorioMensal()"
+      style="cursor:pointer;"
+    >
+      <h3>📆 Mensal</h3>
+      <p>Ver os resultados consolidados de um mês.</p>
+    </div>
+
+    <div
+      class="card relatorio-opcao"
+      onclick="abrirRelatorioAnual()"
+      style="cursor:pointer;"
+    >
+      <h3>📈 Anual</h3>
+      <p>Consultar produtividade e resultados de um ano inteiro.</p>
+    </div>
+
+  `;
+
+}

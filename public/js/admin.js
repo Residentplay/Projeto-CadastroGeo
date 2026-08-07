@@ -223,7 +223,21 @@ window.confirmarAtribuicao = async function(colaborador){
 
     if(!res.ok){
 
-      showToast(retorno.erro || "Erro ao atribuir!", true);
+      if(res.status === 409){
+
+        showToast(
+          retorno.erro || "Esta casa já está atribuída a outro colaborador.",
+          true
+        );
+
+        return;
+
+      }
+
+      showToast(
+        retorno.erro || "Erro ao atribuir!",
+        true
+      );
 
       return;
 

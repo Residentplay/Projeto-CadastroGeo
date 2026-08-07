@@ -223,6 +223,8 @@ window.carregarDashboard = async function(){
   });
   const casasAtuais = await resCasasAtuais.json();
 
+  console.log("CASAS ATUAIS:", casasAtuais);
+
   const resRanking = await fetch("/dashboard/ranking", {
     headers: authHeaders()
   });

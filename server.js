@@ -1468,6 +1468,21 @@ app.post("/relatorios/fechar-dia", autenticarToken, async (req, res) => {
 
     }
 
+    const colaboradores = await pg.query(`
+      SELECT
+        usuario,
+        nome
+      FROM usuarios
+      WHERE papel = 'colaborador'
+        AND ativo = TRUE
+      ORDER BY nome
+    `);
+
+    console.log(
+      "COLABORADORES DO RELATÓRIO:",
+      colaboradores.rows
+    );
+
     res.json({
       ok: true
     });

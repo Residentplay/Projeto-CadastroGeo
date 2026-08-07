@@ -203,6 +203,9 @@ window.confirmarAtribuicao = async function(colaborador){
 
   try{
 
+    console.log("CASA SENDO ATRIBUÍDA:", currentHouse.id);
+    console.log("COLABORADOR:", colaborador);
+
     const res = await fetch("/atribuir-casa",{
 
       method:"POST",

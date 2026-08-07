@@ -200,18 +200,6 @@ iniciarPostgreSQL();
 // CRIAR TABELAS
 // ==========================
 
-app.get("/teste-atribuicoes", async (req, res) => {
-
-  const resultado = await pg.query(`
-    SELECT colaborador, COUNT(*) AS total
-    FROM atribuicoes
-    GROUP BY colaborador
-    ORDER BY total DESC;
-  `);
-
-  res.json(resultado.rows);
-
-});
 
 // ==========================
 // LISTAR LOTES

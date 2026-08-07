@@ -83,51 +83,32 @@ function renderizarEquipe(dadosEquipe, casasAtuais){
       casa => casa.colaborador === item.colaborador
     );  
 
-    lista.innerHTML += `
-    <div class="card" style="margin-top:10px;padding:15px;">
+   lista.innerHTML += `
+    <div class="card card-equipe">
 
-      <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        margin-bottom:10px;
-      ">
-
-        <strong>👷 ${nome}</strong>
-
-        <span style="
-          background:#2563eb;
-          padding:3px 10px;
-          border-radius:20px;
-          font-weight:bold;
-        ">
-          ${item.total}
-        </span>
-
-      </div>
+      <h3>👷 ${nome}</h3>
 
       ${casaAtual ? `
-        <div style="margin-bottom:10px;color:#ffd600;">
+        <div class="equipe-casa">
           📍 ${casaAtual.numero || casaAtual.casa_id}
         </div>
       ` : `
-        <div style="margin-bottom:10px;color:var(--text2);">
+        <div class="equipe-casa">
           Sem missão em andamento
         </div>
       `}
 
-      <div style="
-        display:flex;
-        justify-content:space-between;
-        font-size:14px;
-        font-weight:bold;
-      ">
+      <div class="equipe-resumo">
 
-        <span>🟡 ${item.pendentes}</span>
+        <span class="badge-total">
+          Total ${item.total}
+        </span>
 
-        <span>🔵 ${item.andamento}</span>
-
-        <span>🟢 ${item.concluidas}</span>
+        <div class="equipe-status">
+          <span>🟡 ${item.pendentes}</span>
+          <span>🔵 ${item.andamento}</span>
+          <span>🟢 ${item.concluidas}</span>
+        </div>
 
       </div>
 

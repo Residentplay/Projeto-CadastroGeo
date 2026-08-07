@@ -570,6 +570,43 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
   margin:0 0 18px 0;
 }
 
+.relatorio-tabela-wrap{
+  margin-top:20px;
+  width:100%;
+  overflow-x:auto;
+}
+
+.relatorio-tabela{
+  width:100%;
+  max-width:900px;
+  border-collapse:collapse;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+}
+
+.relatorio-tabela th,
+.relatorio-tabela td{
+  padding:10px 14px;
+  border-bottom:1px solid var(--border);
+  text-align:center;
+  font-size:14px;
+}
+
+.relatorio-tabela th{
+  font-weight:700;
+}
+
+.relatorio-tabela th:first-child,
+.relatorio-tabela td:first-child{
+  text-align:left;
+}
+
+.relatorio-tabela tbody tr:last-child td{
+  border-bottom:none;
+}
+
 
 @media (max-width: 1024px) and (pointer: coarse){
 

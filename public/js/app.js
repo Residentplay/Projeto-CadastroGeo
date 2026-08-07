@@ -304,47 +304,45 @@ window.consultarRelatorioDiario = async function(){
       return;
     }
 
-    resultado.innerHTML = "";
+    resultado.innerHTML = `
 
-    filtrados.forEach(item => {
+      <div class="relatorio-tabela-wrap">
 
-      resultado.innerHTML += `
+        <table class="relatorio-tabela">
 
-      <div class="relatorio-colaborador">
+          <thead>
+            <tr>
+              <th>Colaborador</th>
+              <th>Total</th>
+              <th>Pendentes</th>
+              <th>Em andamento</th>
+              <th>Concluídas</th>
+            </tr>
+          </thead>
 
-          <h2 style="margin-bottom:18px;">
-              👷 ${item.nome_colaborador || item.colaborador}
-          </h2>
+          <tbody>
+            ${filtrados.map(item => `
+              <tr>
+                <td>
+                  ${item.nome_colaborador || item.colaborador}
+                </td>
 
-          <div class="relatorio-resumo">
+                <td>${item.total}</td>
 
-              <div class="relatorio-item relatorio-total">
-                  <h3>Total</h3>
-                  <div class="numero">${item.total}</div>
-              </div>
+                <td>${item.pendentes}</td>
 
-              <div class="relatorio-item relatorio-pendente">
-                  <h3>🟡 Pendentes</h3>
-                  <div class="numero">${item.pendentes}</div>
-              </div>
+                <td>${item.andamento}</td>
 
-              <div class="relatorio-item relatorio-andamento">
-                  <h3>🔵 Andamento</h3>
-                  <div class="numero">${item.andamento}</div>
-              </div>
+                <td>${item.concluidas}</td>
+              </tr>
+            `).join("")}
+          </tbody>
 
-              <div class="relatorio-item relatorio-concluida">
-                  <h3>🟢 Concluídas</h3>
-                  <div class="numero">${item.concluidas}</div>
-              </div>
-
-          </div>
+        </table>
 
       </div>
 
-      `;
-
-    });
+    `;
 
   }catch(err){
 

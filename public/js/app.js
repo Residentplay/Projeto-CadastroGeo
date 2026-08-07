@@ -310,11 +310,7 @@ window.consultarRelatorioDiario = async function(){
 
       resultado.innerHTML += `
 
-      <div class="card" style="
-          margin-bottom:20px;
-          border-radius:14px;
-          padding:20px;
-      ">
+      <div class="relatorio-colaborador">
 
           <h2 style="margin-bottom:18px;">
               👷 ${item.nome_colaborador || item.colaborador}

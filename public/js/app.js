@@ -209,3 +209,10 @@ window.doLogin = async function(){
   }
 
 };
+
+
+window.abrirRelatorioDiario = function(){
+
+  alert("Tela do Relatório Diário");
+
+};

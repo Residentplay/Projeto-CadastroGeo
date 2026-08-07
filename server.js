@@ -1630,3 +1630,43 @@ app.get("/relatorios/mensal", autenticarToken, async (req, res) => {
   }
 
 });
+
+
+app.get("/relatorios/anual", autenticarToken, async (req, res) => {
+
+  try{
+
+    const { ano } = req.query;
+
+    const resultado = await pg.query(
+      `
+      SELECT
+        colaborador,
+        nome_colaborador,
+        SUM(total) AS total,
+        SUM(pendentes) AS pendentes,
+        SUM(andamento) AS andamento,
+        SUM(concluidas) AS concluidas
+      FROM relatorios_diarios
+      WHERE ano = $1
+      GROUP BY colaborador, nome_colaborador
+      ORDER BY nome_colaborador
+      `,
+      [
+        Number(ano)
+      ]
+    );
+
+    res.json(resultado.rows);
+
+  }catch(err){
+
+    console.error(err);
+
+    res.status(500).json({
+      erro:"Erro ao consultar relatório anual."
+    });
+
+  }
+
+});

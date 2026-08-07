@@ -951,3 +951,349 @@ window.exportarRelatorioMensalPDF = async function(){
     .save();
 
 };
+
+
+window.abrirRelatorioAnual = function(){
+
+  const menu =
+    document.getElementById("relatorios-menu");
+
+  menu.style.display = "block";
+  menu.style.gridTemplateColumns = "none";
+  menu.style.maxWidth = "1000px";
+  menu.style.width = "100%";
+
+  menu.innerHTML = `
+
+    <button
+      class="btn"
+      onclick="switchView('relatorios')"
+      style="margin-bottom:20px;"
+    >
+      ← Voltar
+    </button>
+
+    <h2 style="margin-bottom:20px;">
+      📈 Relatório Anual
+    </h2>
+
+    <div style="
+      display:flex;
+      gap:12px;
+      align-items:end;
+      flex-wrap:wrap;
+      margin-bottom:20px;
+    ">
+
+      <div>
+
+        <label>Ano</label>
+
+        <input
+          id="relatorio-anual-ano"
+          class="inp"
+          type="number"
+          value="2026"
+          style="width:120px;"
+        >
+
+      </div>
+
+      <button
+        class="btn-blue"
+        onclick="consultarRelatorioAnual()"
+      >
+        Consultar
+      </button>
+
+      <button
+        class="btn"
+        onclick="exportarRelatorioAnualPDF()"
+      >
+        📄 Exportar PDF
+      </button>
+
+    </div>
+
+    <div id="resultado-relatorio-anual"></div>
+
+  `;
+
+};
+
+
+window.consultarRelatorioAnual = async function(){
+
+  const ano =
+    document.getElementById("relatorio-anual-ano").value;
+
+  const resultado =
+    document.getElementById("resultado-relatorio-anual");
+
+  try{
+
+    const res = await fetch(
+      `/relatorios/anual?ano=${ano}`,
+      {
+        headers: authHeaders()
+      }
+    );
+
+    const dados = await res.json();
+
+    if(!res.ok){
+
+      showToast(
+        dados.erro || "Erro ao consultar relatório anual.",
+        true
+      );
+
+      return;
+
+    }
+
+    if(!dados.length){
+
+      resultado.innerHTML = `
+        <div class="card">
+          Nenhum relatório encontrado para esse ano.
+        </div>
+      `;
+
+      return;
+
+    }
+
+    resultado.innerHTML = `
+
+      <div class="relatorio-tabela-wrap">
+
+        <table class="relatorio-tabela">
+
+          <thead>
+
+            <tr>
+              <th>Colaborador</th>
+              <th>Total</th>
+              <th>Pendentes</th>
+              <th>Andamento</th>
+              <th>Concluídas</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${dados.map(item => `
+
+              <tr>
+
+                <td>${item.nome_colaborador || item.colaborador}</td>
+
+                <td>${item.total}</td>
+
+                <td>${item.pendentes}</td>
+
+                <td>${item.andamento}</td>
+
+                <td>${item.concluidas}</td>
+
+              </tr>
+
+            `).join("")}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    `;
+
+  }catch(err){
+
+    console.error(err);
+
+    showToast(
+      "Erro ao consultar relatório anual.",
+      true
+    );
+
+  }
+
+};
+
+window.exportarRelatorioAnualPDF = async function(){
+
+  const ano =
+    document.getElementById("relatorio-anual-ano").value;
+
+  const tabela =
+    document.querySelector("#resultado-relatorio-anual .relatorio-tabela");
+
+  if(!tabela){
+
+    showToast(
+      "Consulte o relatório anual antes de exportar.",
+      true
+    );
+
+    return;
+  }
+
+  const agora =
+    new Date().toLocaleString("pt-BR");
+
+  const pdf = document.createElement("div");
+
+  pdf.style.background = "#ffffff";
+  pdf.style.color = "#111111";
+  pdf.style.padding = "30px";
+  pdf.style.fontFamily = "Arial, sans-serif";
+  pdf.style.width = "750px";
+
+  pdf.innerHTML = `
+
+    <div style="
+      text-align:center;
+      margin-bottom:25px;
+    ">
+
+      <h1 style="
+        margin:0;
+        font-size:24px;
+        color:#111;
+      ">
+        CadastroGeo
+      </h1>
+
+      <h2 style="
+        margin:8px 0 0;
+        font-size:18px;
+        color:#333;
+      ">
+        Relatório Anual
+      </h2>
+
+      <div style="
+        margin-top:8px;
+        font-size:14px;
+        color:#555;
+      ">
+        Ano: ${ano}
+      </div>
+
+    </div>
+
+    <table style="
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+      color:#111;
+    ">
+
+      <thead>
+
+        <tr style="background:#eeeeee;">
+
+          <th style="border:1px solid #999;padding:8px;text-align:left;">
+            Colaborador
+          </th>
+
+          <th style="border:1px solid #999;padding:8px;">
+            Total
+          </th>
+
+          <th style="border:1px solid #999;padding:8px;">
+            Pendentes
+          </th>
+
+          <th style="border:1px solid #999;padding:8px;">
+            Andamento
+          </th>
+
+          <th style="border:1px solid #999;padding:8px;">
+            Concluídas
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+        ${
+          Array.from(tabela.querySelectorAll("tbody tr"))
+          .map(linha => {
+
+            const colunas =
+              Array.from(linha.querySelectorAll("td"));
+
+            return `
+              <tr>
+
+                ${colunas.map((coluna, index) => `
+                  <td style="
+                    border:1px solid #bbb;
+                    padding:7px;
+                    text-align:${index === 0 ? "left" : "center"};
+                  ">
+                    ${coluna.textContent.trim()}
+                  </td>
+                `).join("")}
+
+              </tr>
+            `;
+
+          }).join("")
+        }
+      </tbody>
+
+    </table>
+
+    <div style="
+      margin-top:25px;
+      padding-top:10px;
+      border-top:1px solid #aaa;
+      font-size:11px;
+      color:#555;
+    ">
+      Emitido em: ${agora}
+    </div>
+
+  `;
+
+  const opcoes = {
+
+    margin: 10,
+
+    filename:
+      `CadastroGeo_Relatorio_Anual_${ano}.pdf`,
+
+    image: {
+      type: "jpeg",
+      quality: 1
+    },
+
+    html2canvas: {
+      scale: 2,
+      backgroundColor: "#ffffff"
+    },
+
+    jsPDF: {
+      unit: "mm",
+      format: "a4",
+      orientation: "portrait"
+    },
+
+    pagebreak: {
+      mode: ["avoid-all", "css", "legacy"]
+    }
+
+  };
+
+  html2pdf()
+    .set(opcoes)
+    .from(pdf)
+    .save();
+
+};

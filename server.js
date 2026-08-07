@@ -1439,7 +1439,34 @@ app.post("/relatorios/fechar-dia", autenticarToken, async (req, res) => {
 
   try{
 
-    // Vamos implementar aqui na próxima etapa
+    const hoje = new Date();
+
+    const ano = hoje.getFullYear();
+
+    const mes = hoje.getMonth() + 1;
+
+    const dia = hoje.getDate();
+
+    const dataRelatorio =
+      `${ano}-${String(mes).padStart(2,"0")}-${String(dia).padStart(2,"0")}`;
+
+    const existe = await pg.query(
+      `
+      SELECT 1
+      FROM relatorios_diarios
+      WHERE data_relatorio = $1
+      LIMIT 1
+      `,
+      [dataRelatorio]
+    );
+
+    if(existe.rows.length){
+
+      return res.status(409).json({
+        erro: "O relatório de hoje já foi gerado."
+      });
+
+    }
 
     res.json({
       ok: true

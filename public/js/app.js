@@ -263,3 +263,38 @@ window.abrirRelatorioDiario = function(){
   `;
 
 };
+
+
+window.consultarRelatorioDiario = async function(){
+
+  const data = document.getElementById("relatorio-data").value;
+
+  if(!data){
+    showToast("Selecione uma data.", true);
+    return;
+  }
+
+  try{
+
+    const res = await fetch("/relatorios", {
+      headers: authHeaders()
+    });
+
+    const dados = await res.json();
+
+    const filtrados = dados.filter(item =>
+      item.data_relatorio &&
+      item.data_relatorio.slice(0,10) === data
+    );
+
+    console.log("RELATÓRIO DIÁRIO:", filtrados);
+
+  }catch(err){
+
+    console.error(err);
+
+    showToast("Erro ao consultar relatório.", true);
+
+  }
+
+};

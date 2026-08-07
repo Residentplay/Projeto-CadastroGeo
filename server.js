@@ -1434,7 +1434,7 @@ app.listen(PORT, "0.0.0.0", () => {
 });
 
 
-app.get("/criar-tabela-relatorios", autenticarToken, async (req, res) => {
+app.get("/criar-tabela-relatorios", async (req, res) => {
 
   try {
 

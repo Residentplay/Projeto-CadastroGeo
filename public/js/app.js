@@ -316,30 +316,26 @@ window.consultarRelatorioDiario = async function(){
               👷 ${item.nome_colaborador || item.colaborador}
           </h2>
 
-          <div style="
-              ddisplay:grid;
-              grid-template-columns:repeat(4, 150px);
-              gap:16px;
-          ">
+          <div class="relatorio-resumo">
 
-              <div class="card card-casas">
+              <div class="relatorio-item relatorio-total">
                   <h3>Total</h3>
-                  <h1>${item.total}</h1>
+                  <div class="numero">${item.total}</div>
               </div>
 
-              <div class="card card-pendentes">
+              <div class="relatorio-item relatorio-pendente">
                   <h3>🟡 Pendentes</h3>
-                  <h1>${item.pendentes}</h1>
+                  <div class="numero">${item.pendentes}</div>
               </div>
 
-              <div class="card card-andamento">
+              <div class="relatorio-item relatorio-andamento">
                   <h3>🔵 Andamento</h3>
-                  <h1>${item.andamento}</h1>
+                  <div class="numero">${item.andamento}</div>
               </div>
 
-              <div class="card card-concluidas">
+              <div class="relatorio-item relatorio-concluida">
                   <h3>🟢 Concluídas</h3>
-                  <h1>${item.concluidas}</h1>
+                  <div class="numero">${item.concluidas}</div>
               </div>
 
           </div>

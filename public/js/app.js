@@ -756,8 +756,198 @@ window.consultarRelatorioMensal = async function(){
 
 };
 
-window.exportarRelatorioMensalPDF = function(){
+window.exportarRelatorioMensalPDF = async function(){
 
-  alert("Exportando PDF mensal...");
+  const mes =
+    document.getElementById("relatorio-mes").value;
 
-}
+  const ano =
+    document.getElementById("relatorio-ano").value;
+
+  const tabela =
+    document.querySelector("#resultado-relatorio-mensal .relatorio-tabela");
+
+  if(!tabela){
+
+    showToast(
+      "Consulte o relatório mensal antes de exportar.",
+      true
+    );
+
+    return;
+  }
+
+  const nomesMeses = [
+    "",
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro"
+  ];
+
+  const nomeMes = nomesMeses[Number(mes)];
+
+  const agora =
+    new Date().toLocaleString("pt-BR");
+
+  const pdf = document.createElement("div");
+
+  pdf.style.background = "#ffffff";
+  pdf.style.color = "#111111";
+  pdf.style.padding = "30px";
+  pdf.style.fontFamily = "Arial, sans-serif";
+  pdf.style.width = "750px";
+
+  pdf.innerHTML = `
+
+    <div style="
+      text-align:center;
+      margin-bottom:25px;
+    ">
+
+      <h1 style="
+        margin:0;
+        font-size:24px;
+        color:#111;
+      ">
+        CadastroGeo
+      </h1>
+
+      <h2 style="
+        margin:8px 0 0;
+        font-size:18px;
+        color:#333;
+      ">
+        Relatório Mensal
+      </h2>
+
+      <div style="
+        margin-top:8px;
+        font-size:14px;
+        color:#555;
+      ">
+        Período: ${nomeMes} / ${ano}
+      </div>
+
+    </div>
+
+    <table style="
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+      color:#111;
+    ">
+
+      <thead>
+
+        <tr style="background:#eeeeee;">
+
+          <th style="border:1px solid #999;padding:8px;text-align:left;">
+            Colaborador
+          </th>
+
+          <th style="border:1px solid #999;padding:8px;">
+            Total
+          </th>
+
+          <th style="border:1px solid #999;padding:8px;">
+            Pendentes
+          </th>
+
+          <th style="border:1px solid #999;padding:8px;">
+            Andamento
+          </th>
+
+          <th style="border:1px solid #999;padding:8px;">
+            Concluídas
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+        ${
+          Array.from(tabela.querySelectorAll("tbody tr"))
+          .map(linha => {
+
+            const colunas =
+              Array.from(linha.querySelectorAll("td"));
+
+            return `
+              <tr>
+
+                ${colunas.map((coluna, index) => `
+                  <td style="
+                    border:1px solid #bbb;
+                    padding:7px;
+                    text-align:${index === 0 ? "left" : "center"};
+                  ">
+                    ${coluna.textContent.trim()}
+                  </td>
+                `).join("")}
+
+              </tr>
+            `;
+
+          }).join("")
+        }
+      </tbody>
+
+    </table>
+
+    <div style="
+      margin-top:25px;
+      padding-top:10px;
+      border-top:1px solid #aaa;
+      font-size:11px;
+      color:#555;
+    ">
+      Emitido em: ${agora}
+    </div>
+
+  `;
+
+  const opcoes = {
+
+    margin: 10,
+
+    filename:
+      `CadastroGeo_Relatorio_Mensal_${ano}_${String(mes).padStart(2,"0")}.pdf`,
+
+    image: {
+      type: "jpeg",
+      quality: 1
+    },
+
+    html2canvas: {
+      scale: 2,
+      backgroundColor: "#ffffff"
+    },
+
+    jsPDF: {
+      unit: "mm",
+      format: "a4",
+      orientation: "portrait"
+    },
+
+    pagebreak: {
+      mode: ["avoid-all", "css", "legacy"]
+    }
+
+  };
+
+  html2pdf()
+    .set(opcoes)
+    .from(pdf)
+    .save();
+
+};

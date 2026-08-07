@@ -289,6 +289,56 @@ window.consultarRelatorioDiario = async function(){
 
     console.log("RELATÓRIO DIÁRIO:", filtrados);
 
+    const resultado = document.getElementById(
+      "resultado-relatorio-diario"
+    );
+
+    if(!filtrados.length){
+
+      resultado.innerHTML = `
+        <div class="card">
+          Nenhum relatório encontrado para essa data.
+        </div>
+      `;
+
+      return;
+    }
+
+    resultado.innerHTML = "";
+
+    filtrados.forEach(item => {
+
+      resultado.innerHTML += `
+        <div class="card" style="
+          margin-bottom:12px;
+          padding:16px;
+        ">
+
+          <h3>
+            👷 ${item.nome_colaborador || item.colaborador}
+          </h3>
+
+          <div style="margin-top:12px;">
+            <strong>Total:</strong> ${item.total}
+          </div>
+
+          <div style="margin-top:6px;">
+            🟡 Pendentes: ${item.pendentes}
+          </div>
+
+          <div style="margin-top:6px;">
+            🔵 Em andamento: ${item.andamento}
+          </div>
+
+          <div style="margin-top:6px;">
+            🟢 Concluídas: ${item.concluidas}
+          </div>
+
+        </div>
+      `;
+
+    });
+
   }catch(err){
 
     console.error(err);

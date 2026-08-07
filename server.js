@@ -1594,7 +1594,30 @@ app.get("/relatorios/mensal", autenticarToken, async (req, res) => {
 
   try{
 
-    res.json([]);
+    const { ano, mes } = req.query;
+
+    const resultado = await pg.query(
+      `
+      SELECT
+        colaborador,
+        nome_colaborador,
+        SUM(total) AS total,
+        SUM(pendentes) AS pendentes,
+        SUM(andamento) AS andamento,
+        SUM(concluidas) AS concluidas
+      FROM relatorios_diarios
+      WHERE ano = $1
+        AND mes = $2
+      GROUP BY colaborador, nome_colaborador
+      ORDER BY nome_colaborador
+      `,
+      [
+        Number(ano),
+        Number(mes)
+      ]
+    );
+
+    res.json(resultado.rows);
 
   }catch(err){
 

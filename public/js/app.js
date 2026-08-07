@@ -52,6 +52,9 @@ window.switchView = function(v){
   document.getElementById('view-missoes').style.display =
     v === 'missoes' ? 'flex' : 'none';
 
+  document.getElementById('view-relatorios').style.display =
+    v === 'relatorios' ? 'flex' : 'none';  
+
   document.getElementById('nav-map')
     .classList.toggle('active', v === 'map');
 
@@ -80,6 +83,10 @@ window.switchView = function(v){
   if(v === 'dashboard'){
     carregarDashboard();
   }
+
+  if(v === 'relatorios'){
+    carregarRelatorios();
+}
 
 };
 

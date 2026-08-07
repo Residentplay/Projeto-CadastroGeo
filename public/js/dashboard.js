@@ -278,6 +278,20 @@ window.carregarDashboard = async function(){
       <h1 id="dash-concluidas">0</h1>
     </div>
 
+    <div style="
+        display:flex;
+        justify-content:flex-end;
+        margin-bottom:10px;
+      ">
+        <button
+          class="btn"
+          id="btn-relatorios"
+          onclick="abrirRelatorios()"
+        >
+          📑 Relatórios
+        </button>
+      </div>
+
   `;
 
 

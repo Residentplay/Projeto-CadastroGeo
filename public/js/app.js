@@ -368,12 +368,15 @@ window.consultarRelatorioDiario = async function(){
 };
 
 
-window.exportarRelatorioPDF = function(){
+window.exportarRelatorioPDF = async function(){
 
-  const elemento =
-    document.getElementById("resultado-relatorio-diario");
+  const data =
+    document.getElementById("relatorio-data").value;
 
-  if(!elemento || !elemento.innerHTML.trim()){
+  const tabela =
+    document.querySelector(".relatorio-tabela");
+
+  if(!data || !tabela){
 
     showToast(
       "Consulte um relatório antes de exportar.",
@@ -383,8 +386,145 @@ window.exportarRelatorioPDF = function(){
     return;
   }
 
-  const data =
-    document.getElementById("relatorio-data").value;
+  const dataFormatada =
+    data.split("-").reverse().join("/");
+
+  const agora =
+    new Date().toLocaleString("pt-BR");
+
+  const pdf = document.createElement("div");
+
+  pdf.style.background = "#ffffff";
+  pdf.style.color = "#111111";
+  pdf.style.padding = "30px";
+  pdf.style.fontFamily = "Arial, sans-serif";
+  pdf.style.width = "750px";
+
+  pdf.innerHTML = `
+
+    <div style="
+      text-align:center;
+      margin-bottom:25px;
+    ">
+
+      <h1 style="
+        margin:0;
+        font-size:24px;
+        color:#111;
+      ">
+        CadastroGeo
+      </h1>
+
+      <h2 style="
+        margin:8px 0 0;
+        font-size:18px;
+        color:#333;
+      ">
+        Relatório Diário
+      </h2>
+
+      <div style="
+        margin-top:8px;
+        font-size:14px;
+        color:#555;
+      ">
+        Data: ${dataFormatada}
+      </div>
+
+    </div>
+
+    <table style="
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+      color:#111;
+    ">
+
+      <thead>
+
+        <tr style="background:#eeeeee;">
+
+          <th style="
+            border:1px solid #999;
+            padding:8px;
+            text-align:left;
+          ">
+            Colaborador
+          </th>
+
+          <th style="
+            border:1px solid #999;
+            padding:8px;
+          ">
+            Total
+          </th>
+
+          <th style="
+            border:1px solid #999;
+            padding:8px;
+          ">
+            Pendentes
+          </th>
+
+          <th style="
+            border:1px solid #999;
+            padding:8px;
+          ">
+            Andamento
+          </th>
+
+          <th style="
+            border:1px solid #999;
+            padding:8px;
+          ">
+            Concluídas
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+        ${
+          Array.from(tabela.querySelectorAll("tbody tr"))
+          .map(linha => {
+
+            const colunas =
+              Array.from(linha.querySelectorAll("td"));
+
+            return `
+              <tr>
+
+                ${colunas.map((coluna, index) => `
+                  <td style="
+                    border:1px solid #bbb;
+                    padding:7px;
+                    text-align:${index === 0 ? "left" : "center"};
+                  ">
+                    ${coluna.textContent.trim()}
+                  </td>
+                `).join("")}
+
+              </tr>
+            `;
+
+          }).join("")
+        }
+      </tbody>
+
+    </table>
+
+    <div style="
+      margin-top:25px;
+      padding-top:10px;
+      border-top:1px solid #aaa;
+      font-size:11px;
+      color:#555;
+    ">
+      Emitido em: ${agora}
+    </div>
+
+  `;
 
   const opcoes = {
 
@@ -395,24 +535,29 @@ window.exportarRelatorioPDF = function(){
 
     image: {
       type: "jpeg",
-      quality: 0.98
+      quality: 1
     },
 
     html2canvas: {
-      scale: 2
+      scale: 2,
+      backgroundColor: "#ffffff"
     },
 
     jsPDF: {
       unit: "mm",
       format: "a4",
       orientation: "portrait"
+    },
+
+    pagebreak: {
+      mode: ["avoid-all", "css", "legacy"]
     }
 
   };
 
   html2pdf()
     .set(opcoes)
-    .from(elemento)
+    .from(pdf)
     .save();
 
 };

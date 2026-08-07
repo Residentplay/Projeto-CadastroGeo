@@ -1434,79 +1434,23 @@ app.listen(PORT, "0.0.0.0", () => {
 });
 
 
-app.get("/criar-tabela-relatorios", async (req, res) => {
 
-  try {
+app.post("/relatorios/fechar-dia", autenticarToken, async (req, res) => {
 
-    await pg.query(`
-      CREATE TABLE IF NOT EXISTS relatorios_diarios (
+  try{
 
-        id SERIAL PRIMARY KEY,
-
-        data_relatorio DATE NOT NULL,
-
-        colaborador VARCHAR(100) NOT NULL,
-
-        total INTEGER DEFAULT 0,
-
-        pendentes INTEGER DEFAULT 0,
-
-        andamento INTEGER DEFAULT 0,
-
-        concluidas INTEGER DEFAULT 0,
-
-        criado_em TIMESTAMP DEFAULT NOW()
-
-      )
-    `);
+    // Vamos implementar aqui na próxima etapa
 
     res.json({
-      ok: true,
-      mensagem: "Tabela relatorios_diarios criada com sucesso."
+      ok: true
     });
 
-  } catch (erro) {
+  }catch(err){
 
-    console.error("Erro ao criar tabela de relatórios:", erro);
+    console.error(err);
 
     res.status(500).json({
-      erro: erro.message
-    });
-
-  }
-
-});
-
-app.get("/atualizar-tabela-relatorios", async (req, res) => {
-
-  try {
-
-    await pg.query(`
-      ALTER TABLE relatorios_diarios
-      ADD COLUMN IF NOT EXISTS ano INTEGER;
-    `);
-
-    await pg.query(`
-      ALTER TABLE relatorios_diarios
-      ADD COLUMN IF NOT EXISTS mes INTEGER;
-    `);
-
-    await pg.query(`
-      ALTER TABLE relatorios_diarios
-      ADD COLUMN IF NOT EXISTS dia INTEGER;
-    `);
-
-    res.json({
-      ok: true,
-      mensagem: "Tabela atualizada."
-    });
-
-  } catch (erro) {
-
-    console.error(erro);
-
-    res.status(500).json({
-      erro: erro.message
+      erro: err.message
     });
 
   }

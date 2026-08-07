@@ -1172,3 +1172,16 @@ window.carregarLotes = async function(){
   }
 
 };
+
+
+window.testarRelatorios = async function(){
+
+  const res = await fetch("/relatorios", {
+    headers: authHeaders()
+  });
+
+  const dados = await res.json();
+
+  console.log("RELATÓRIOS:", dados);
+
+};

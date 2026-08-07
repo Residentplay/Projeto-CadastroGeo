@@ -281,7 +281,7 @@ window.carregarDashboard = async function(){
     <div style="
         display:flex;
         justify-content:flex-end;
-        margin-bottom:5px; margin-right: 10px;
+        margin-right: 10px;
       ">
         <button
           class="btn"

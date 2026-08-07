@@ -266,19 +266,9 @@ window.carregarDashboard = async function(){
 
   `;
 
-  document.getElementById("dashboard-graficos").innerHTML = `
-    <div class="dashboard-grafico">
-      <h3>Distribuição das Missões</h3>
-
-      <div class="grafico-container">
-        <canvas id="grafico-missoes"></canvas>
-      </div>
-    </div>
-  `;
 
   document.getElementById("dashboard-graficos").innerHTML = `
     <div class="dashboard-grafico">
-      <h3>Distribuição das Missões</h3>
 
       <div class="grafico-container">
         <canvas id="grafico-missoes"></canvas>

@@ -339,6 +339,16 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
   cursor: default;
 }
 
+#dashboard-equipe{
+  width: 340px !important;
+  min-width: 340px !important;
+}
+
+#dashboard-equipe .card{
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
 #dashboard-resumo .card-colaboradores{
   border-left: 5px solid #ec4899;
 }
@@ -642,52 +652,45 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
  
   <!-- MAPA -->
   <div
+  id="view-dashboard"
   style="
-    display:flex;
-    align-items:flex-start;
-    gap:24px;
-    width:100%;
-  "
->
+    display:none;
+    flex:1;
+    overflow:auto;
+    padding:20px 20px 20px 5px;
+  ">
 
-  <div
-    id="dashboard-resumo"
-    style="
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      margin-top:25px;
-      width:155px;
-      flex-shrink:0;
-    ">
+    
+
+    <div
+      id="dashboard-resumo"
+      style="
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+        margin-top:25px;
+        width:155px;
+      ">
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:20px; flex:0 1 1700px;">
+
+      <div id="dashboard-graficos">
+
+      <div id="dashboard-ranking"></div>
+
+      </div>
+
+    </div>
+
+    <div 
+      id="dashboard-equipe"
+      style="
+        margin-top:24px; margin-left: 24px;
+      ">
+    </div>
+
   </div>
-
-  <div
-    style="
-      display:flex;
-      flex-direction:column;
-      gap:20px;
-      width:550px;
-      flex-shrink:0;
-    "
-  >
-
-    <div id="dashboard-graficos"></div>
-
-    <div id="dashboard-ranking"></div>
-
-  </div>
-
-  <div 
-    id="dashboard-equipe"
-    style="
-      margin-top:24px;
-      width:340px;
-      flex-shrink:0;
-    ">
-  </div>
-
-</div>
 
 
   <div id="view-map">

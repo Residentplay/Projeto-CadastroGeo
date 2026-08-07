@@ -163,6 +163,20 @@ async function atualizarDashboard(){
 }
 
 
+setInterval(() => {
+
+  const dashboard = document.getElementById("view-dashboard");
+
+  if(
+    dashboard &&
+    dashboard.style.display !== "none"
+  ){
+    atualizarDashboard();
+  }
+
+}, 5000);
+
+
 
 function renderizarRanking(dadosRanking){
 

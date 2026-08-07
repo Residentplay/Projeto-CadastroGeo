@@ -89,7 +89,11 @@ function renderizarEquipe(dadosEquipe, casasAtuais){
       <h3>👷 ${nome}</h3>
 
       ${casaAtual ? `
-        <div class="equipe-casa">
+        <div
+          class="equipe-casa"
+          style="cursor:pointer;"
+          onclick="abrirCasaEquipe('${casaAtual.casa_id}')"
+        >
           📍 ${casaAtual.numero || casaAtual.casa_id}
         </div>
       ` : `
@@ -118,6 +122,32 @@ function renderizarEquipe(dadosEquipe, casasAtuais){
   });
 
 }
+
+
+window.abrirCasaEquipe = function(casaId){
+
+  const casa = houses.find(h => h.id === casaId);
+
+  if(!casa){
+    showToast("Casa não encontrada.", true);
+    return;
+  }
+
+  casaSelecionada = casa.id;
+
+  drawMap();
+
+  if(casa.lat && casa.lng){
+    map.flyTo([casa.lat, casa.lng], 20, {
+      animate: true,
+      duration: 1
+    });
+  }
+
+  openHouse(casa);
+
+};
+
 
 async function atualizarDashboard(){
 

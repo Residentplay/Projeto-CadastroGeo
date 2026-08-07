@@ -654,3 +654,16 @@ window.abrirRelatorioMensal = function(){
   `;
 
 };
+
+
+window.consultarRelatorioMensal = async function(){
+
+  alert("Consultando relatório mensal...");
+
+}
+
+window.exportarRelatorioMensalPDF = function(){
+
+  alert("Exportando PDF mensal...");
+
+}

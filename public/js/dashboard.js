@@ -84,41 +84,54 @@ function renderizarEquipe(dadosEquipe, casasAtuais){
     );  
 
     lista.innerHTML += `
-      <div class="card" style="margin-top:10px;padding:15px;">
+    <div class="card" style="margin-top:10px;padding:15px;">
 
-        <strong>${nome}</strong>
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:10px;
+      ">
 
-        ${casaAtual ? `
-          <div style="margin-top:8px;color:#ffd600;">
-            📍 Casa atual: ${casaAtual.numero || casaAtual.casa_id}
-          </div>
+        <strong>👷 ${nome}</strong>
 
-          <div style="margin-top:4px;color:#ffd600;">
-            🟡 Em andamento
-          </div>
-        ` : `
-          <div style="margin-top:8px;color:var(--text2);">
-            Sem missão em andamento
-          </div>
-        `}
-
-        <div style="margin-top:8px;">
-          Total: ${item.total}
-        </div>
-
-        <div style="margin-top:4px;">
-          🟡 Pendentes: ${item.pendentes}
-        </div>
-
-        <div style="margin-top:4px;">
-          🔵 Em andamento: ${item.andamento}
-        </div>
-
-        <div style="margin-top:4px;">
-          🟢 Concluídas: ${item.concluidas}
-        </div>
+        <span style="
+          background:#2563eb;
+          padding:3px 10px;
+          border-radius:20px;
+          font-weight:bold;
+        ">
+          ${item.total}
+        </span>
 
       </div>
+
+      ${casaAtual ? `
+        <div style="margin-bottom:10px;color:#ffd600;">
+          📍 ${casaAtual.numero || casaAtual.casa_id}
+        </div>
+      ` : `
+        <div style="margin-bottom:10px;color:var(--text2);">
+          Sem missão em andamento
+        </div>
+      `}
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        font-size:14px;
+        font-weight:bold;
+      ">
+
+        <span>🟡 ${item.pendentes}</span>
+
+        <span>🔵 ${item.andamento}</span>
+
+        <span>🟢 ${item.concluidas}</span>
+
+      </div>
+
+    </div>
     `;
 
   });

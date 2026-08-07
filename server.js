@@ -1476,3 +1476,39 @@ app.get("/criar-tabela-relatorios", async (req, res) => {
   }
 
 });
+
+app.get("/atualizar-tabela-relatorios", async (req, res) => {
+
+  try {
+
+    await pg.query(`
+      ALTER TABLE relatorios_diarios
+      ADD COLUMN IF NOT EXISTS ano INTEGER;
+    `);
+
+    await pg.query(`
+      ALTER TABLE relatorios_diarios
+      ADD COLUMN IF NOT EXISTS mes INTEGER;
+    `);
+
+    await pg.query(`
+      ALTER TABLE relatorios_diarios
+      ADD COLUMN IF NOT EXISTS dia INTEGER;
+    `);
+
+    res.json({
+      ok: true,
+      mensagem: "Tabela atualizada."
+    });
+
+  } catch (erro) {
+
+    console.error(erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
+
+});

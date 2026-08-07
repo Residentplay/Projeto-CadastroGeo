@@ -224,7 +224,7 @@ window.abrirRelatorioDiario = function(){
 
       <button
         class="btn"
-        mostrarMenuRelatorios();
+        onclick="mostrarMenuRelatorios()"
         style="margin-bottom:20px;"
       >
         ← Voltar

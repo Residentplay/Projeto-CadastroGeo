@@ -84,10 +84,7 @@ window.switchView = function(v){
     carregarDashboard();
   }
 
-  if(v === 'relatorios'){
-    mostrarMenuRelatorios();
-  }
-
+  
 };
 
 

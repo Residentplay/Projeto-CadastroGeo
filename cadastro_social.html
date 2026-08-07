@@ -413,15 +413,10 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 }
 
 .relatorio-resumo{
-
     display:grid;
-
-    grid-template-columns:repeat(4,1fr);
-
+    grid-template-columns:repeat(4,minmax(170px,1fr));
     gap:16px;
-
     margin-top:18px;
-
 }
 
 .relatorio-item{
@@ -435,6 +430,8 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     padding:18px;
 
     text-align:center;
+
+    min-width:0;
 
 }
 
@@ -558,14 +555,15 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
 
 .relatorio-colaborador{
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:20px;
-  margin-bottom:18px;
-  width:720px;
-  max-width:95%;
-  box-shadow:0 8px 24px rgba(0,0,0,.12);
+    background:var(--bg2);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:18px;
+    width:100%;
+    max-width:980px;
+    box-sizing:border-box;
+    box-shadow:0 8px 24px rgba(0,0,0,.12);
 }
 
 .relatorio-colaborador h2{

@@ -215,6 +215,11 @@ window.abrirRelatorioDiario = function(){
 
   const menu = document.getElementById("relatorios-menu");
 
+  menu.style.display = "block";
+  menu.style.gridTemplateColumns = "none";
+  menu.style.maxWidth = "1000px";
+  menu.style.width = "100%";
+
   menu.innerHTML = `
     <div style="width:100%;">
 

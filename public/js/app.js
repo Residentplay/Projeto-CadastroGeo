@@ -561,3 +561,10 @@ window.exportarRelatorioPDF = async function(){
     .save();
 
 };
+
+
+window.abrirRelatorioMensal = function(){
+
+  alert("Tela do Relatório Mensal");
+
+};

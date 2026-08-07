@@ -1172,19 +1172,3 @@ window.carregarLotes = async function(){
   }
 
 };
-
-
-
-
-window.testarFechamentoDia = async function(){
-
-  const res = await fetch("/relatorios/fechar-dia", {
-    method: "POST",
-    headers: authHeaders()
-  });
-
-  const dados = await res.json();
-
-  console.log("FECHAMENTO DO DIA:", res.status, dados);
-
-};

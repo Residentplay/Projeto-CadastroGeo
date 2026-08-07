@@ -1553,3 +1553,39 @@ app.post("/relatorios/fechar-dia", autenticarToken, async (req, res) => {
   }
 
 });
+
+
+app.get("/relatorios", autenticarToken, async (req, res) => {
+
+  try {
+
+    const resultado = await pg.query(`
+      SELECT
+        id,
+        data_relatorio,
+        ano,
+        mes,
+        dia,
+        colaborador,
+        nome_colaborador,
+        total,
+        pendentes,
+        andamento,
+        concluidas
+      FROM relatorios_diarios
+      ORDER BY data_relatorio DESC, concluidas DESC
+    `);
+
+    res.json(resultado.rows);
+
+  } catch (err) {
+
+    console.error("Erro ao buscar relatórios:", err);
+
+    res.status(500).json({
+      erro: err.message
+    });
+
+  }
+
+});

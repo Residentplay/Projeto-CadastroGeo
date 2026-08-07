@@ -281,14 +281,14 @@ window.carregarDashboard = async function(){
     <div style="
         display:flex;
         justify-content:flex-end;
-        margin-bottom:10px;
+        margin-bottom:5px; margin-right: 10px;
       ">
         <button
           class="btn"
           id="btn-relatorios"
           onclick="abrirRelatorios()"
         >
-          📑 Relatórios
+         <h3> 📑 Relatórios </h3>
         </button>
       </div>
 

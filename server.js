@@ -1017,6 +1017,26 @@ app.post("/atribuir-casa", autenticarToken, async (req, res) => {
       colaborador
     } = req.body;
 
+    const jaAtribuida = await pg.query(
+      `
+      SELECT colaborador
+      FROM atribuicoes
+      WHERE casa_id = $1
+        AND status <> 'concluida'
+      LIMIT 1
+      `,
+      [casa_id]
+    );
+
+    if (jaAtribuida.rows.length > 0) {
+
+      return res.status(409).json({
+        erro: "Esta casa já está atribuída a " +
+          jaAtribuida.rows[0].colaborador
+      });
+
+    }
+
     await pg.query(
       `
       INSERT INTO atribuicoes (

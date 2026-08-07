@@ -565,6 +565,92 @@ window.exportarRelatorioPDF = async function(){
 
 window.abrirRelatorioMensal = function(){
 
-  alert("Tela do Relatório Mensal");
+  const menu =
+    document.getElementById("relatorios-menu");
+
+  menu.style.display = "block";
+  menu.style.gridTemplateColumns = "none";
+  menu.style.maxWidth = "1000px";
+  menu.style.width = "100%";
+
+  menu.innerHTML = `
+
+    <button
+      class="btn"
+      onclick="switchView('relatorios')"
+      style="margin-bottom:20px;"
+    >
+      ← Voltar
+    </button>
+
+    <h2 style="margin-bottom:20px;">
+      📆 Relatório Mensal
+    </h2>
+
+    <div style="
+      display:flex;
+      gap:12px;
+      align-items:end;
+      flex-wrap:wrap;
+      margin-bottom:20px;
+    ">
+
+      <div>
+
+        <label>Mês</label>
+
+        <select
+          id="relatorio-mes"
+          class="inp"
+        >
+          <option value="1">Janeiro</option>
+          <option value="2">Fevereiro</option>
+          <option value="3">Março</option>
+          <option value="4">Abril</option>
+          <option value="5">Maio</option>
+          <option value="6">Junho</option>
+          <option value="7">Julho</option>
+          <option value="8" selected>Agosto</option>
+          <option value="9">Setembro</option>
+          <option value="10">Outubro</option>
+          <option value="11">Novembro</option>
+          <option value="12">Dezembro</option>
+        </select>
+
+      </div>
+
+      <div>
+
+        <label>Ano</label>
+
+        <input
+          id="relatorio-ano"
+          class="inp"
+          type="number"
+          value="2026"
+          style="width:120px;"
+        >
+
+      </div>
+
+      <button
+        class="btn-blue"
+        onclick="consultarRelatorioMensal()"
+      >
+        Consultar
+      </button>
+
+      <button
+        class="btn"
+        onclick="exportarRelatorioMensalPDF()"
+      >
+        📄 Exportar PDF
+      </button>
+
+    </div>
+
+    <div id="resultado-relatorio-mensal"></div>
+
+  `;
 
 };

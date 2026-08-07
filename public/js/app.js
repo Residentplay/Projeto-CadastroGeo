@@ -213,6 +213,53 @@ window.doLogin = async function(){
 
 window.abrirRelatorioDiario = function(){
 
-  alert("Tela do Relatório Diário");
+  const menu = document.getElementById("relatorios-menu");
+
+  menu.innerHTML = `
+    <div style="width:100%;">
+
+      <button
+        class="btn"
+        onclick="location.reload()"
+        style="margin-bottom:20px;"
+      >
+        ← Voltar
+      </button>
+
+      <h2>📅 Relatório Diário</h2>
+
+      <div style="
+        margin-top:20px;
+        display:flex;
+        gap:12px;
+        align-items:end;
+      ">
+
+        <div>
+          <label>Data</label><br>
+
+          <input
+            type="date"
+            id="relatorio-data"
+            class="inp"
+          >
+        </div>
+
+        <button
+          class="btn-blue"
+          onclick="consultarRelatorioDiario()"
+        >
+          Consultar
+        </button>
+
+      </div>
+
+      <div
+        id="resultado-relatorio-diario"
+        style="margin-top:25px;"
+      ></div>
+
+    </div>
+  `;
 
 };

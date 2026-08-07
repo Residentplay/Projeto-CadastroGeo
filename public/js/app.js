@@ -224,7 +224,7 @@ window.abrirRelatorioDiario = function(){
 
       <button
         class="btn"
-        onclick="location.reload()"
+        mostrarMenuRelatorios();
         style="margin-bottom:20px;"
       >
         ← Voltar
@@ -576,7 +576,7 @@ window.abrirRelatorioMensal = function(){
 
     <button
       class="btn"
-      onclick="switchView('relatorios')"
+      onclick="mostrarMenuRelatorios()"
       style="margin-bottom:20px;"
     >
       ← Voltar

@@ -1355,13 +1355,15 @@ app.get("/dashboard/ranking", autenticarToken, async (req, res) => {
 
     const resultado = await pg.query(`
       SELECT
-        colaborador,
+        a.colaborador,
         COUNT(*) AS total
-      FROM atribuicoes
-      WHERE colaborador IS NOT NULL
-        AND colaborador <> ''
-      GROUP BY colaborador
-      ORDER BY COUNT(*) DESC, colaborador
+      FROM atribuicoes a
+      INNER JOIN usuarios u
+        ON u.usuario = a.colaborador
+      WHERE u.papel = 'colaborador'
+        AND u.ativo = TRUE
+      GROUP BY a.colaborador
+      ORDER BY COUNT(*) DESC, a.colaborador
     `);
 
     res.json(resultado.rows);

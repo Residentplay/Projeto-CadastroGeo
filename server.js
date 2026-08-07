@@ -1345,11 +1345,11 @@ app.get("/dashboard/ranking", autenticarToken, async (req, res) => {
       SELECT
         colaborador,
         COUNT(*) AS total
-      FROM cadastros
+      FROM atribuicoes
       WHERE colaborador IS NOT NULL
         AND colaborador <> ''
       GROUP BY colaborador
-      ORDER BY total DESC
+      ORDER BY COUNT(*) DESC, colaborador
     `);
 
     res.json(resultado.rows);

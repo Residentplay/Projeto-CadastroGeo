@@ -318,8 +318,8 @@ window.consultarRelatorioDiario = async function(){
 
           <div style="
               display:grid;
-              grid-template-columns:repeat(4,minmax(140px,1fr));
-              gap:14px;
+              grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+              gap:16px;
           ">
 
               <div class="card card-casas">

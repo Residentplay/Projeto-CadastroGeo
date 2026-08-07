@@ -658,9 +658,103 @@ window.abrirRelatorioMensal = function(){
 
 window.consultarRelatorioMensal = async function(){
 
-  alert("Consultando relatório mensal...");
+  const mes =
+    document.getElementById("relatorio-mes").value;
 
-}
+  const ano =
+    document.getElementById("relatorio-ano").value;
+
+  const resultado =
+    document.getElementById("resultado-relatorio-mensal");
+
+  try{
+
+    const res = await fetch(
+      `/relatorios/mensal?ano=${ano}&mes=${mes}`,
+      {
+        headers: authHeaders()
+      }
+    );
+
+    const dados = await res.json();
+
+    if(!res.ok){
+
+      showToast(
+        dados.erro || "Erro ao consultar relatório mensal.",
+        true
+      );
+
+      return;
+    }
+
+    if(!dados.length){
+
+      resultado.innerHTML = `
+        <div class="card">
+          Nenhum relatório encontrado para esse período.
+        </div>
+      `;
+
+      return;
+    }
+
+    resultado.innerHTML = `
+
+      <div class="relatorio-tabela-wrap">
+
+        <table class="relatorio-tabela">
+
+          <thead>
+            <tr>
+              <th>Colaborador</th>
+              <th>Total</th>
+              <th>Pendentes</th>
+              <th>Andamento</th>
+              <th>Concluídas</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            ${dados.map(item => `
+              <tr>
+
+                <td>
+                  ${item.nome_colaborador || item.colaborador}
+                </td>
+
+                <td>${item.total}</td>
+
+                <td>${item.pendentes}</td>
+
+                <td>${item.andamento}</td>
+
+                <td>${item.concluidas}</td>
+
+              </tr>
+            `).join("")}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    `;
+
+  }catch(err){
+
+    console.error(err);
+
+    showToast(
+      "Erro ao consultar relatório mensal.",
+      true
+    );
+
+  }
+
+};
 
 window.exportarRelatorioMensalPDF = function(){
 

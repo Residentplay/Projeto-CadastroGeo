@@ -576,7 +576,7 @@ window.abrirRelatorioMensal = function(){
 
     <button
       class="btn"
-      onclick="mostrarMenuRelatorios()"
+      onclick="switchView('relatorios')"
       style="margin-bottom:20px;"
     >
       ← Voltar

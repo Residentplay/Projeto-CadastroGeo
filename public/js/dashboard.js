@@ -126,6 +126,8 @@ function renderizarEquipe(dadosEquipe, casasAtuais){
 
 window.abrirCasaEquipe = function(casaId){
 
+  switchView('map');
+
   const casa = houses.find(h => h.id === casaId);
 
   if(!casa){

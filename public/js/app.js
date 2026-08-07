@@ -304,40 +304,49 @@ window.consultarRelatorioDiario = async function(){
       return;
     }
 
-    resultado.innerHTML = "";
+    resultado.innerHTML += `
 
-    filtrados.forEach(item => {
+    <div class="card" style="
+        margin-bottom:20px;
+        border-radius:14px;
+        padding:20px;
+    ">
 
-      resultado.innerHTML += `
-        <div class="card" style="
-          margin-bottom:12px;
-          padding:16px;
+        <h2 style="margin-bottom:18px;">
+            👷 ${item.nome_colaborador || item.colaborador}
+        </h2>
+
+        <div style="
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:14px;
         ">
 
-          <h3>
-            👷 ${item.nome_colaborador || item.colaborador}
-          </h3>
+            <div class="card card-casas">
+                <h3>Total</h3>
+                <h1>${item.total}</h1>
+            </div>
 
-          <div style="margin-top:12px;">
-            <strong>Total:</strong> ${item.total}
-          </div>
+            <div class="card card-pendentes">
+                <h3>🟡 Pendentes</h3>
+                <h1>${item.pendentes}</h1>
+            </div>
 
-          <div style="margin-top:6px;">
-            🟡 Pendentes: ${item.pendentes}
-          </div>
+            <div class="card card-andamento">
+                <h3>🔵 Andamento</h3>
+                <h1>${item.andamento}</h1>
+            </div>
 
-          <div style="margin-top:6px;">
-            🔵 Em andamento: ${item.andamento}
-          </div>
-
-          <div style="margin-top:6px;">
-            🟢 Concluídas: ${item.concluidas}
-          </div>
+            <div class="card card-concluidas">
+                <h3>🟢 Concluídas</h3>
+                <h1>${item.concluidas}</h1>
+            </div>
 
         </div>
-      `;
 
-    });
+    </div>
+
+    `;
 
   }catch(err){
 

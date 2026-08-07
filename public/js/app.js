@@ -317,8 +317,8 @@ window.consultarRelatorioDiario = async function(){
           </h2>
 
           <div style="
-              display:grid;
-              grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+              ddisplay:grid;
+              grid-template-columns:repeat(4, 150px);
               gap:16px;
           ">
 

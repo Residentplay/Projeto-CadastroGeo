@@ -1432,3 +1432,47 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
+
+
+app.get("/criar-tabela-relatorios", autenticarToken, async (req, res) => {
+
+  try {
+
+    await pg.query(`
+      CREATE TABLE IF NOT EXISTS relatorios_diarios (
+
+        id SERIAL PRIMARY KEY,
+
+        data_relatorio DATE NOT NULL,
+
+        colaborador VARCHAR(100) NOT NULL,
+
+        total INTEGER DEFAULT 0,
+
+        pendentes INTEGER DEFAULT 0,
+
+        andamento INTEGER DEFAULT 0,
+
+        concluidas INTEGER DEFAULT 0,
+
+        criado_em TIMESTAMP DEFAULT NOW()
+
+      )
+    `);
+
+    res.json({
+      ok: true,
+      mensagem: "Tabela relatorios_diarios criada com sucesso."
+    });
+
+  } catch (erro) {
+
+    console.error("Erro ao criar tabela de relatórios:", erro);
+
+    res.status(500).json({
+      erro: erro.message
+    });
+
+  }
+
+});

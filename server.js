@@ -1589,3 +1589,21 @@ app.get("/relatorios", autenticarToken, async (req, res) => {
   }
 
 });
+
+app.get("/relatorios/mensal", autenticarToken, async (req, res) => {
+
+  try{
+
+    res.json([]);
+
+  }catch(err){
+
+    console.error(err);
+
+    res.status(500).json({
+      erro:"Erro ao consultar relatório mensal."
+    });
+
+  }
+
+});

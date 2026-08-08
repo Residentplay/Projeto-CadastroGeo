@@ -988,7 +988,6 @@ app.post("/login", loginLimiter, async (req, res) => {
       usuario: usuarioEncontrado.usuario,
       papel: usuarioEncontrado.papel,
       ativo: usuarioEncontrado.ativo,
-      token
     });
 
   } catch (erro) {

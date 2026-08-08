@@ -3,17 +3,13 @@ let confirmCb = null;
 
 
 window.authHeaders = function(contentType = false) {
-
-  const headers = {
-    Authorization: `Bearer ${localStorage.getItem("token")}`
-  };
+  const headers = {};
 
   if (contentType) {
     headers["Content-Type"] = "application/json";
   }
 
   return headers;
-
 };
 
 
@@ -121,7 +117,7 @@ window.setupUI = async function(){
 
 window.doLogout = function(){
 
-    localStorage.removeItem("token");
+    
 
   cancelAnimationFrame(animFrame);
   currentUser = null;
@@ -135,85 +131,27 @@ window.doLogout = function(){
 document.getElementById('inp-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
 
 
-window.doLogin = async function(){
+window.doLogout = async function(){
 
-  const u = document.getElementById('inp-user').value.trim();
-  const p = document.getElementById('inp-pass').value;
+  try {
 
-  try{
-
-    const res = await fetch("/login",{
-
-      method:"POST",
-
-      headers:{
-        "Content-Type":"application/json"
-      },
-
-      body:JSON.stringify({
-
-        usuario:u,
-        senha:p
-
-      })
-
+    await fetch("/logout", {
+      method: "POST"
     });
 
-    if(!res.ok){
-
-      const erro = await res.json();
-
-      const loginError = document.getElementById('login-error');
-
-      loginError.textContent =
-        erro.erro || "Erro ao realizar login.";
-
-      loginError.style.display = 'block';
-
-      return;
-    }
-
-    const usuario = await res.json();
-
-    localStorage.setItem("token", usuario.token);
-
-    currentUser = {
-
-      id:"u"+Date.now(),
-
-      name:usuario.nome,
-
-      user:usuario.usuario,
-
-      role:usuario.papel,
-
-      active:usuario.ativo
-
-    };
-
-    document.getElementById('login-error').style.display='none';
-
-    document.getElementById('screen-login').style.display='none';
-
-    const app = document.getElementById('screen-app');
-
-    app.style.display='flex';
-
-    setupUI();
-
-    switchView('map');
-
-    startGPS();
-
-
-  }catch(err){
-
-    console.error(err);
-
-    showToast("Erro ao realizar login!",true);
-
+  } catch (erro) {
+    console.error("Erro ao sair:", erro);
   }
 
+  cancelAnimationFrame(animFrame);
+
+  currentUser = null;
+
+  document.getElementById('screen-app').style.display = 'none';
+  document.getElementById('screen-login').style.display = 'flex';
+
+  document.getElementById('inp-user').value = '';
+  document.getElementById('inp-pass').value = '';
 };
 
 

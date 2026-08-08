@@ -1043,6 +1043,22 @@ app.delete(
 
 });
 
+
+app.post("/logout", (req, res) => {
+
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax"
+  });
+
+  res.json({
+    ok: true
+  });
+
+});
+
+
 app.post("/fotos", autenticarToken, async (req, res) => {
 
   try {

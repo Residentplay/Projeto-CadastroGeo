@@ -973,6 +973,12 @@ app.post("/login", loginLimiter, async (req, res) => {
 
   try {
 
+    if (!req.is("application/json")) {
+      return res.status(415).json({
+        erro: "Formato de requisição inválido."
+      });
+    }
+
     if (
       typeof req.body.usuario !== "string" ||
       typeof req.body.senha !== "string"
@@ -1022,20 +1028,18 @@ app.post("/login", loginLimiter, async (req, res) => {
 
     const usuarioEncontrado = resultado.rows[0];
 
-
-    if (!usuarioEncontrado.ativo) {
-      return res.status(403).json({
-        erro: "Usuário inativo."
-      });
-    }
-
-
     const senhaValida = await bcrypt.compare(
       senha,
       usuarioEncontrado.senha
     );
 
     if (!senhaValida) {
+      return res.status(401).json({
+        erro: "Usuário ou senha inválidos."
+      });
+    }
+
+    if (!usuarioEncontrado.ativo) {
       return res.status(401).json({
         erro: "Usuário ou senha inválidos."
       });

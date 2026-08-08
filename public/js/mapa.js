@@ -1083,6 +1083,10 @@ window.carregarCasas = async function() {
 
     console.log("Casas carregadas do banco:", houses);
 
+    await salvarCasasOffline(houses);
+
+    console.log("Casas salvas para uso offline:", houses.length);
+
     renderHousesList();
     updateStats();
     drawMap();

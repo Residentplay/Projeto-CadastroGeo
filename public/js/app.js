@@ -21,7 +21,7 @@ pedidoDB.onupgradeneeded = function(event) {
       keyPath: "id"
     });
   }
-  
+
 };
 
 pedidoDB.onsuccess = function(event) {
@@ -31,6 +31,42 @@ pedidoDB.onsuccess = function(event) {
 pedidoDB.onerror = function(event) {
   console.error("Erro ao abrir banco offline:", event.target.error);
 };
+
+
+function salvarCasasOffline(listaCasas) {
+
+  return new Promise((resolve, reject) => {
+
+    if (!window.dbOffline) {
+      reject(new Error("Banco offline ainda não disponível."));
+      return;
+    }
+
+    const transacao = window.dbOffline.transaction(
+      "casasOffline",
+      "readwrite"
+    );
+
+    const store = transacao.objectStore("casasOffline");
+
+    const limpar = store.clear();
+
+    limpar.onsuccess = () => {
+
+      for (const casa of listaCasas) {
+        store.put(casa);
+      }
+
+    };
+
+    transacao.oncomplete = () => resolve();
+
+    transacao.onerror = () =>
+      reject(transacao.error);
+
+  });
+
+}
 
 
 window.addEventListener("online", async () => {

@@ -81,6 +81,27 @@ function somenteEngenheiro(req, res, next) {
 }
 
 
+function engenheiroOuColaborador(req, res, next) {
+
+  if (!req.usuario) {
+    return res.status(401).json({
+      erro: "Usuário não autenticado."
+    });
+  }
+
+  if (
+    req.usuario.papel !== "engenheiro" &&
+    req.usuario.papel !== "colaborador"
+  ) {
+    return res.status(403).json({
+      erro: "Você não tem permissão para realizar esta ação."
+    });
+  }
+
+  next();
+}
+
+
 
 const app = express();
 
@@ -357,7 +378,11 @@ app.get("/lotes/:id", autenticarToken, async (req, res) => {
 // ==========================
 // SALVAR LOTES
 // ==========================
-app.post("/lotes", autenticarToken, async (req, res) => {
+app.post(
+  "/lotes",
+  autenticarToken,
+  somenteEngenheiro,
+  async (req, res) => {
 
   const lotes = req.body;
 
@@ -496,7 +521,11 @@ app.get("/casas/:id", autenticarToken, async (req, res) => {
 // ==========================
 // SALVAR CASAS
 // ==========================
-app.post("/casas", autenticarToken, async (req, res) => {
+app.post(
+  "/casas",
+  autenticarToken,
+  somenteEngenheiro,
+  async (req, res) => {
 
   const casas = req.body;
 
@@ -564,7 +593,11 @@ app.post("/casas", autenticarToken, async (req, res) => {
 // ==========================
 // SALVAR CADASTRO
 // ==========================
-app.post("/cadastro", autenticarToken, async (req, res) => {
+app.post(
+  "/cadastro",
+  autenticarToken,
+  engenheiroOuColaborador,
+  async (req, res) => {
 
   const c = req.body;
 

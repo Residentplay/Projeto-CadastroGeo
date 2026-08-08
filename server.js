@@ -26,7 +26,7 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
 }
 
 
-function autenticarToken(req, res, next) {
+async function autenticarToken(req, res, next) {
 
   const authHeader = req.headers.authorization;
 
@@ -44,12 +44,42 @@ function autenticarToken(req, res, next) {
 
   try {
 
-    const usuario = jwt.verify(
+    const usuarioToken = jwt.verify(
       token,
       process.env.JWT_SECRET
     );
 
-    req.usuario = usuario;
+    const resultado = await pg.query(
+      `
+      SELECT
+        usuario,
+        papel,
+        ativo
+      FROM usuarios
+      WHERE usuario = $1
+      LIMIT 1
+      `,
+      [usuarioToken.usuario]
+    );
+
+    if (resultado.rows.length === 0) {
+      return res.status(401).json({
+        erro: "Usuário não encontrado."
+      });
+    }
+
+    const usuarioBanco = resultado.rows[0];
+
+    if (!usuarioBanco.ativo) {
+      return res.status(401).json({
+        erro: "Usuário inativo."
+      });
+    }
+
+    req.usuario = {
+      usuario: usuarioBanco.usuario,
+      papel: usuarioBanco.papel
+    };
 
     next();
 
@@ -61,7 +91,6 @@ function autenticarToken(req, res, next) {
 
   }
 }
-
 
 function somenteEngenheiro(req, res, next) {
 

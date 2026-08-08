@@ -2,7 +2,7 @@ let currentUser = null;
 let confirmCb = null;
 let gpsWatchId = null;
 let estaOnline = navigator.onLine;
-let dbOffline = null;
+window.dbOffline = null;
 
 const pedidoDB = indexedDB.open("CadastroGeoOffline", 1);
 
@@ -18,7 +18,7 @@ pedidoDB.onupgradeneeded = function(event) {
 };
 
 pedidoDB.onsuccess = function(event) {
-  dbOffline = event.target.result;
+  window.dbOffline = event.target.result;
 };
 
 pedidoDB.onerror = function(event) {

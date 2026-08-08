@@ -280,6 +280,37 @@ window.closeModal = function(){
 };
 
 
+function salvarCadastroOffline(cadastro, casaId, fotos) {
+
+  return new Promise((resolve, reject) => {
+
+    if (!window.dbOffline) {
+      reject(new Error("Banco offline ainda não disponível."));
+      return;
+    }
+
+    const transacao = window.dbOffline.transaction(
+      "cadastrosPendentes",
+      "readwrite"
+    );
+
+    const store = transacao.objectStore("cadastrosPendentes");
+
+    const pedido = store.add({
+      casa_id: casaId,
+      cadastro: cadastro,
+      fotos: [...fotos],
+      data_offline: new Date().toISOString()
+    });
+
+    pedido.onsuccess = () => resolve();
+    pedido.onerror = () => reject(pedido.error);
+
+  });
+
+}
+
+
 window.saveCadastro = async function() {
 
   if (currentHouse) {

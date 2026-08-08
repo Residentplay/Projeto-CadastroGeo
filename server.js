@@ -899,6 +899,12 @@ app.post("/login", loginLimiter, async (req, res) => {
       senha
     } = req.body;
 
+    if (!usuario || !senha) {
+      return res.status(400).json({
+        erro: "Usuário e senha são obrigatórios."
+      });
+    }
+
     const resultado = await pg.query(
       `
       SELECT

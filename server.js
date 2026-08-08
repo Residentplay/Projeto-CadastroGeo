@@ -29,7 +29,7 @@ function autenticarToken(req, res, next) {
 
     const usuario = jwt.verify(
       token,
-      process.env.JWT_SECRET || "chave-temporaria"
+      process.env.JWT_SECRET
     );
 
     req.usuario = usuario;

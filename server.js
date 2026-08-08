@@ -249,7 +249,7 @@ app.get("/minhas-missoes/:colaborador", autenticarToken, async (req, res) => {
 
   try {
 
-    const { colaborador } = req.params;
+    const colaborador = req.usuario.usuario;
 
     const resultado = await pg.query(
       `
@@ -1097,7 +1097,11 @@ app.post(
 
 });
 
-app.get("/usuarios", autenticarToken, async (req, res) => {
+app.get(
+  "/usuarios",
+  autenticarToken,
+  somenteEngenheiro,
+  async (req, res) => {
 
   try {
 
@@ -1699,33 +1703,6 @@ app.get("/relatorios/anual", autenticarToken, async (req, res) => {
 
     res.status(500).json({
       erro:"Erro ao consultar relatório anual."
-    });
-
-  }
-
-});
-
-
-app.get("/verificar-senhas", autenticarToken, async (req, res) => {
-
-  try {
-
-    const resultado = await pg.query(`
-      SELECT
-        usuario,
-        LEFT(senha, 4) AS inicio_senha
-      FROM usuarios
-      ORDER BY usuario
-    `);
-
-    res.json(resultado.rows);
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      erro: err.message
     });
 
   }

@@ -339,6 +339,38 @@ function salvarCadastroOffline(cadastro, casaId, fotos) {
 }
 
 
+async function sincronizarCadastrosOffline() {
+
+  if (!window.dbOffline || !navigator.onLine) {
+    return;
+  }
+
+  const transacao = window.dbOffline.transaction(
+    "cadastrosPendentes",
+    "readonly"
+  );
+
+  const store = transacao.objectStore("cadastrosPendentes");
+  const pedido = store.getAll();
+
+  pedido.onsuccess = async function() {
+
+    const pendentes = pedido.result;
+
+    if (!pendentes.length) {
+      return;
+    }
+
+    console.log(
+      "Cadastros aguardando sincronização:",
+      pendentes.length
+    );
+
+  };
+
+}
+
+
 window.saveCadastro = async function() {
 
   if (currentHouse) {

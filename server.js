@@ -240,9 +240,6 @@ async function iniciarPostgreSQL() {
       )
     `);
 
-      await pg.query(`
-        DROP TABLE IF EXISTS fotos
-      `);
 
       await pg.query(`
         CREATE TABLE IF NOT EXISTS fotos (
@@ -1156,8 +1153,15 @@ app.post("/fotos", autenticarToken, async (req, res) => {
       casa_id,
       nome_arquivo,
       tipo,
-      dados
+      tamanho,
+      url
     } = req.body;
+
+    if (!casa_id || !nome_arquivo || !url) {
+      return res.status(400).json({
+        erro: "Dados da foto incompletos."
+      });
+    }
 
     await pg.query(
       `
@@ -1165,15 +1169,17 @@ app.post("/fotos", autenticarToken, async (req, res) => {
         casa_id,
         nome_arquivo,
         tipo,
-        dados
+        tamanho,
+        url
       )
-      VALUES ($1, $2, $3, $4)
+      VALUES ($1, $2, $3, $4, $5)
       `,
       [
         casa_id,
         nome_arquivo,
         tipo,
-        dados
+        tamanho,
+        url
       ]
     );
 
@@ -1186,7 +1192,7 @@ app.post("/fotos", autenticarToken, async (req, res) => {
     console.error("Erro ao salvar foto:", erro);
 
     res.status(500).json({
-      erro: erro.message
+      erro: "Erro interno do servidor."
     });
 
   }

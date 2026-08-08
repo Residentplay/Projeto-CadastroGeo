@@ -948,7 +948,11 @@ app.post("/login", async (req, res) => {
 
 });
 
-app.delete("/usuario/:id", autenticarToken, async (req, res) => {
+app.delete(
+  "/usuario/:id",
+  autenticarToken,
+  somenteEngenheiro,
+  async (req, res) => {
 
   try {
 
@@ -1030,7 +1034,11 @@ app.post("/fotos", autenticarToken, async (req, res) => {
 
 });
 
-app.post("/atribuir-casa", autenticarToken, async (req, res) => {
+app.post(
+  "/atribuir-casa",
+  autenticarToken,
+  somenteEngenheiro,
+  async (req, res) => {
 
   try {
 
@@ -1457,7 +1465,11 @@ app.listen(PORT, "0.0.0.0", () => {
 
 
 
-app.post("/relatorios/fechar-dia", autenticarToken, async (req, res) => {
+app.post(
+  "/relatorios/fechar-dia",
+  autenticarToken,
+  somenteEngenheiro,
+  async (req, res) => {
 
   try{
 

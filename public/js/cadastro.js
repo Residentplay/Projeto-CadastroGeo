@@ -14,7 +14,18 @@ window.openHouse = async function(h){
   document.getElementById('modal-addr').innerHTML=`<b>${h.label}</b>${h.bairro?' — '+h.bairro:''} &nbsp;<span style="font-size:10px;padding:2px 7px;border-radius:4px;background:${done?'rgba(46,160,67,.15)':'rgba(125,133,144,.15)'};color:${done?'#3fb950':'#7d8590'}">${done?'Cadastrado':'Pendente'}</span>`;
   const modal=document.getElementById('modal');
   viewOnly?modal.classList.add('view-only'):modal.classList.remove('view-only');
-  const cadastro = await carregarCadastro(h.id);
+  let cadastro = null;
+
+  if (estaOnline) {
+    try {
+      cadastro = await carregarCadastro(h.id);
+    } catch (erro) {
+      console.error("Erro ao carregar cadastro online:", erro);
+      cadastro = cadastros[h.id] || null;
+    }
+  } else {
+    cadastro = cadastros[h.id] || null;
+  }
 
   
 
@@ -81,7 +92,24 @@ if (cadastro && cadastro.casa_id) {
     document.getElementById('f-colab').value=currentUser.name;
   }
 
-  await carregarFotosCasa(h.id);
+  if (estaOnline) {
+
+    try {
+      await carregarFotosCasa(h.id);
+    } catch (erro) {
+      console.error("Erro ao carregar fotos:", erro);
+    }
+
+  } else {
+
+    const galeria = document.getElementById("galeria-fotos");
+
+    if (galeria) {
+      galeria.innerHTML =
+        "Fotos online indisponíveis enquanto estiver sem internet.";
+    }
+
+  }
   
   document.querySelectorAll('.house-item').forEach(el=>el.classList.remove('selected'));
   const li=document.getElementById('li-'+h.id); if(li) li.classList.add('selected');

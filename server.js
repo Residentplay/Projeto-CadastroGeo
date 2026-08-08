@@ -11,6 +11,7 @@ const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 5,
   skipSuccessfulRequests: true,
+  keyGenerator: (req) => `${req.ip}-${req.body.usuario || "sem-usuario"}`,
   standardHeaders: "draft-8",
   legacyHeaders: false,
   message: {
@@ -966,7 +967,7 @@ app.post("/login", loginLimiter, async (req, res) => {
     console.error("Erro no login:", erro);
 
     res.status(500).json({
-      erro: erro.message
+      erro: "Erro interno do servidor."
     });
 
   }

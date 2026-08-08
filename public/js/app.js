@@ -1,6 +1,18 @@
 let currentUser = null;
 let confirmCb = null;
 let gpsWatchId = null;
+let estaOnline = navigator.onLine;
+
+
+window.addEventListener("online", () => {
+  estaOnline = true;
+  showToast("Conexão restabelecida.");
+});
+
+window.addEventListener("offline", () => {
+  estaOnline = false;
+  showToast("Você está sem internet.", true);
+});
 
 
 window.authHeaders = function(contentType = false) {

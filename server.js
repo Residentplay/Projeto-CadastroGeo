@@ -7,6 +7,17 @@ const bcrypt = require("bcrypt");
 const { rateLimit } = require("express-rate-limit");
 
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: {
+    erro: "Muitas tentativas de login. Tente novamente mais tarde."
+  }
+});
+
+
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
   throw new Error("JWT_SECRET ausente ou muito fraco.");
 }
@@ -877,7 +888,7 @@ app.put(
 
 
 
-app.post("/login", async (req, res) => {
+app.post("/login", loginLimiter, async (req, res) => {
 
   try {
 

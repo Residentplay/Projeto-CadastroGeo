@@ -909,6 +909,14 @@ app.post("/login", async (req, res) => {
 
     const usuarioEncontrado = resultado.rows[0];
 
+
+    if (!usuarioEncontrado.ativo) {
+      return res.status(403).json({
+        erro: "Usuário inativo."
+      });
+    }
+
+
     const senhaValida = await bcrypt.compare(
       senha,
       usuarioEncontrado.senha

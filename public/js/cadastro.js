@@ -348,18 +348,23 @@ window.saveCadastro = async function() {
 
       for (const foto of fotosCasa) {
 
-        const base64 = await arquivoParaBase64(foto);
+        const formData = new FormData();
 
-        await fetch("/fotos", {
+        formData.append("casa_id", casaIdAtual);
+        formData.append("foto", foto);
+
+        const respostaFoto = await fetch("/fotos", {
           method: "POST",
-          headers: authHeaders(true),
-          body: JSON.stringify({
-            casa_id: casaIdAtual,
-            nome_arquivo: foto.name,
-            tipo: foto.type,
-            dados: base64
-          })
+          body: formData
         });
+
+        const retornoFoto = await respostaFoto.json();
+
+        if (!respostaFoto.ok) {
+          throw new Error(
+            retornoFoto.erro || "Erro ao enviar foto."
+          );
+        }
 
       }
 

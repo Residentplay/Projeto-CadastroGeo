@@ -1171,59 +1171,75 @@ app.post("/logout", (req, res) => {
 });
 
 
-app.post("/fotos", autenticarToken, async (req, res) => {
+app.post(
+  "/fotos",
+  autenticarToken,
+  upload.single("foto"),
+  async (req, res) => {
 
-  try {
+    try {
 
-    const {
-      casa_id,
-      nome_arquivo,
-      tipo,
-      tamanho,
-      url
-    } = req.body;
+      const { casa_id } = req.body;
+      const arquivo = req.file;
 
-    if (!casa_id || !nome_arquivo || !url) {
-      return res.status(400).json({
-        erro: "Dados da foto incompletos."
+      if (!casa_id || !arquivo) {
+        return res.status(400).json({
+          erro: "Casa e foto são obrigatórias."
+        });
+      }
+
+      const nomeSeguro =
+        `${Date.now()}-${arquivo.originalname.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+
+      const chave =
+        `casas/${casa_id}/${nomeSeguro}`;
+
+      await r2.send(
+        new PutObjectCommand({
+          Bucket: process.env.R2_BUCKET,
+          Key: chave,
+          Body: arquivo.buffer,
+          ContentType: arquivo.mimetype
+        })
+      );
+
+      await pg.query(
+        `
+        INSERT INTO fotos (
+          casa_id,
+          nome_arquivo,
+          tipo,
+          tamanho,
+          url
+        )
+        VALUES ($1, $2, $3, $4, $5)
+        `,
+        [
+          casa_id,
+          arquivo.originalname,
+          arquivo.mimetype,
+          arquivo.size,
+          chave
+        ]
+      );
+
+      res.json({
+        ok: true,
+        nome: arquivo.originalname
       });
+
+    } catch (erro) {
+
+      console.error("Erro ao enviar foto:", erro);
+
+      res.status(500).json({
+        erro: "Erro ao enviar foto."
+      });
+
     }
 
-    await pg.query(
-      `
-      INSERT INTO fotos (
-        casa_id,
-        nome_arquivo,
-        tipo,
-        tamanho,
-        url
-      )
-      VALUES ($1, $2, $3, $4, $5)
-      `,
-      [
-        casa_id,
-        nome_arquivo,
-        tipo,
-        tamanho,
-        url
-      ]
-    );
-
-    res.json({
-      ok: true
-    });
-
-  } catch (erro) {
-
-    console.error("Erro ao salvar foto:", erro);
-
-    res.status(500).json({
-      erro: "Erro interno do servidor."
-    });
-
   }
-
-});
+);
 
 app.post(
   "/atribuir-casa",

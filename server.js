@@ -903,14 +903,17 @@ app.post("/login", async (req, res) => {
         usuario: usuarioEncontrado.usuario,
         papel: usuarioEncontrado.papel
       },
-      process.env.JWT_SECRET || "chave-temporaria",
+      process.env.JWT_SECRET,
       {
         expiresIn: "8h"
       }
     );
 
     res.json({
-      ...usuarioEncontrado,
+      nome: usuarioEncontrado.nome,
+      usuario: usuarioEncontrado.usuario,
+      papel: usuarioEncontrado.papel,
+      ativo: usuarioEncontrado.ativo,
       token
     });
 

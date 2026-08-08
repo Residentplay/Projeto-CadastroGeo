@@ -4,7 +4,7 @@ let gpsWatchId = null;
 let estaOnline = navigator.onLine;
 window.dbOffline = null;
 
-const pedidoDB = indexedDB.open("CadastroGeoOffline", 1);
+const pedidoDB = indexedDB.open("CadastroGeoOffline", 2);
 
 pedidoDB.onupgradeneeded = function(event) {
   const db = event.target.result;
@@ -15,6 +15,13 @@ pedidoDB.onupgradeneeded = function(event) {
       autoIncrement: true
     });
   }
+
+  if (!db.objectStoreNames.contains("casasOffline")) {
+    db.createObjectStore("casasOffline", {
+      keyPath: "id"
+    });
+  }
+  
 };
 
 pedidoDB.onsuccess = function(event) {

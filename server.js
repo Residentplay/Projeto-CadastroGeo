@@ -11,9 +11,9 @@ function autenticarToken(req, res, next) {
 
   const authHeader = req.headers.authorization;
 
-  if (!authHeader) {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
-      erro: "Token não informado."
+      erro: "Token não informado ou formato inválido."
     });
   }
 

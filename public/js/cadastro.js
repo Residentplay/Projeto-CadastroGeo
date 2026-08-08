@@ -364,11 +364,18 @@ function removerCadastroOffline(id) {
 }
 
 
+let sincronizacaoEmAndamento = false;
 async function sincronizarCadastrosOffline() {
 
-  if (!window.dbOffline || !navigator.onLine) {
+  if (
+    sincronizacaoEmAndamento ||
+    !window.dbOffline ||
+    !navigator.onLine
+  ) {
     return;
   }
+
+  sincronizacaoEmAndamento = true;
 
   const transacao = window.dbOffline.transaction(
     "cadastrosPendentes",
@@ -383,6 +390,7 @@ async function sincronizarCadastrosOffline() {
     const pendentes = pedido.result;
 
     if (!pendentes.length) {
+      sincronizacaoEmAndamento = false;
       return;
     }
 
@@ -474,6 +482,8 @@ async function sincronizarCadastrosOffline() {
           true
         );
 
+        sincronizacaoEmAndamento = false;
+
         return;
       }
 
@@ -486,6 +496,7 @@ async function sincronizarCadastrosOffline() {
     showToast(
       "Cadastros pendentes sincronizados com sucesso."
     );
+    sincronizacaoEmAndamento = false;
 
   };
 

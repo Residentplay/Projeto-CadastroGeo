@@ -241,12 +241,17 @@ async function iniciarPostgreSQL() {
     `);
 
       await pg.query(`
+        DROP TABLE IF EXISTS fotos
+      `);
+
+      await pg.query(`
         CREATE TABLE IF NOT EXISTS fotos (
           id SERIAL PRIMARY KEY,
           casa_id TEXT NOT NULL,
-          nome_arquivo TEXT,
+          nome_arquivo TEXT NOT NULL,
           tipo TEXT,
-          dados TEXT NOT NULL,
+          tamanho BIGINT,
+          url TEXT NOT NULL,
           data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
       `);

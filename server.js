@@ -10,6 +10,7 @@ const {
   S3Client,
   PutObjectCommand
 } = require("@aws-sdk/client-s3");
+const multer = require("multer");
 
 
 const loginLimiter = rateLimit({
@@ -37,6 +38,15 @@ const r2 = new S3Client({
   credentials: {
     accessKeyId: process.env.R2_ACCESS_KEY_ID,
     secretAccessKey: process.env.R2_SECRET_ACCESS_KEY
+  }
+});
+
+
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 30 * 1024 * 1024
   }
 });
 

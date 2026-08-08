@@ -6,6 +6,10 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+  throw new Error("JWT_SECRET ausente ou muito fraco.");
+}
+
 
 function autenticarToken(req, res, next) {
 

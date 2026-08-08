@@ -1673,3 +1673,30 @@ app.get("/relatorios/anual", autenticarToken, async (req, res) => {
   }
 
 });
+
+
+app.get("/verificar-senhas", autenticarToken, async (req, res) => {
+
+  try {
+
+    const resultado = await pg.query(`
+      SELECT
+        usuario,
+        LEFT(senha, 4) AS inicio_senha
+      FROM usuarios
+      ORDER BY usuario
+    `);
+
+    res.json(resultado.rows);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      erro: err.message
+    });
+
+  }
+
+});

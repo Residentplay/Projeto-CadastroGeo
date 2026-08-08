@@ -360,9 +360,59 @@ window.saveCadastro = async function() {
 
   };
 
+
+  const casaIdAtual = currentHouse.id;
+
+  if (!estaOnline) {
+
+    try {
+
+      await salvarCadastroOffline(
+        cadastro,
+        casaIdAtual,
+        fotosCasa
+      );
+
+      cadastros[casaIdAtual] = cadastro;
+
+      const casaOffline = houses.find(
+        h => h.id === casaIdAtual
+      );
+
+      if (casaOffline) {
+        casaOffline.pendenteSincronizacao = true;
+      }
+
+      renderHousesList();
+      updateStats();
+      drawMap();
+      closeModal();
+
+      showToast(
+        "Sem internet. Cadastro salvo no aparelho e aguardando sincronização."
+      );
+
+      return;
+
+    } catch (erro) {
+
+      console.error(
+        "Erro ao salvar cadastro offline:",
+        erro
+      );
+
+      showToast(
+        "Não foi possível salvar o cadastro no aparelho.",
+        true
+      );
+
+      return;
+    }
+  }
+
+
   try {
 
-    const casaIdAtual = currentHouse.id;
 
     const res = await fetch('/cadastro', {
 

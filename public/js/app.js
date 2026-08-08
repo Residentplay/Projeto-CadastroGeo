@@ -2,6 +2,28 @@ let currentUser = null;
 let confirmCb = null;
 let gpsWatchId = null;
 let estaOnline = navigator.onLine;
+let dbOffline = null;
+
+const pedidoDB = indexedDB.open("CadastroGeoOffline", 1);
+
+pedidoDB.onupgradeneeded = function(event) {
+  const db = event.target.result;
+
+  if (!db.objectStoreNames.contains("cadastrosPendentes")) {
+    db.createObjectStore("cadastrosPendentes", {
+      keyPath: "id",
+      autoIncrement: true
+    });
+  }
+};
+
+pedidoDB.onsuccess = function(event) {
+  dbOffline = event.target.result;
+};
+
+pedidoDB.onerror = function(event) {
+  console.error("Erro ao abrir banco offline:", event.target.error);
+};
 
 
 window.addEventListener("online", () => {

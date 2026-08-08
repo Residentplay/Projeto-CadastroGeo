@@ -883,13 +883,10 @@ app.post("/login", async (req, res) => {
 
     const usuarioEncontrado = resultado.rows[0];
 
-    let senhaValida = false;
-
-    if (usuarioEncontrado.senha.startsWith("$2")) {
-      senhaValida = await bcrypt.compare(senha, usuarioEncontrado.senha);
-    } else {
-      senhaValida = senha === usuarioEncontrado.senha;
-    }
+    const senhaValida = await bcrypt.compare(
+      senha,
+      usuarioEncontrado.senha
+    );
 
     if (!senhaValida) {
       return res.status(401).json({

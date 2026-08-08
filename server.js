@@ -65,12 +65,16 @@ function autenticarToken(req, res, next) {
 
 function somenteEngenheiro(req, res, next) {
 
-  if (req.usuario.papel !== "engenheiro") {
+  if (!req.usuario) {
+    return res.status(401).json({
+      erro: "Usuário não autenticado."
+    });
+  }
 
+  if (req.usuario.papel !== "engenheiro") {
     return res.status(403).json({
       erro: "Acesso permitido somente para engenheiro."
     });
-
   }
 
   next();
@@ -82,7 +86,10 @@ const app = express();
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.static("public"));
-app.use(cors());
+app.use(cors({
+  origin: "https://projeto-cadastrogeo.onrender.com",
+  credentials: true
+}));
 app.use(express.static(__dirname));
 app.use(cookieParser());
 

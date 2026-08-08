@@ -815,13 +815,58 @@ console.log(
 // GPS
 //
 function startGPS(){
-  if(!navigator.geolocation){ document.getElementById('loc-text').textContent='GPS não disponível.'; return; }
-  navigator.geolocation.watchPosition(pos=>{
-    userLat=pos.coords.latitude; userLng=pos.coords.longitude;
-    document.getElementById('loc-text').textContent=
-      `Você está aqui — ${userLat.toFixed(5)}, ${userLng.toFixed(5)} (precisão: ${Math.round(pos.coords.accuracy)}m)`;
-    drawMap();
-  }, ()=>{ document.getElementById('loc-text').textContent='Localizacao aproximada (GPS negado).'; }, {enableHighAccuracy:true, maximumAge:5000});
+
+  const locText = document.getElementById('loc-text');
+
+  if(!navigator.geolocation){
+    locText.textContent = 'GPS não disponível neste dispositivo.';
+    return;
+  }
+
+  if(gpsWatchId !== null){
+    navigator.geolocation.clearWatch(gpsWatchId);
+  }
+
+  locText.textContent = 'Obtendo localização...';
+
+  gpsWatchId = navigator.geolocation.watchPosition(
+
+    pos => {
+
+      userLat = pos.coords.latitude;
+      userLng = pos.coords.longitude;
+
+      locText.textContent =
+        `Você está aqui — ${userLat.toFixed(5)}, ${userLng.toFixed(5)} ` +
+        `(precisão: ${Math.round(pos.coords.accuracy)}m)`;
+
+      drawMap();
+    },
+
+    erro => {
+
+      if(erro.code === 1){
+        locText.textContent = 'Permissão de localização negada.';
+      }
+      else if(erro.code === 2){
+        locText.textContent = 'Não foi possível determinar sua localização.';
+      }
+      else if(erro.code === 3){
+        locText.textContent = 'Tempo limite ao buscar localização.';
+      }
+      else{
+        locText.textContent = 'Erro ao acessar o GPS.';
+      }
+
+      console.error("Erro GPS:", erro.code, erro.message);
+    },
+
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 5000
+    }
+  );
 }
  
 //

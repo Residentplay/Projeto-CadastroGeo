@@ -1862,13 +1862,3 @@ app.get("/relatorios/anual", autenticarToken, async (req, res) => {
   }
 
 });
-
-
-
-
-app.get("/me", autenticarToken, (req, res) => {
-  res.json({
-    usuario: req.usuario.usuario,
-    papel: req.usuario.papel
-  });
-});

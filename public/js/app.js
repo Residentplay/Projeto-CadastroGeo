@@ -1,5 +1,6 @@
 let currentUser = null;
 let confirmCb = null;
+let gpsWatchId = null;
 
 
 window.authHeaders = function(contentType = false) {
@@ -130,6 +131,11 @@ window.doLogout = async function(){
 
   } catch (erro) {
     console.error("Erro ao sair:", erro);
+  }
+
+  if(gpsWatchId !== null){
+    navigator.geolocation.clearWatch(gpsWatchId);
+    gpsWatchId = null;
   }
 
   cancelAnimationFrame(animFrame);

@@ -4,9 +4,11 @@ let userLat = null, userLng = null;
 window.obterMinhaLocalizacao = function() {
 
   if (!navigator.geolocation) {
-    alert("Seu navegador não suporta GPS.");
+    showToast("GPS não disponível neste dispositivo.", true);
     return;
   }
+
+  showToast("Obtendo localização...");
 
   navigator.geolocation.getCurrentPosition(
 
@@ -14,9 +16,24 @@ window.obterMinhaLocalizacao = function() {
 
       const lat = posicao.coords.latitude;
       const lng = posicao.coords.longitude;
+      const precisao = Math.round(posicao.coords.accuracy);
 
-      console.log("Minha localização:", lat, lng);
+      userLat = lat;
+      userLng = lng;
 
+      const locText = document.getElementById('loc-text');
+
+      if (locText) {
+        locText.textContent =
+          `Você está aqui — ${lat.toFixed(5)}, ${lng.toFixed(5)} ` +
+          `(precisão: ${precisao}m)`;
+      }
+
+      showToast(
+        `Localização encontrada. Precisão aproximada: ${precisao}m`
+      );
+
+      drawMap();
     },
 
     function(erro) {
@@ -27,16 +44,23 @@ window.obterMinhaLocalizacao = function() {
         erro.message
       );
 
-      alert(
-        "Erro ao obter localização: " +
-        erro.message
-      );
-
+      if (erro.code === 1) {
+        showToast("Permissão de localização negada.", true);
+      }
+      else if (erro.code === 2) {
+        showToast("Não foi possível determinar sua localização.", true);
+      }
+      else if (erro.code === 3) {
+        showToast("Tempo limite ao buscar localização.", true);
+      }
+      else {
+        showToast("Erro ao acessar o GPS.", true);
+      }
     },
 
     {
       enableHighAccuracy: true,
-      timeout: 10000,
+      timeout: 15000,
       maximumAge: 0
     }
 

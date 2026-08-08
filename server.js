@@ -47,6 +47,20 @@ function autenticarToken(req, res, next) {
 }
 
 
+function somenteEngenheiro(req, res, next) {
+
+  if (req.usuario.papel !== "engenheiro") {
+
+    return res.status(403).json({
+      erro: "Acesso permitido somente para engenheiro."
+    });
+
+  }
+
+  next();
+}
+
+
 
 const app = express();
 
@@ -713,7 +727,11 @@ app.post("/status-missao", autenticarToken, async (req, res) => {
 
 
 
-app.post("/usuario", autenticarToken, async (req, res) => {
+app.post(
+  "/usuario",
+  autenticarToken,
+  somenteEngenheiro,
+  async (req, res) => {
 
   try {
 

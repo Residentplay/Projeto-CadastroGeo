@@ -161,9 +161,16 @@ window.doLogin = async function(){
 
     if(!res.ok){
 
-      document.getElementById('login-error').style.display='block';
-      return;
+      const erro = await res.json();
 
+      const loginError = document.getElementById('login-error');
+
+      loginError.textContent =
+        erro.erro || "Erro ao realizar login.";
+
+      loginError.style.display = 'block';
+
+      return;
     }
 
     const usuario = await res.json();

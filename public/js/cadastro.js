@@ -339,6 +339,31 @@ function salvarCadastroOffline(cadastro, casaId, fotos) {
 }
 
 
+function removerCadastroOffline(id) {
+
+  return new Promise((resolve, reject) => {
+
+    const transacao = window.dbOffline.transaction(
+      "cadastrosPendentes",
+      "readwrite"
+    );
+
+    const store = transacao.objectStore(
+      "cadastrosPendentes"
+    );
+
+    const pedido = store.delete(id);
+
+    pedido.onsuccess = () => resolve();
+
+    pedido.onerror = () =>
+      reject(pedido.error);
+
+  });
+
+}
+
+
 async function sincronizarCadastrosOffline() {
 
   if (!window.dbOffline || !navigator.onLine) {
@@ -361,9 +386,105 @@ async function sincronizarCadastrosOffline() {
       return;
     }
 
-    console.log(
-      "Cadastros aguardando sincronização:",
-      pendentes.length
+    showToast(
+      `Sincronizando ${pendentes.length} cadastro(s) pendente(s)...`
+    );
+
+    for (const item of pendentes) {
+
+      try {
+
+        const res = await fetch("/cadastro", {
+          method: "POST",
+          headers: authHeaders(true),
+          body: JSON.stringify(item.cadastro)
+        });
+
+        const retorno = await res.json();
+
+        if (!res.ok) {
+          throw new Error(
+            retorno.erro || "Erro ao sincronizar cadastro."
+          );
+        }
+
+        if (item.fotos && item.fotos.length) {
+
+          for (const foto of item.fotos) {
+
+            const formData = new FormData();
+
+            formData.append("casa_id", item.casa_id);
+            formData.append("foto", foto);
+
+            const respostaFoto = await fetch("/fotos", {
+              method: "POST",
+              body: formData
+            });
+
+            const retornoFoto = await respostaFoto.json();
+
+            if (!respostaFoto.ok) {
+              throw new Error(
+                retornoFoto.erro || "Erro ao sincronizar foto."
+              );
+            }
+
+          }
+
+        }
+
+        const respostaStatus = await fetch("/status-missao", {
+          method: "POST",
+          headers: authHeaders(true),
+          body: JSON.stringify({
+            casa_id: item.casa_id,
+            status: "concluida"
+          })
+        });
+
+        if (!respostaStatus.ok) {
+          throw new Error(
+            "Erro ao atualizar status da missão."
+          );
+        }
+
+        await removerCadastroOffline(item.id);
+
+        const casa = houses.find(
+          h => h.id === item.casa_id
+        );
+
+        if (casa) {
+          casa.statusMissao = "concluida";
+          casa.pendenteSincronizacao = false;
+        }
+
+        cadastros[item.casa_id] = item.cadastro;
+
+      } catch (erro) {
+
+        console.error(
+          "Erro ao sincronizar cadastro offline:",
+          erro
+        );
+
+        showToast(
+          "Falha ao sincronizar. O cadastro continua salvo no aparelho.",
+          true
+        );
+
+        return;
+      }
+
+    }
+
+    renderHousesList();
+    updateStats();
+    drawMap();
+
+    showToast(
+      "Cadastros pendentes sincronizados com sucesso."
     );
 
   };

@@ -26,9 +26,13 @@ pedidoDB.onerror = function(event) {
 };
 
 
-window.addEventListener("online", () => {
+window.addEventListener("online", async () => {
   estaOnline = true;
   showToast("Conexão restabelecida.");
+
+  if (typeof sincronizarCadastrosOffline === "function") {
+    await sincronizarCadastrosOffline();
+  }
 });
 
 window.addEventListener("offline", () => {

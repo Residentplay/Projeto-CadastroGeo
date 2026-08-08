@@ -6,6 +6,10 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { rateLimit } = require("express-rate-limit");
 const cookieParser = require("cookie-parser");
+const {
+  S3Client,
+  PutObjectCommand
+} = require("@aws-sdk/client-s3");
 
 
 const loginLimiter = rateLimit({
@@ -24,6 +28,18 @@ const loginLimiter = rateLimit({
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
   throw new Error("JWT_SECRET ausente ou muito fraco.");
 }
+
+
+
+const r2 = new S3Client({
+  region: "auto",
+  endpoint: process.env.R2_ENDPOINT,
+  credentials: {
+    accessKeyId: process.env.R2_ACCESS_KEY_ID,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY
+  }
+});
+
 
 
 async function autenticarToken(req, res, next) {

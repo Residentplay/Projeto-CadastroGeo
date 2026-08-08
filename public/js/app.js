@@ -115,19 +115,6 @@ window.setupUI = async function(){
 };
 
 
-window.doLogout = function(){
-
-    
-
-  cancelAnimationFrame(animFrame);
-  currentUser = null;
-  document.getElementById('screen-app').style.display='none';
-  document.getElementById('screen-login').style.display='flex';
-  document.getElementById('inp-user').value='';
-  document.getElementById('inp-pass').value='';
-};
-
-
 document.getElementById('inp-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
 
 
@@ -152,6 +139,76 @@ window.doLogout = async function(){
 
   document.getElementById('inp-user').value = '';
   document.getElementById('inp-pass').value = '';
+};
+
+
+window.doLogin = async function(){
+
+  const u = document.getElementById('inp-user').value.trim();
+  const p = document.getElementById('inp-pass').value;
+
+  try{
+
+    const res = await fetch("/login",{
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+        usuario:u,
+        senha:p
+      })
+    });
+
+    if(!res.ok){
+
+      const erro = await res.json();
+
+      const loginError =
+        document.getElementById('login-error');
+
+      loginError.textContent =
+        erro.erro || "Erro ao realizar login.";
+
+      loginError.style.display = 'block';
+
+      return;
+    }
+
+    const usuario = await res.json();
+
+    currentUser = {
+      id:"u"+Date.now(),
+      name:usuario.nome,
+      user:usuario.usuario,
+      role:usuario.papel,
+      active:usuario.ativo
+    };
+
+    document.getElementById('login-error').style.display='none';
+
+    document.getElementById('screen-login').style.display='none';
+
+    const app = document.getElementById('screen-app');
+
+    app.style.display='flex';
+
+    setupUI();
+
+    switchView('map');
+
+    startGPS();
+
+  }catch(err){
+
+    console.error(err);
+
+    showToast("Erro ao realizar login!",true);
+
+  }
+
 };
 
 

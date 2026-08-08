@@ -8,8 +8,13 @@ const { rateLimit } = require("express-rate-limit");
 const cookieParser = require("cookie-parser");
 const {
   S3Client,
-  PutObjectCommand
+  PutObjectCommand,
+  GetObjectCommand
 } = require("@aws-sdk/client-s3");
+
+const {
+  getSignedUrl
+} = require("@aws-sdk/s3-request-presigner");
 const multer = require("multer");
 
 
@@ -1375,7 +1380,8 @@ app.get("/fotos/:casaId", autenticarToken, async (req, res) => {
         casa_id,
         nome_arquivo,
         tipo,
-        dados,
+        tamanho,
+        url,
         data_envio
       FROM fotos
       WHERE casa_id = $1
@@ -1384,14 +1390,38 @@ app.get("/fotos/:casaId", autenticarToken, async (req, res) => {
       [req.params.casaId]
     );
 
-    res.json(resultado.rows);
+    const fotos = await Promise.all(
+      resultado.rows.map(async foto => {
+
+        const comando = new GetObjectCommand({
+          Bucket: process.env.R2_BUCKET,
+          Key: foto.url
+        });
+
+        const urlTemporaria = await getSignedUrl(
+          r2,
+          comando,
+          {
+            expiresIn: 3600
+          }
+        );
+
+        return {
+          ...foto,
+          url_temporaria: urlTemporaria
+        };
+
+      })
+    );
+
+    res.json(fotos);
 
   } catch (erro) {
 
     console.error("Erro ao carregar fotos:", erro);
 
     res.status(500).json({
-      erro: erro.message
+      erro: "Erro interno do servidor."
     });
 
   }

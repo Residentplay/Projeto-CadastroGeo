@@ -190,24 +190,29 @@ window.arquivoParaBase64 = function(arquivo) {
 
 window.carregarFotosCasa = async function(casaId) {
 
-  const galeria = document.getElementById("galeria-fotos");
+    const galeria = document.getElementById("galeria-fotos");
 
-  galeria.innerHTML = "<p>Carregando fotos...</p>";
+    galeria.innerHTML = "<p>Carregando fotos...</p>";
 
 
-  const res = await fetch("/fotos/" + casaId, {
-    headers: authHeaders()
-  });
+    const res = await fetch("/fotos/" + casaId, {
+      headers: authHeaders()
+    });
 
-  const fotos = await res.json();
+    const fotos = await res.json();
 
-  galeria.innerHTML = "";
+    galeria.innerHTML = "";
 
-  fotos.forEach(foto => {
+    if (!res.ok || !Array.isArray(fotos)) {
+      galeria.innerHTML = "Erro ao carregar fotos.";
+      return;
+    }
+
+    fotos.forEach(foto => {
 
     const img = document.createElement("img");
 
-    img.src = foto.dados;
+    img.src = foto.url_temporaria;
 
     img.style.width = "120px";
     img.style.height = "90px";

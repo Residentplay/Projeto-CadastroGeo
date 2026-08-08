@@ -894,10 +894,8 @@ app.post("/login", loginLimiter, async (req, res) => {
 
   try {
 
-    const {
-      usuario,
-      senha
-    } = req.body;
+    const usuario = req.body.usuario?.trim();
+    const senha = req.body.senha;
 
     if (!usuario || !senha) {
       return res.status(400).json({

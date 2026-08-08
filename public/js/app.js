@@ -94,6 +94,8 @@ window.setupUI = async function(){
   rp.className = 'role-pill role-'+currentUser.role;
   document.getElementById('nav-admin').style.display = currentUser.role==='engenheiro'?'':'none';
   document.getElementById('btn-missoes').style.display = currentUser.role === 'colaborador' ? '' : 'none';
+  document.getElementById('tab-btn-relatorios').style.display = currentUser.role === 'engenheiro' ? '' : 'none';
+  document.getElementById('tab-btn-localizacao').style.display = currentUser.role === 'colaborador' ? 'none' : '';
   document.getElementById('upload-zone').style.display = currentUser.role==='engenheiro'?'block':'none';
   document.getElementById('btn-import-top').style.display = currentUser.role==='engenheiro'?'':'none';
   const titles={colaborador:'Imóveis para cadastrar',assistente:'Fichas de cadastro',engenheiro:'Painel de fiscalização'};

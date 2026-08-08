@@ -42,12 +42,24 @@ async function autenticarToken(req, res, next) {
     });
   }
 
+  let usuarioToken;
+
   try {
 
-    const usuarioToken = jwt.verify(
+    usuarioToken = jwt.verify(
       token,
       process.env.JWT_SECRET
     );
+
+  } catch (erro) {
+
+    return res.status(401).json({
+      erro: "Token inválido ou expirado."
+    });
+
+  }
+
+  try {
 
     const resultado = await pg.query(
       `
@@ -85,8 +97,10 @@ async function autenticarToken(req, res, next) {
 
   } catch (erro) {
 
-    return res.status(401).json({
-      erro: "Token inválido ou expirado."
+    console.error("Erro ao validar usuário no banco:", erro);
+
+    return res.status(500).json({
+      erro: "Erro interno do servidor."
     });
 
   }

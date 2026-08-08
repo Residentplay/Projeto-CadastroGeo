@@ -782,7 +782,11 @@ app.post(
 
 
 
-app.put("/usuario/:id", autenticarToken, async (req, res) => {
+app.put(
+  "/usuario/:id",
+  autenticarToken,
+  somenteEngenheiro,
+  async (req, res) => {
 
   try {
 

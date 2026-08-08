@@ -223,8 +223,9 @@ window.abrirRelatorioDiario = function(){
     <div style="width:100%;">
 
       <button
+        type="button"
         class="btn"
-        onclick="switchView('relatorios')"
+        onclick="mostrarMenuRelatorios()"
         style="margin-bottom:20px;"
       >
         ← Voltar

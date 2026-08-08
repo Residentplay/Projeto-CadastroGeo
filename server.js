@@ -5,6 +5,7 @@ const { Pool } = require("pg");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { rateLimit } = require("express-rate-limit");
+const cookieParser = require("cookie-parser");
 
 
 const loginLimiter = rateLimit({
@@ -29,17 +30,15 @@ function autenticarToken(req, res, next) {
 
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({
-      erro: "Token não informado ou formato inválido."
-    });
-  }
+  let token = req.cookies?.token;
 
-  const token = authHeader.split(" ")[1];
+  if (!token && authHeader?.startsWith("Bearer ")) {
+    token = authHeader.split(" ")[1];
+  }
 
   if (!token) {
     return res.status(401).json({
-      erro: "Token inválido."
+      erro: "Token não informado."
     });
   }
 
@@ -61,7 +60,6 @@ function autenticarToken(req, res, next) {
     });
 
   }
-
 }
 
 
@@ -86,6 +84,7 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.static("public"));
 app.use(cors());
 app.use(express.static(__dirname));
+app.use(cookieParser());
 
 const pg = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -894,8 +893,24 @@ app.post("/login", loginLimiter, async (req, res) => {
 
   try {
 
+    if (
+      typeof req.body.usuario !== "string" ||
+      typeof req.body.senha !== "string"
+    ) {
+      return res.status(400).json({
+        erro: "Dados de login inválidos."
+      });
+    }
+
     const usuario = req.body.usuario?.trim();
     const senha = req.body.senha;
+
+    if (usuario?.length > 100 || senha?.length > 200) {
+      return res.status(400).json({
+        erro: "Dados de login inválidos."
+      });
+    }
+
 
     if (!usuario || !senha) {
       return res.status(400).json({
@@ -954,9 +969,19 @@ app.post("/login", loginLimiter, async (req, res) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "8h"
+        expiresIn: "4h"
       }
     );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 4 * 60 * 60 * 1000
+    });
+
+    res.set("Cache-Control", "no-store");
+
 
     res.json({
       nome: usuarioEncontrado.nome,

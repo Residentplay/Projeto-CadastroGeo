@@ -665,7 +665,7 @@ window.saveCadastro = async function() {
 
     if (casaIdAtual) {
 
-      await fetch("/status-missao", {
+      const respostaMissao = await fetch("/status-missao", {
         method: "POST",
         headers: authHeaders(true),
         body: JSON.stringify({
@@ -674,10 +674,27 @@ window.saveCadastro = async function() {
         })
       });
 
-      const casaConcluida = houses.find(h => h.id === casaIdAtual);
+      if (!respostaMissao.ok) {
+        throw new Error("Erro ao concluir missão.");
+      }
+
+      const casaConcluida = houses.find(
+        h => h.id === casaIdAtual
+      );
 
       if (casaConcluida) {
         casaConcluida.statusMissao = "concluida";
+      }
+
+      // remove imediatamente da lateral do colaborador
+      if (currentUser.role === "colaborador") {
+        const itemLateral = document.getElementById(
+          "li-" + casaIdAtual
+        );
+
+        if (itemLateral) {
+          itemLateral.remove();
+        }
       }
 
       renderHousesList();

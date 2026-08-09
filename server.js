@@ -1950,3 +1950,41 @@ app.get("/relatorios/anual", autenticarToken, async (req, res) => {
   }
 
 });
+
+
+app.get(
+  "/debug/atribuicoes/:colaborador",
+  autenticarToken,
+  somenteEngenheiro,
+  async (req, res) => {
+
+    try {
+
+      const resultado = await pg.query(
+        `
+        SELECT
+          id,
+          casa_id,
+          colaborador,
+          status,
+          data_atribuicao,
+          data_conclusao
+        FROM atribuicoes
+        WHERE colaborador = $1
+        ORDER BY id
+        `,
+        [req.params.colaborador]
+      );
+
+      res.json(resultado.rows);
+
+    } catch (erro) {
+
+      res.status(500).json({
+        erro: erro.message
+      });
+
+    }
+
+  }
+);

@@ -690,11 +690,66 @@ window.saveCadastro = async function() {
 
   } catch (err) {
 
-    console.error(err);
+      console.error("Erro ao salvar online:", err);
 
-    showToast('Erro ao salvar cadastro!', true);
+      const erroDeConexao =
+        !navigator.onLine ||
+        err instanceof TypeError ||
+        err.message === "Failed to fetch";
 
-  }
+      if (erroDeConexao) {
+
+        try {
+
+          await salvarCadastroOffline(
+            cadastro,
+            casaIdAtual,
+            fotosCasa
+          );
+
+          cadastros[casaIdAtual] = cadastro;
+
+          const casaOffline = houses.find(
+            h => h.id === casaIdAtual
+          );
+
+          if (casaOffline) {
+            casaOffline.pendenteSincronizacao = true;
+          }
+
+          renderHousesList();
+          updateStats();
+          drawMap();
+          closeModal();
+
+          showToast(
+            "Sem internet. Cadastro e fotos salvos no aparelho."
+          );
+
+          return;
+
+        } catch (erroOffline) {
+
+          console.error(
+            "Erro ao salvar no aparelho:",
+            erroOffline
+          );
+
+          showToast(
+            "Não foi possível salvar o cadastro no aparelho.",
+            true
+          );
+
+          return;
+        }
+      }
+
+      showToast(
+        "Erro ao salvar cadastro: " + err.message,
+        true
+      );
+
+    }
 
   console.log("Fotos por casa:", fotosPorCasa);
 

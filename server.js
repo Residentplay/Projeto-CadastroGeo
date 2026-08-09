@@ -196,6 +196,16 @@ const pg = new Pool({
 
 async function iniciarPostgreSQL() {
 
+  await pg.query(`
+    TRUNCATE TABLE
+      fotos,
+      cadastros,
+      atribuicoes,
+      casas,
+      lotes
+    RESTART IDENTITY
+  `);
+
   if (!process.env.DATABASE_URL) {
     console.log(
       "DATABASE_URL não configurada. PostgreSQL será iniciado apenas no Render."

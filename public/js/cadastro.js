@@ -9,7 +9,7 @@ window.openHouse = async function(h){
 
   currentHouse=h;
   const done=!!cadastros[h.id];
-  const viewOnly=(currentUser.role==='assistente')||(currentUser.role==='colaborador'&&done);
+  const viewOnly = false;
   document.getElementById('modal-title').textContent=done?'Ficha de Cadastro Social':'Novo Cadastro Social';
   document.getElementById('modal-addr').innerHTML=`<b>${h.label}</b>${h.bairro?' — '+h.bairro:''} &nbsp;<span style="font-size:10px;padding:2px 7px;border-radius:4px;background:${done?'rgba(46,160,67,.15)':'rgba(125,133,144,.15)'};color:${done?'#3fb950':'#7d8590'}">${done?'Cadastrado':'Pendente'}</span>`;
   const modal=document.getElementById('modal');

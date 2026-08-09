@@ -69,6 +69,33 @@ function salvarCasasOffline(listaCasas) {
 }
 
 
+function carregarCasasOffline() {
+
+  return new Promise((resolve, reject) => {
+
+    if (!window.dbOffline) {
+      reject(new Error("Banco offline ainda não disponível."));
+      return;
+    }
+
+    const transacao = window.dbOffline.transaction(
+      "casasOffline",
+      "readonly"
+    );
+
+    const store = transacao.objectStore("casasOffline");
+
+    const pedido = store.getAll();
+
+    pedido.onsuccess = () => resolve(pedido.result);
+
+    pedido.onerror = () => reject(pedido.error);
+
+  });
+
+}
+
+
 window.addEventListener("online", async () => {
   estaOnline = true;
   showToast("Conexão restabelecida.");

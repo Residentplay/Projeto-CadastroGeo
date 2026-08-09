@@ -1049,6 +1049,24 @@ window.carregarCasas = async function() {
 
   try {
 
+    if (!navigator.onLine) {
+
+      const casasOffline = await carregarCasasOffline();
+
+      houses = casasOffline;
+
+      console.log(
+        "Casas carregadas do modo offline:",
+        houses.length
+      );
+
+      renderHousesList();
+      updateStats();
+      drawMap();
+
+      return;
+    }
+
     const res = await fetch("/casas", {
       headers: authHeaders()
     });

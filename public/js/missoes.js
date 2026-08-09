@@ -156,14 +156,34 @@ window.iniciarTrabalho = async function(){
         const minhaLat = posicao.coords.latitude;
         const minhaLng = posicao.coords.longitude;
 
-        const res = await fetch(
-          "/minhas-missoes/" + currentUser.user,
-          {
-            headers: authHeaders()
-          }
-        );
+        let missoes = [];
 
-        const missoes = await res.json();
+        if (navigator.onLine) {
+
+          const res = await fetch(
+            "/minhas-missoes/" + currentUser.user,
+            {
+              headers: authHeaders()
+            }
+          );
+
+          if (!res.ok) {
+            throw new Error("Erro ao carregar missões.");
+          }
+
+          missoes = await res.json();
+
+          await salvarMissoesOffline(missoes);
+
+        } else {
+
+          missoes = await carregarMissoesOffline();
+
+          showToast(
+            "Sem internet. Usando missões salvas no aparelho."
+          );
+
+        }
 
         const pendentes = missoes.filter(
           missao =>

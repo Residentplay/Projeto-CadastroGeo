@@ -388,6 +388,12 @@ window.renderHousesList = function(lista = houses){
 
   el.innerHTML = "";
 
+  if (currentUser?.role === "colaborador") {
+    lista = lista.filter(h =>
+      h.statusMissao !== "concluida"
+    );
+  }
+
   lista.forEach(h=>{
 
     const cadastro = cadastros[h.id] || {};

@@ -680,6 +680,8 @@ window.saveCadastro = async function() {
         casaConcluida.statusMissao = "concluida";
       }
 
+      renderHousesList();
+
       casaSelecionada = null;
 
       drawMap();

@@ -196,16 +196,6 @@ const pg = new Pool({
 
 async function iniciarPostgreSQL() {
 
-  await pg.query(`
-    TRUNCATE TABLE
-      fotos,
-      cadastros,
-      atribuicoes,
-      casas,
-      lotes
-    RESTART IDENTITY
-  `);
-
   if (!process.env.DATABASE_URL) {
     console.log(
       "DATABASE_URL não configurada. PostgreSQL será iniciado apenas no Render."
@@ -842,7 +832,12 @@ app.post("/status-missao", autenticarToken, async (req, res) => {
     await pg.query(
       `
       UPDATE atribuicoes
-      SET status = $1
+      SET
+        status = $1,
+        data_conclusao = CASE
+          WHEN $1 = 'concluida' THEN CURRENT_TIMESTAMP
+          ELSE NULL
+        END
       WHERE casa_id = $2
       `,
       [status, casa_id]
@@ -1580,8 +1575,6 @@ app.get("/dashboard/equipe", autenticarToken, async (req, res) => {
 
         colaborador,
 
-        COUNT(*) AS total,
-
         SUM(CASE WHEN status = 'pendente' THEN 1 ELSE 0 END) AS pendentes,
 
         SUM(CASE WHEN status = 'em_andamento' THEN 1 ELSE 0 END) AS andamento,
@@ -1631,6 +1624,8 @@ app.get("/dashboard/ranking", autenticarToken, async (req, res) => {
         ON u.usuario = a.colaborador
       WHERE u.papel = 'colaborador'
         AND u.ativo = TRUE
+        AND a.status = 'concluida'
+        AND a.data_conclusao::date = CURRENT_DATE
       GROUP BY a.colaborador
       ORDER BY COUNT(*) DESC, a.colaborador
     `);

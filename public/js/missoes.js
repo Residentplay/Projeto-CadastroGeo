@@ -61,6 +61,11 @@ window.carregarTelaMissoes = async function(){
 
     }
 
+
+    missoes = missoes.filter(
+      missao => missao.status_missao !== "concluida"
+    );
+
     missoes.forEach(missao => {
 
       const casa = houses.find(h =>

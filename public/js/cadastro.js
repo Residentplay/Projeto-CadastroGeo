@@ -264,9 +264,12 @@ window.previewFotos = function() {
   preview.innerHTML = "";
   galeria.innerHTML = "";
 
-  fotosCasa = [...input.files];
+  fotosCasa = [
+    ...fotosCasa,
+    ...input.files
+  ];
 
-  [...input.files].forEach(file => {
+  fotosCasa.forEach(file => {
 
     const img = document.createElement("img");
 

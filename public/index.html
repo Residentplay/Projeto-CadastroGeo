@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CadastroGeo — Sistema de Campo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;
+  --border:#30363d;--border2:#3d444d;
+  --text:#e6edf3;--text2:#7d8590;--text3:#484f58;
+  --green:#2ea043;--green2:#1a7f37;
+  --blue:#1f6feb;--blue2:#388bfd;
+  --amber:#d29922;--red:#da3633;--purple:#8957e5;
+  --radius:8px;--radius-lg:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;}
+ 
+/* LOGIN */
+#screen-login{height:100vh;display:flex;align-items:center;justify-content:center;position:relative;}
+#screen-login::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 600px 400px at 50% 30%,rgba(31,111,235,.12) 0%,transparent 70%);pointer-events:none;}
+.login-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:40px 36px;width:360px;position:relative;z-index:1;}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.login-logo-icon{width:36px;height:36px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.login-logo span{font-size:18px;font-weight:600;}
+.login-logo small{font-size:11px;color:var(--text2);display:block;margin-top:-2px;}
+.lbl{font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500;}
+.inp{width:100%;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;margin-bottom:14px;transition:border-color .2s;}
+.inp:focus{outline:none;border-color:var(--blue2);}
+.login-btn{width:100%;padding:11px;background:var(--green);border:none;border-radius:var(--radius);color:white;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;margin-top:4px;}
+.login-btn:hover{background:var(--green2);}
+.login-error{font-size:12px;color:var(--red);margin-top:-8px;margin-bottom:10px;display:none;}
+.login-hint{margin-top:16px;padding:12px;background:var(--bg3);border-radius:var(--radius);border:1px solid var(--border);font-size:11px;color:var(--text2);line-height:1.7;}
+.login-hint strong{color:var(--text);}
+ 
+/* APP */
+#screen-app{height:100vh;display:none;flex-direction:column;}
+ 
+/* TOPBAR */
+#topbar{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;z-index:100;}
+.topbar-logo{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.topbar-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.topbar-nav{display:flex;gap:4px;margin-left:8px;}
+.nav-btn{padding:5px 12px;border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;background:none;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .15s;}
+.nav-btn:hover{background:var(--bg3);color:var(--text);}
+.nav-btn.active{background:var(--bg3);color:var(--text);border-color:var(--border);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);}
+.user-avatar{width:28px;height:28px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:white;flex-shrink:0;}
+.role-pill{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;}
+.role-colaborador{background:rgba(46,160,67,.15);color:#3fb950;border:1px solid rgba(46,160,67,.3);}
+.role-assistente{background:rgba(31,111,235,.15);color:var(--blue2);border:1px solid rgba(31,111,235,.3);}
+.role-engenheiro{background:rgba(210,153,34,.15);color:#e3b341;border:1px solid rgba(210,153,34,.3);}
+.btn-logout{background:none;border:1px solid var(--border);border-radius:var(--radius);color:var(--text2);font-size:11px;padding:4px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.btn-logout:hover{border-color:var(--red);color:var(--red);}
+.btn-blue{
+  background:#0969da;
+  color:#fff;
+  border:none;
+  padding:10px 16px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+  transition:.2s;
+}
+
+.btn-blue:hover{
+  background:#1f6feb;
+}
+ 
+/* STATSBAR */
+#statsbar{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;}
+.stat-item{flex:1;padding:8px 16px;border-right:1px solid var(--border);font-size:11px;color:var(--text2);}
+.stat-item:last-child{border-right:none;}
+.stat-item strong{display:block;font-size:18px;font-weight:600;color:var(--text);font-family:'DM Mono',monospace;}
+.stat-item.green strong{color:var(--green);}
+.stat-item.amber strong{color:var(--amber);}
+.stat-item.purple strong{color:var(--purple);}
+ 
+/* VIEWS */
+#view-map,#view-admin{display:none;flex:1;min-height:0;overflow:hidden;}
+#view-map{flex-direction:row;}
+ 
+/* MAPA CANVAS */
+#map{width:100%;height:100vh;}
+#map-wrap{flex:1;position:relative;overflow:hidden;background:#1a2030;}
+#map-canvas{width:100%;height:100%;cursor:grab;}
+#map-canvas:active{cursor:grabbing;}
+.map-overlay{position:absolute;top:15px;right:10px;display:flex;flex-direction:column;gap:6px;z-index:10;padding-top: 40px;}
+.map-ctrl-btn{width:32px;height:32px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;}
+.map-ctrl-btn:hover{background:var(--bg3);}
+#gps-bar{position:absolute;bottom:10px;left:10px;right:10px;background:rgba(22,27,34,.9);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-size:11px;color:var(--text2);display:flex;align-items:center;gap:8px;backdrop-filter:blur(4px);}
+.loc-pulse{width:8px;height:8px;border-radius:50%;background:var(--blue2);animation:blink 1.5s infinite;flex-shrink:0;}
+.map-overlay{
+  position:absolute;
+  top:30px;
+  right:10px;
+  z-index:9999;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+} 
+/* SIDEBAR */
+#sidebar{width:300px;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
+#sidebar-header{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#sidebar-header h3{font-size:13px;font-weight:600;}
+#sidebar-header p{font-size:11px;color:var(--text2);margin-top:2px;}
+#upload-zone{margin:10px 12px;padding:16px 14px;background:rgba(31,111,235,.07);border:1.5px dashed var(--blue2);border-radius:var(--radius);text-align:center;cursor:pointer;transition:all .2s;display:none;}
+#upload-zone:hover{background:rgba(31,111,235,.14);}
+#upload-zone p{font-size:11px;color:var(--text2);margin-top:4px;line-height:1.5;}
+#upload-zone strong{font-size:13px;color:var(--blue2);}
+#geojson-input{display:none;}
+#houses-list{flex:1;overflow-y:auto;padding:4px 0;}
+.house-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;}
+.house-item:hover{background:var(--bg3);}
+.house-item.selected{background:rgba(31,111,235,.08);border-left:2px solid var(--blue2);}
+.house-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.house-dot.pendente{background:var(--text3);border:1.5px solid var(--border2);}
+.house-dot.cadastrado{background:var(--green);}
+.house-info{flex:1;min-width:0;}
+.house-info strong{font-size:12px;font-weight:500;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.house-info span{font-size:11px;color:var(--text2);}
+.house-badge{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:500;flex-shrink:0;}
+.badge-pendente{background:rgba(125,133,144,.15);color:var(--text2);}
+.badge-cadastrado{background:rgba(46,160,67,.15);color:#3fb950;}
+
+
+
+.search-box{
+    padding:10px;
+    border-bottom:1px solid var(--border);
+}
+
+.search-box input{
+    width:100%;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid var(--border);
+    background:var(--bg3);
+    color:var(--text);
+    font-size:13px;
+}
+
+.search-box input:focus{
+    outline:none;
+    border-color:#2f81f7;
+}
+
+
+
+/* ADMIN */
+#view-admin{flex-direction:column;background:var(--bg);overflow-y:auto;}
+.admin-wrap{max-width:900px;margin:0 auto;padding:24px 20px;width:100%;}
+.admin-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:20px;overflow:hidden;}
+.admin-section-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px;}
+.admin-section-head h3{font-size:14px;font-weight:600;}
+.admin-section-head p{font-size:11px;color:var(--text2);margin-top:2px;}
+.admin-section-body{padding:16px 18px;}
+.add-user-form{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:10px;align-items:end;}
+.add-user-form .field label{font-size:11px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500;}
+.add-user-form .field input,.add-user-form .field select{width:100%;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;}
+.add-user-form .field input:focus,.add-user-form .field select:focus{outline:none;border-color:var(--blue2);}
+.user-table{width:100%;border-collapse:collapse;}
+.user-table th{font-size:11px;font-weight:500;color:var(--text2);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em;}
+.user-table td{font-size:13px;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.user-table tr:last-child td{border-bottom:none;}
+.user-table tr:hover td{background:var(--bg3);}
+.td-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:white;}
+.td-user{font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);}
+.td-pass{font-family:'DM Mono',monospace;font-size:12px;color:var(--text3);cursor:pointer;user-select:none;}
+.td-pass:hover{color:var(--text2);}
+.td-actions{display:flex;gap:6px;}
+.activity-list{display:flex;flex-direction:column;gap:8px;}
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:10px;background:var(--bg3);border-radius:var(--radius);border:1px solid var(--border);}
+.activity-info strong{font-size:12px;font-weight:500;display:block;}
+.activity-info span{font-size:11px;color:var(--text2);}
+.activity-time{font-size:10px;color:var(--text3);margin-left:auto;white-space:nowrap;}
+ 
+/* BOTÕES */
+.btn{padding:8px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .15s;}
+.btn-green{background:var(--green);color:white;}
+.btn-green:hover{background:var(--green2);}
+.btn-red{background:rgba(218,54,51,.15);color:#f85149;border:1px solid rgba(218,54,51,.3);}
+.btn-red:hover{background:rgba(218,54,51,.25);}
+.btn-ghost{background:var(--bg3);color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--border2);}
+.btn-sm{padding:5px 10px;font-size:11px;}
+ 
+/* MODAL */
+#modal-wrap{display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.75);align-items:center;justify-content:center;padding:20px;}
+#modal-wrap.open{display:flex;}
+#modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:620px;max-height:90vh;display:flex;flex-direction:column;}
+#modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;}
+#modal-head h2{font-size:15px;font-weight:600;}
+#modal-head .addr{font-size:12px;color:var(--text2);margin-top:2px;}
+#modal-close{background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;line-height:1;padding:0 4px;}
+#modal-close:hover{color:var(--text);}
+#modal-body{overflow-y:auto;padding:20px 20px 16px;flex:1;}
+#modal-foot{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:center;flex-shrink:0;}
+.form-section{margin-bottom:20px;}
+.form-section-title{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.form-row{display:grid;gap:10px;margin-bottom:10px;}
+.form-row.c2{grid-template-columns:1fr 1fr;}
+.form-row.c3{grid-template-columns:1fr 1fr 1fr;}
+.form-row.c1{grid-template-columns:1fr;}
+.field label{display:block;font-size:11px;color:var(--text2);margin-bottom:4px;font-weight:500;}
+.field input,.field select,.field textarea{width:100%;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;transition:border-color .15s;}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--blue2);}
+.field input[readonly]{background:var(--bg);color:var(--text2);cursor:default;}
+.field textarea{resize:vertical;min-height:70px;}
+.field select option{background:var(--bg3);}
+.view-only .field input,.view-only .field select,.view-only .field textarea{background:var(--bg);color:var(--text2);pointer-events:none;}
+.view-only #btn-save{display:none;}
+#cadastro-tabs{
+
+    display:flex;
+
+    gap:6px;
+
+    padding:10px 16px;
+
+    border-bottom:1px solid var(--border);
+
+    background:var(--bg2);
+
+    overflow-x:auto;
+
+    flex-shrink:0;
+
+    scrollbar-width:none;
+
+}
+
+.tab-btn{
+
+    border:none;
+
+    background:white;
+
+    padding:8px 12px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:12px;
+
+    font-weight:600;
+
+    color:#475569;
+
+    transition:.2s;
+
+    white-space:nowrap;
+
+    flex:0 0 auto;
+
+}
+
+.tab-btn:hover{
+
+    background:#e2e8f0;
+
+}
+
+.tab-btn.active{
+
+    background:#2563eb;
+
+    color:white;
+
+    box-shadow:0 2px 8px rgba(37,99,235,.35);
+
+    transform:translateY(-1px);
+
+}
+
+#tab-midia .form-row.c2{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+#tab-midia .btn{
+  width:auto;
+  padding:6px 10px;
+  font-size:12px;
+}
+
+#tab-relatorios .form-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+#tab-relatorios .btn{
+    width:auto;
+    padding:8px 12px;
+}
+
+
+#modal-missao{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:30000;
+  background:rgba(0,0,0,.75);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+#modal-missao.open{
+  display:flex;
+}
+
+#modal-missao .modal{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:16px;
+  width:100%;
+  max-width:420px;
+  padding:20px;
+}
+
+#dashboard-resumo .card,
+#dashboard-equipe .card{
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  min-height: 75px;
+  width: 160px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  transition: .25s;
+  cursor: default;
+}
+
+#dashboard-equipe{
+  width: 200px !important;
+  min-width: 200px !important;
+}
+
+#dashboard-equipe .card{
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+#dashboard-resumo .card-colaboradores{
+  border-left: 5px solid #ec4899;
+}
+
+
+
+#dashboard-graficos{
+  flex:1;
+  min-width:450px;
+  margin-left:20px;
+}
+
+.dashboard-grafico{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:20px;
+  height:100%;
+  min-height:420px;
+  box-shadow:0 8px 24px rgba(0,0,0,.12);
+}
+
+.grafico-container{
+  position:relative;
+  height:350px;
+}
+
+
+
+#dashboard-resumo .card:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(0,0,0,.18);
+}
+
+#dashboard-resumo .card-casas{
+  border-left: 5px solid #3b82f6;
+}
+
+#dashboard-resumo .card-missoes{
+  border-left: 5px solid #8b5cf6;
+}
+
+#dashboard-resumo .card-pendentes{
+  border-left: 5px solid #f59e0b;
+}
+
+#dashboard-resumo .card-andamento{
+  border-left: 5px solid #06b6d4;
+}
+
+#dashboard-resumo .card-concluidas{
+  border-left: 5px solid #22c55e;
+}
+
+#dashboard-resumo .card h3{
+  font-size:14px;
+  margin-bottom:12px;
+}
+
+#dashboard-resumo .card h1{
+  font-size:28px;
+}
+
+.relatorio-resumo{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(170px,1fr));
+    gap:16px;
+    margin-top:18px;
+}
+
+.relatorio-item{
+
+    background:#1b2029;
+
+    border:1px solid #313744;
+
+    border-radius:14px;
+
+    padding:18px;
+
+    text-align:center;
+
+    min-width:0;
+
+}
+
+.relatorio-item h3{
+
+    font-size:15px;
+
+    margin:0 0 12px;
+
+    color:#d6dce5;
+
+    font-weight:600;
+
+}
+
+.relatorio-item .numero{
+
+    font-size:42px;
+
+    font-weight:bold;
+
+    color:#fff;
+
+}
+
+.relatorio-total{
+    border-top:4px solid #3b82f6;
+}
+
+.relatorio-pendente{
+    border-top:4px solid #f59e0b;
+}
+
+.relatorio-andamento{
+    border-top:4px solid #2563eb;
+}
+
+.relatorio-concluida{
+    border-top:4px solid #22c55e;
+}
+
+.card-equipe{
+  margin-top:12px;
+  padding:16px;
+}
+
+.card-equipe h3{
+  margin:0 0 10px 0;
+}
+
+.equipe-casa{
+  color:var(--text2);
+  margin-bottom:12px;
+}
+
+.equipe-resumo{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.badge-total{
+  background:#2563eb;
+  color:#fff;
+  border-radius:20px;
+  padding:4px 10px;
+  font-weight:bold;
+}
+
+.equipe-status{
+  display:flex;
+  gap:12px;
+  font-weight:bold;
+}
+
+#dashboard-ranking{
+  margin-top:18px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px;
+  width:100%;
+  box-sizing:border-box;
+}
+
+#dashboard-ranking::before{
+  content:"🏆 Ranking de Missões";
+  display:block;
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:14px;
+}
+
+.ranking-item{
+  display:flex;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+
+.ranking-item:last-child{
+  border-bottom:none;
+}
+
+.ranking-posicao{
+  width:40px;
+  font-size:18px;
+}
+
+.ranking-nome{
+  flex:1;
+  font-weight:600;
+}
+
+.ranking-total{
+  background:#2563eb;
+  color:white;
+  border-radius:18px;
+  padding:4px 10px;
+}
+
+
+.relatorio-colaborador{
+    background:var(--bg2);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:18px;
+    width:100%;
+    max-width:980px;
+    box-sizing:border-box;
+    box-shadow:0 8px 24px rgba(0,0,0,.12);
+}
+
+.relatorio-colaborador h2{
+  margin:0 0 18px 0;
+}
+
+.relatorio-tabela-wrap{
+  margin-top:20px;
+  width:100%;
+  overflow:visible;
+}
+
+.relatorio-tabela{
+  width:100%;
+  max-width:900px;
+  border-collapse:collapse;
+}
+
+.relatorio-tabela th,
+.relatorio-tabela td{
+  padding:10px 14px;
+  border-bottom:1px solid var(--border);
+  text-align:center;
+  font-size:14px;
+}
+
+.relatorio-tabela th{
+  font-weight:700;
+}
+
+.relatorio-tabela th:first-child,
+.relatorio-tabela td:first-child{
+  text-align:left;
+}
+
+.relatorio-tabela tbody tr:last-child td{
+  border-bottom:none;
+}
+
+.relatorio-opcao{
+
+    background:var(--bg2);
+
+    border:1px solid var(--border);
+
+    border-radius:18px;
+
+    padding:28px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.12);
+
+    min-height:170px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+}
+
+.relatorio-opcao:hover{
+
+    transform:translateY(-6px);
+
+    border-color:#2563eb;
+
+    box-shadow:0 16px 35px rgba(37,99,235,.28);
+
+}
+
+.relatorio-opcao h3{
+
+    font-size:26px;
+
+    margin:0 0 15px;
+
+    color:#fff;
+
+}
+
+.relatorio-opcao p{
+
+    color:var(--text2);
+
+    line-height:1.6;
+
+    font-size:15px;
+
+    margin:0;
+
+}
+
+
+@media (max-width: 1024px) and (pointer: coarse){
+
+  #topbar{
+    gap:6px;
+    padding:5px 8px;
+    min-height:36px;
+  }
+
+  .topbar-logo{
+    font-size:11px;
+    gap:4px;
+  }
+
+  .topbar-dot{
+    width:6px;
+    height:6px;
+  }
+
+  .topbar-nav{
+    gap:2px;
+    margin-left:2px;
+  }
+
+  .nav-btn{
+    padding:4px 7px;
+    font-size:10px;
+  }
+
+  .topbar-right{
+    gap:4px;
+    font-size:10px;
+  }
+
+  #statsbar{
+    display:none !important;
+  }
+
+  #upload-zone{
+    display:none !important;
+  }
+
+  #sidebar-title,
+  #sidebar-sub{
+    display:none !important;
+  }
+
+  #search-house{
+    display:none !important;
+  }
+
+  #modal-wrap.open{
+    z-index:20000 !important;
+  }
+
+  #modal{
+    position:relative;
+    z-index:20001;
+  }
+
+}
+
+ 
+/* CONFIRM */
+#confirm-wrap{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);align-items:center;justify-content:center;}
+#confirm-wrap.open{display:flex;}
+#confirm-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;max-width:320px;width:90%;text-align:center;}
+#confirm-box h4{font-size:15px;font-weight:600;margin-bottom:8px;}
+#confirm-box p{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.5;}
+#confirm-box .btns{display:flex;gap:10px;justify-content:center;}
+ 
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;z-index:99999;transition:transform .3s ease;pointer-events:none;color:white;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+ 
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+ 
+@media(max-width:640px){
+  #sidebar{display:none;}
+  .add-user-form{grid-template-columns:1fr 1fr;}
+  #modal{max-width:100%;max-height:95vh;border-radius:16px 16px 0 0;}
+  #modal-wrap{align-items:flex-end;padding:0;}
+  .form-row.c3{grid-template-columns:1fr 1fr;}
+}
+
+.tab-page{
+    display:none;
+}
+
+.tab-page.active{
+    display:block;
+}
+
+</style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css">
+  <script src="https://unpkg.com/leaflet-draw/dist/leaflet.draw.js"></script>
+  <script src="https://unpkg.com/leaflet-rotate@0.2.8/dist/leaflet-rotate-src.js"></script>
+</head>
+<body>
+ 
+<!-- LOGIN -->
+<div id="screen-login">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">🗺️</div>
+      <div><span>CadastroGeo</span><small>Sistema de Cadastro Social em Campo</small></div>
+    </div>
+    <div class="lbl">Usuário</div>
+    <input class="inp" id="inp-user" type="text" placeholder="seu.usuario" autocomplete="username"/>
+    <div class="lbl">Senha</div>
+    <input class="inp" id="inp-pass" type="password" placeholder="••••••••" autocomplete="current-password"/>
+    <div class="login-error" id="login-error">Usuário ou senha incorretos.</div>
+    <button class="login-btn" onclick="doLogin()">Entrar no sistema</button>
+    <div class="login-hint">
+      <strong>Contas de demonstração:</strong><br/>
+      engenheiro / admin123 — Engenheiro (admin)<br/>
+      colaborador1 / campo123 — Colaborador de Campo<br/>
+      assistente1 / social123 — Assistente Social
+    </div>
+  </div>
+</div>
+ 
+<!-- APP -->
+<div id="screen-app">
+  <div id="topbar">
+    <div class="topbar-logo"><div class="topbar-dot"></div>CadastroGeo</div>
+    <div class="topbar-nav">
+
+  <button
+    class="nav-btn"
+    id="nav-dashboard"
+    onclick="switchView('dashboard')">
+    📊 Dashboard
+  </button>    
+
+  <button class="nav-btn active" id="nav-map"
+    onclick="switchView('map')">
+    🗺 Mapa
+  </button>
+
+  <button
+    class="nav-btn"
+    id="btn-missoes"
+    onclick="switchView('missoes')">
+    📍 Minhas Missões
+  </button>
+
+  <button class="nav-btn" id="nav-admin"
+    onclick="switchView('admin')"
+    style="display:none">
+    ⚙️ Administração
+  </button>
+
+  <button class="nav-btn" id="btn-import-top"
+    onclick="document.getElementById('geojson-input').click()"
+    style="display:none;background:var(--amber);color:#0d1117">
+    📂 Importar GeoJSON
+  </button>
+
+  <button onclick="salvarLotes()"
+    class="btn-blue">
+    💾 Salvar Lotes
+  </button>
+
+  <button onclick="salvarCasas()"
+    class="btn-blue">
+    🏠 Salvar Casas
+</button>
+
+  <input type="file"
+    id="geojson-input"
+    accept=".geojson,.json,.kml,.kmz"
+    onchange="loadMapFile(this)"
+    style="display:none"/>
+
+    <div class="search-box">
+    <input
+        id="search-house"
+        type="text"
+        placeholder="🔍 Buscar lote, endereço, morador ou CPF..."
+        oninput="filtrarLotes()"
+    >
+    </div>
+
+</div>
+    <div class="topbar-right">
+      <span class="role-pill" id="role-pill"></span>
+      <div class="user-avatar" id="user-avatar"></div>
+      <span id="user-name" style="font-size:13px"></span>
+      <button class="btn-logout" onclick="doLogout()">Sair</button>
+    </div>
+  </div>
+ 
+  <div id="statsbar">
+    <div class="stat-item"><strong id="stat-total">0</strong>Total de imóveis</div>
+    <div class="stat-item green"><strong id="stat-done">0</strong>Cadastrados</div>
+    <div class="stat-item amber"><strong id="stat-pend">0</strong>Pendentes</div>
+    <div class="stat-item purple"><strong id="stat-users">0</strong>Colaboradores ativos</div>
+  </div>
+ 
+  <!-- MAPA -->
+  <div
+    id="view-dashboard"
+    style="
+      display:none;
+      flex:1;
+      overflow:auto;
+      padding:20px 20px 20px 5px;
+    ">
+
+    
+
+    <div
+      id="dashboard-resumo"
+      style="
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+        margin-top:25px;
+        width:155px;
+      ">
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:20px; flex:0 1 1700px;">
+
+      <div id="dashboard-graficos"></div>
+
+      
+
+      <div id="dashboard-ranking"></div>
+
+      
+
+    </div>
+
+    <div 
+      id="dashboard-equipe"
+      style="
+        margin-top:24px; margin-left: 24px;
+      ">
+    </div>
+
+  </div>
+
+  <div
+    id="view-relatorios"
+    style="
+      display:none;
+      flex:1;
+      overflow:auto;
+      padding:20px;
+      align-self:stretch;
+      position:relative;
+    "
+  >
+
+    <h2>📑 Relatórios</h2>
+
+    <div
+      id="relatorios-menu"
+      style="
+        display:grid;
+        grid-template-columns:repeat(2, minmax(220px, 1fr));
+        gap:16px;
+        margin-top:20px;
+        max-width:700px;
+      "
+    >
+
+      <div
+        class="card relatorio-opcao"
+        onclick="abrirRelatorioDiario()"
+        style="cursor:pointer;"
+      >
+        <h3>📅 Diário</h3>
+        <p>Consultar o fechamento de um dia específico.</p>
+      </div>
+
+      <div
+        class="card relatorio-opcao"
+        onclick="abrirRelatorioMensal()"
+        style="cursor:pointer;"
+      >
+        <h3>📆 Mensal</h3>
+        <p>Ver os resultados consolidados de um mês.</p>
+      </div>
+
+      <div
+        class="card relatorio-opcao"
+        onclick="abrirRelatorioAnual()"
+        style="cursor:pointer;"
+      >
+        <h3>📈 Anual</h3>
+        <p>Consultar produtividade e resultados de um ano inteiro.</p>
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+  <div id="view-map">
+    <div id="map-wrap">
+      <div id="map"></div>
+      <div class="map-overlay">
+        <button class="map-ctrl-btn"  onclick="girarEsquerda()"  title="Girar Esquerda">  ↺</button>
+        <button class="map-ctrl-btn"  onclick="girarDireita()"  title="Girar Direita">  ↻</button>
+        <button class="map-ctrl-btn"  onclick="resetarRotacao()"  title="Centralizar">  ⊕</button>
+        <button class="map-ctrl-btn" onclick="mapZoom(1)" title="Aproximar">+</button>
+        <button class="map-ctrl-btn" onclick="mapZoom(-1)" title="Afastar">−</button>
+        <button class="map-ctrl-btn" onclick="centerOnUser()" title="Minha localização">📍</button>
+      </div>
+      <div id="gps-bar">
+        <div class="loc-pulse"></div>
+        <span id="loc-text">Localizando sua posição GPS...</span>
+      </div>
+    </div>
+    <div id="sidebar">
+      <div id="sidebar-header">
+        <h3 id="sidebar-title">Imóveis no mapa</h3>
+        <p id="sidebar-sub">Clique em um imóvel para abrir o cadastro</p>
+      </div>
+      <div id="upload-zone" onclick="document.getElementById('geojson-input').click()">
+        <div style="font-size:20px">📂</div>
+        <strong>Importar mapa do QGIS</strong>
+        <p>Clique para carregar o arquivo GeoJSON exportado do QGIS</p>
+ 
+      </div>
+
+      <input
+        type="text"
+        id="search-house"
+        placeholder="Pesquisar imóvel..."
+        style="width:100%;padding:8px;margin:10px 0;border:1px solid #ccc;border-radius:6px;">
+
+      <div id="houses-list"></div>
+    </div>
+  </div>
+
+  
+
+  <div id="view-missoes" style="display:none;flex:1;overflow:auto;padding:20px;">
+
+    <h2>📍 Minhas Missões</h2>
+
+    <div style="margin:15px 0;">
+
+      <button
+        class="btn btn-primary"
+        style="width:100%;font-size:16px;"
+        onclick="iniciarTrabalho()">
+
+        ▶ Iniciar Trabalho
+
+      </button>
+
+    </div>
+
+    <div
+        id="missao-atual-card"
+        style="
+          display:none;
+          margin-top:12px;
+          padding:14px;
+          border:1px solid var(--border);
+          border-radius:10px;
+          background:var(--bg3);
+        ">
+
+        <strong>📍 Você chegou ao destino?</strong>
+
+        <button
+          class="btn btn-secondary"
+          style="width:100%;margin-top:10px;"
+          onclick="abrirMissaoAtual()">
+
+          📋 Abrir Cadastro
+
+        </button>
+
+      </div>
+
+    <div
+      id="lista-missoes"
+      style="
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+        margin-top:20px;
+      ">
+    </div>
+
+  </div>
+
+ 
+  <!-- ADMIN -->
+  <div id="view-admin">
+    <div class="admin-wrap">
+      <div class="admin-section">
+        <div class="admin-section-head">
+          <div><h3>➕ Cadastrar novo usuário</h3><p>Adicione colaboradores, assistentes ou engenheiros</p></div>
+        </div>
+        <div class="admin-section-body">
+          <div class="add-user-form">
+            <div class="field"><label>Nome completo</label><input id="new-name" type="text" placeholder="Nome do usuário"/></div>
+            <div class="field"><label>Usuário (login)</label><input id="new-user" type="text" placeholder="joao.silva"/></div>
+            <div class="field"><label>Senha</label><input id="new-pass" type="text" placeholder="senha123"/></div>
+            <div class="field"><label>Perfil de acesso</label>
+              <select id="new-role">
+                <option value="colaborador">Colaborador de Campo</option>
+                <option value="assistente">Assistente Social</option>
+                <option value="engenheiro">Engenheiro</option>
+              </select>
+            </div>
+            <div><button class="btn btn-green" onclick="addUser()" style="height:37px;white-space:nowrap">+ Cadastrar</button></div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="admin-section">
+        <div class="admin-section-head">
+          <div><h3>👥 Usuários cadastrados</h3><p id="users-count">0 usuários</p></div>
+          <input class="inp" id="search-user" type="text" placeholder="Buscar..." style="width:180px;margin:0" oninput="renderUsersTable()"/>
+        </div>
+        <div class="admin-section-body" style="padding:0">
+          <table class="user-table">
+            <thead><tr><th style="width:44px"></th><th>Nome</th><th>Usuário</th><th>Perfil</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+ 
+      <div class="admin-section">
+        <div class="admin-section-head"><div><h3>📋 Atividade recente</h3><p>Últimos cadastros realizados em campo</p></div></div>
+        <div class="admin-section-body"><div class="activity-list" id="activity-list"><div style="font-size:13px;color:var(--text2);text-align:center;padding:20px">Nenhuma atividade ainda.</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+ 
+<!-- MODAL CADASTRO -->
+<div id="modal-wrap">
+  <div id="modal">
+    <div id="modal-head">
+
+      <div>
+
+        <div style="
+          font-size:12px;
+          color:#64748b;
+          font-weight:600;
+          text-transform:uppercase;
+          letter-spacing:.08em;
+        ">
+          CadastroGeo Professional
+        </div>
+
+        <h2 id="modal-title">
+          Cadastro Social
+        </h2>
+
+        <div class="addr" id="modal-addr"></div>
+
+      </div>
+
+      <button
+        id="modal-close"
+        onclick="closeModal()">
+        ✕
+      </button>
+
+    </div>
+
+    <div id="cadastro-tabs">
+
+      <button class="tab-btn active" onclick="mostrarAba('dados', this)">
+          📋 Dados
+      </button>
+
+      <button class="tab-btn" onclick="mostrarAba('familia', this)">
+          👨 Família
+      </button>
+
+      <button class="tab-btn" onclick="mostrarAba('midia', this)">
+          📷 Mídia
+      </button>
+
+      <button
+          class="tab-btn"
+          id="tab-btn-localizacao"
+          onclick="mostrarAba('localizacao', this)">
+          📍 Localização
+      </button>
+
+      <button
+          class="tab-btn"
+          id="tab-btn-relatorios"
+          onclick="mostrarAba('relatorios', this)">
+          📄 Relatórios
+      </button>
+
+    </div>
+
+    <div id="modal-body">
+      <div class="tab-page active" id="tab-dados">
+        <div class="form-section-title">Identificação do imóvel</div>
+        <div class="form-row c2">
+          <div class="field"><label>Endereço</label><input id="f-end" type="text" placeholder="Rua, número"/></div>
+          <div class="field"><label>Bairro</label><input id="f-bairro" type="text" placeholder="Bairro"/></div>
+        </div>
+        <div class="form-row c3">
+          <div class="field"><label>Latitude</label><input id="f-lat" type="text" readonly/></div>
+          <div class="field"><label>Longitude</label><input id="f-lng" type="text" readonly/></div>
+          <div class="field"><label>Data do cadastro</label><input id="f-data" type="text" readonly/></div>
+        </div>
+      </div>
+      <div class="tab-page" id="tab-familia">
+        <div class="form-section-title">Responsável pela família</div>
+        <div class="form-row c2">
+          <div class="field"><label>Nome completo</label><input id="f-nome" type="text" placeholder="Nome do responsável"/></div>
+          <div class="field"><label>CPF</label><input id="f-cpf" type="text" placeholder="000.000.000-00"/></div>
+        </div>
+        <div class="form-row c3">
+          <div class="field"><label>Nascimento</label><input id="f-nasc" type="date"/></div>
+          <div class="field"><label>Sexo</label><select id="f-sexo"><option value="">Selecione</option><option>Feminino</option><option>Masculino</option><option>Outro</option></select></div>
+          <div class="field"><label>Escolaridade</label><select id="f-esc"><option value="">Selecione</option><option>Sem escolaridade</option><option>Fund. incompleto</option><option>Fund. completo</option><option>Médio incompleto</option><option>Médio completo</option><option>Superior</option></select></div>
+        </div>
+        <div class="form-row c2">
+          <div class="field"><label>Telefone</label><input id="f-tel" type="text" placeholder="(86) 99999-9999"/></div>
+          <div class="field"><label>NIS / Bolsa Família</label><input id="f-nis" type="text" placeholder="NIS"/></div>
+        
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Composição familiar</div>
+        <div class="form-row c3">
+          <div class="field"><label>Nº de moradores</label><input id="f-mor" type="number" min="1" placeholder="0"/></div>
+          <div class="field"><label>Menores de 18</label><input id="f-men" type="number" min="0" placeholder="0"/></div>
+          <div class="field"><label>Idosos (60+)</label><input id="f-ido" type="number" min="0" placeholder="0"/></div>
+        </div>
+        <div class="form-row c2">
+          <div class="field"><label>Renda familiar (R$)</label><input id="f-renda" type="text" placeholder="0,00"/></div>
+          <div class="field"><label>Fonte de renda</label><select id="f-fonte"><option value="">Selecione</option><option>Emprego formal</option><option>Emprego informal</option><option>Autônomo</option><option>Aposentadoria/Pensão</option><option>Benefício social</option><option>Sem renda</option></select></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Condições do domicílio</div>
+        <div class="form-row c2">
+          <div class="field"><label>Tipo de moradia</label><select id="f-tipo"><option value="">Selecione</option><option>Própria quitada</option><option>Própria financiada</option><option>Alugada</option><option>Cedida</option><option>Ocupação irregular</option></select></div>
+          <div class="field"><label>Material predominante</label><select id="f-mat"><option value="">Selecione</option><option>Alvenaria</option><option>Madeira</option><option>Misto</option><option>Taipa</option><option>Outro</option></select></div>
+        </div>
+        <div class="form-row c3">
+          <div class="field"><label>Água</label><select id="f-agua"><option value="">Selecione</option><option>Rede pública</option><option>Poço</option><option>Carro-pipa</option><option>Sem acesso</option></select></div>
+          <div class="field"><label>Esgoto</label><select id="f-esg"><option value="">Selecione</option><option>Rede pública</option><option>Fossa séptica</option><option>Céu aberto</option><option>Sem saneamento</option></select></div>
+          <div class="field"><label>Energia</label><select id="f-en"><option value="">Selecione</option><option>Ligação regular</option><option>Ligação irregular</option><option>Sem energia</option></select></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Observações e acompanhamento</div>
+        <div class="form-row c1"><div class="field"><label>Observações / Vulnerabilidades</label><textarea id="f-obs" placeholder="Situações de vulnerabilidade, encaminhamentos necessários..."></textarea></div></div>
+        <div class="form-row c1">
+
+          <div class="field">
+
+            <label>Fotos do imóvel</label>
+
+            <input
+              type="file"
+              id="f-fotos"
+              accept="image/*"
+              capture="environment"
+              multiple
+              onchange="previewFotos()"
+            >
+
+            <div id="preview-fotos" style="
+              margin-top:10px;
+              display:flex;
+              flex-wrap:wrap;
+              gap:10px;
+            "></div>
+
+          </div>
+
+        </div>
+        <div class="form-row c2">
+          <div class="field"><label>Colaborador responsável</label><input id="f-colab" type="text" readonly/></div>
+          <div class="field"><label>Status</label><select id="f-status"><option>Cadastrado</option><option>Visita agendada</option><option>Em acompanhamento</option><option>Encaminhado</option></select></div>
+        </div>
+      </div>
+    </div><!-- fecha tab-familia -->
+    
+
+    <div class="tab-page" id="tab-midia">
+      <div class="form-section-title">
+        📷 Mídia
+      </div>
+
+      <div class="form-row c2">
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="btn-foto"
+          onclick="document.getElementById('f-fotos').click()">
+          📷 Tirar Foto
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          id="btn-galeria"
+          onclick="document.getElementById('f-fotos').click()">
+          🖼️ Galeria
+        </button>
+              
+      </div>
+                 
+      <div
+        id="galeria-fotos"
+        style="
+          margin-top:15px;
+          display:flex;
+          flex-wrap:wrap;
+          gap:10px;
+        ">
+      </div>
+
+    </div>
+
+    <div class="tab-page" id="tab-localizacao">
+
+        <div class="form-section-title">
+            📍 Localização
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          id="btn-localizacao"
+          onclick="obterMinhaLocalizacao()">
+          📍 Minha Localização
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          id="btn-rota">
+          🧭 Ir até a Casa
+        </button>
+
+
+    </div>
+
+    <div class="tab-page" id="tab-relatorios">
+
+      <div class="form-section-title">
+          📄 Relatórios
+      </div>
+
+      <div class="form-row c2">
+
+          <button
+              type="button"
+              class="btn btn-secondary"
+              id="btn-pdf">
+              📄 Gerar PDF
+          </button>
+
+          <button
+              type="button"
+              class="btn btn-secondary"
+              id="btn-excel">
+              📊 Exportar Excel
+          </button>
+
+      </div>
+
+    </div>
+
+</div> <!-- fecha modal-body -->
+
+    <div id="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal()">Fechar</button>
+      <button class="btn btn-green" id="btn-save" onclick="saveCadastro()">
+        💾 Salvar cadastro
+      </button>
+    </div>
+
+  </div><!-- fecha o modal -->
+
+</div><!-- fecha modal-wrap -->
+
+<div id="modal-atribuir" style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.6);
+z-index:30000;
+align-items:center;
+justify-content:center;
+">
+
+  <div style="
+    background:#fff;
+    width:95%;
+    max-width:420px;
+    border-radius:12px;
+    padding:20px;
+  ">
+
+    <h3>Atribuir casa</h3>
+
+    <input
+      id="busca-colaborador"
+      type="text"
+      placeholder="Digite o nome do colaborador..."
+      style="
+        width:100%;
+        padding:10px;
+        margin-top:10px;
+      "
+    >
+
+    <div
+      id="lista-colaboradores"
+      style="
+        margin-top:15px;
+        max-height:250px;
+        overflow:auto;
+      ">
+    </div>
+
+    <div style="
+      display:flex;
+      justify-content:flex-end;
+      margin-top:15px;
+    ">
+
+      <button
+        class="btn btn-ghost"
+        onclick="fecharModalAtribuir()">
+        Fechar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+ 
+<!-- CONFIRM -->
+<div id="confirm-wrap">
+  <div id="confirm-box">
+    <h4 id="confirm-title">Confirmar</h4>
+    <p id="confirm-msg"></p>
+    <div class="btns">
+      <button class="btn btn-ghost" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn btn-red" id="confirm-ok">Confirmar</button>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+
+<!-- Modal Missão Concluída -->
+<div id="modal-missao" class="modal-wrap">
+
+  <div class="modal">
+
+    <h2>✅ Missão concluída</h2>
+
+    <p id="missao-msg">
+      Cadastro salvo com sucesso.
+    </p>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+
+      <button
+        class="btn btn-secondary"
+        onclick="voltarMissoes()">
+
+        📍 Voltar às Missões
+
+      </button>
+
+      <button
+        class="btn btn-primary"
+        onclick="proximaMissao()">
+
+        ➡ Próxima Casa
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<script>
+
+// Fechar modais clicando fora
+document.getElementById('modal-wrap').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
+document.getElementById('confirm-wrap').addEventListener('click',function(e){ if(e.target===this) closeConfirm(); });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script src="/js/dashboard.js"></script>
+<script src="/js/mapa.js?v=2"></script>
+<script src="/js/cadastro.js"></script>
+<script src="/js/admin.js"></script>
+<script src="/js/app.js"></script>
+<script src="/js/gps.js"></script>
+<script src="/js/missoes.js"></script>
+
+</body>
+</html>

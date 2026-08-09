@@ -31,11 +31,27 @@ window.carregarTelaMissoes = async function(){
 
   try{
 
-    const res = await fetch(
-      "/minhas-missoes/" + currentUser.user
-    );
+    let missoes = [];
 
-    const missoes = await res.json();
+    if (navigator.onLine) {
+
+      const res = await fetch(
+        "/minhas-missoes/" + currentUser.user
+      );
+
+      missoes = await res.json();
+
+      await salvarMissoesOffline(missoes);
+
+    } else {
+
+      missoes = await carregarMissoesOffline();
+
+      showToast(
+        "Sem internet. Exibindo missões salvas no aparelho."
+      );
+
+    }
 
     missoes.forEach(missao => {
 

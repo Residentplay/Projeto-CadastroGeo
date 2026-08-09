@@ -4,7 +4,7 @@ let gpsWatchId = null;
 let estaOnline = navigator.onLine;
 window.dbOffline = null;
 
-const pedidoDB = indexedDB.open("CadastroGeoOffline", 2);
+const pedidoDB = indexedDB.open("CadastroGeoOffline", 3);
 
 pedidoDB.onupgradeneeded = function(event) {
   const db = event.target.result;
@@ -18,6 +18,12 @@ pedidoDB.onupgradeneeded = function(event) {
 
   if (!db.objectStoreNames.contains("casasOffline")) {
     db.createObjectStore("casasOffline", {
+      keyPath: "id"
+    });
+  }
+
+  if (!db.objectStoreNames.contains("missoesOffline")) {
+    db.createObjectStore("missoesOffline", {
       keyPath: "id"
     });
   }
@@ -63,6 +69,54 @@ function salvarCasasOffline(listaCasas) {
 
     transacao.onerror = () =>
       reject(transacao.error);
+
+  });
+
+}
+
+
+function salvarMissoesOffline(listaMissoes) {
+
+  return new Promise((resolve, reject) => {
+
+    const transacao = window.dbOffline.transaction(
+      "missoesOffline",
+      "readwrite"
+    );
+
+    const store = transacao.objectStore("missoesOffline");
+
+    store.clear();
+
+    listaMissoes.forEach((missao, index) => {
+      store.put({
+        id: index + 1,
+        ...missao
+      });
+    });
+
+    transacao.oncomplete = () => resolve();
+    transacao.onerror = () => reject(transacao.error);
+
+  });
+
+}
+
+function carregarMissoesOffline() {
+
+  return new Promise((resolve, reject) => {
+
+    const transacao = window.dbOffline.transaction(
+      "missoesOffline",
+      "readonly"
+    );
+
+    const store = transacao.objectStore("missoesOffline");
+
+    const pedido = store.getAll();
+
+    pedido.onsuccess = () => resolve(pedido.result);
+    pedido.onerror = () => reject(pedido.error);
 
   });
 

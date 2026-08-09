@@ -306,23 +306,30 @@ window.abrirCadastroMissao = async function(casaId){
           }
         );
 
-        await fetch("/status-missao",{
+        if (navigator.onLine) {
 
-          method:"POST",
+        try {
 
-          headers: authHeaders(true),
+          await fetch("/status-missao", {
+            method: "POST",
+            headers: authHeaders(true),
+            body: JSON.stringify({
+              casa_id: casaId,
+              status: "em_andamento"
+            })
+          });
 
-          body:JSON.stringify({
+        } catch (erro) {
 
-            casa_id:casaId,
+          console.log(
+            "Sem conexão. Status será atualizado depois."
+          );
 
-            status:"em_andamento"
+        }
 
-          })
+      }
 
-        });
-
-        casa.statusMissao = "em_andamento";
+      casa.statusMissao = "em_andamento";
 
         casaSelecionada = casa.id;
 

@@ -15,6 +15,7 @@ let dragging = false, dragStart = {x:0,y:0}, camStart = {lat:0,lng:0};
 let tileCache = {}, pendingTiles = {};
 let animFrame = null;
 let casaSelecionada = null;
+let controleCamadas = null;
 
 window.initMap = function(){
 
@@ -48,16 +49,20 @@ window.initMap = function(){
     }
   );
 
-  L.control.layers(
-    {
-      "Mapa": normal,
-      "Satélite": satelite
-    },
-    null,
-    {
-      position: "topright"
-    }
-  ).addTo(map);
+  if (!controleCamadas) {
+
+    controleCamadas = L.control.layers(
+      {
+        "Mapa": normal,
+        "Satélite": satelite
+      },
+      null,
+      {
+        position: "topright"
+      }
+    ).addTo(map);
+
+  }
 
   L.control.layers({
     "Mapa": normal,

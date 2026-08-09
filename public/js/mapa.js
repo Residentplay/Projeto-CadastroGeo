@@ -68,11 +68,6 @@ window.initMap = function(){
 
   }
 
-  L.control.layers({
-    "Mapa": normal,
-    "Satélite": satelite
-  }).addTo(map);
-
   drawnItems = new L.FeatureGroup();
 
   map.addLayer(drawnItems);
@@ -626,10 +621,7 @@ window.loadMapFile = async function(input){
   }
   );
 
-  L.control.layers({
-  "Mapa": normal,
-  "Satélite": satelite
-}).addTo(map);
+  
 
   console.log("Arquivo selecionado:", input.files)
 

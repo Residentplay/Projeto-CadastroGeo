@@ -48,6 +48,17 @@ window.initMap = function(){
     }
   );
 
+  L.control.layers(
+    {
+      "Mapa": normal,
+      "Satélite": satelite
+    },
+    null,
+    {
+      position: "topright"
+    }
+  ).addTo(map);
+
   L.control.layers({
     "Mapa": normal,
     "Satélite": satelite

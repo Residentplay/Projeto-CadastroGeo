@@ -226,13 +226,16 @@ window.iniciarTrabalho = async function(){
           maisProxima.longitude
         );
 
-      }catch(err){
+        }catch(err){
 
-        console.error(err);
+            console.error("ERRO INICIAR TRABALHO:", err);
 
-        showToast("Erro ao iniciar trabalho!", true);
+            showToast(
+              "Erro ao iniciar trabalho: " + err.message,
+              true
+            );
 
-      }
+          }
 
     },
 

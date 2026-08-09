@@ -686,17 +686,6 @@ window.saveCadastro = async function() {
         casaConcluida.statusMissao = "concluida";
       }
 
-      // remove imediatamente da lateral do colaborador
-      if (currentUser.role === "colaborador") {
-        const itemLateral = document.getElementById(
-          "li-" + casaIdAtual
-        );
-
-        if (itemLateral) {
-          itemLateral.remove();
-        }
-      }
-
       renderHousesList();
 
       casaSelecionada = null;

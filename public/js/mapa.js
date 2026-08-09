@@ -51,16 +51,20 @@ window.initMap = function(){
 
   if (!controleCamadas) {
 
-    controleCamadas = L.control.layers(
-      {
-        "Mapa": normal,
-        "Satélite": satelite
-      },
-      null,
-      {
-        position: "topright"
-      }
-    ).addTo(map);
+    if (!window.controleCamadas) {
+
+      window.controleCamadas = L.control.layers(
+        {
+          "Mapa": normal,
+          "Satélite": satelite
+        },
+        null,
+        {
+          position: "topright"
+        }
+      ).addTo(map);
+
+    }
 
   }
 

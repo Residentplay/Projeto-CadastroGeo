@@ -321,15 +321,6 @@ await pg.query(`
 
 console.log("Tabela PostgreSQL 'usuarios' verificada/criada.");
 
-// LIMPEZA TEMPORÁRIA - remover depois do primeiro deploy
-await pg.query(`
-  DELETE FROM atribuicoes
-  WHERE casa_id NOT IN (
-    SELECT id FROM casas
-  )
-`);
-
-console.log("Atribuições órfãs removidas.");
 
 
 }

@@ -33,17 +33,25 @@ window.carregarTelaMissoes = async function(){
 
     let missoes = [];
 
-    if (navigator.onLine) {
+    try {
 
       const res = await fetch(
         "/minhas-missoes/" + currentUser.user
       );
 
+      if (!res.ok) {
+        throw new Error("Servidor indisponível.");
+      }
+
       missoes = await res.json();
 
       await salvarMissoesOffline(missoes);
 
-    } else {
+    } catch (erro) {
+
+      console.log(
+        "Sem conexão. Carregando missões salvas."
+      );
 
       missoes = await carregarMissoesOffline();
 

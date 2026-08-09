@@ -49,7 +49,6 @@ window.initMap = function(){
     }
   );
 
-  if (!controleCamadas) {
 
     if (!window.controleCamadas) {
 
@@ -66,7 +65,6 @@ window.initMap = function(){
 
     }
 
-  }
 
   drawnItems = new L.FeatureGroup();
 

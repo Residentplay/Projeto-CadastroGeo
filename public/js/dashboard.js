@@ -224,6 +224,12 @@ function renderizarRanking(dadosRanking){
 
 window.carregarDashboard = async function(){
 
+  if (dashboardAtualizando) return;
+
+  dashboardAtualizando = true;
+
+  try {
+
   const res = await fetch("/dashboard", {
     headers: authHeaders()
   });
@@ -314,10 +320,6 @@ window.carregarDashboard = async function(){
   renderizarRanking(dadosRanking);
 
 
-  renderizarResumo(dadosDashboard);
-
-  renderizarEquipe(dadosEquipe, casasAtuais);
-
   const textoCentro = {
     id: "textoCentro",
 
@@ -361,7 +363,11 @@ window.carregarDashboard = async function(){
 
   if (ctx) {
 
-    new Chart(ctx, {
+    if (graficoMissoes) {
+      graficoMissoes.destroy();
+    }
+
+    graficoMissoes = new Chart(ctx, {
 
       type: "doughnut",
 
@@ -444,5 +450,40 @@ window.carregarDashboard = async function(){
     atualizarDashboard();
 
   },10000);
+
+    } catch (erro) {
+
+    console.error(
+      "Erro ao atualizar dashboard:",
+      erro
+    );
+
+  } finally {
+
+    dashboardAtualizando = false;
+
+  }
+
+};
+
+
+window.iniciarAtualizacaoDashboard = function(){
+
+  if (intervaloDashboard) {
+    clearInterval(intervaloDashboard);
+  }
+
+  carregarDashboard();
+
+  intervaloDashboard = setInterval(() => {
+
+    if (
+      currentUser &&
+      currentUser.role === "engenheiro"
+    ) {
+      carregarDashboard();
+    }
+
+  }, 5000);
 
 };

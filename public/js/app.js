@@ -240,7 +240,14 @@ window.switchView = function(v){
   }
 
   if(v === 'dashboard'){
-    carregarDashboard();
+    iniciarAtualizacaoDashboard();
+  }
+
+  if(v !== 'dashboard' && intervaloDashboard){
+
+    clearInterval(intervaloDashboard);
+    intervaloDashboard = null;
+
   }
 
   

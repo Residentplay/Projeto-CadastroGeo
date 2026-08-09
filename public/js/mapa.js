@@ -16,6 +16,9 @@ let tileCache = {}, pendingTiles = {};
 let animFrame = null;
 let casaSelecionada = null;
 let controleCamadas = null;
+let intervaloDashboard = null;
+let dashboardAtualizando = false;
+let graficoMissoes = null;
 
 window.initMap = function(){
 

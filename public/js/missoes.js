@@ -158,7 +158,7 @@ window.iniciarTrabalho = async function(){
 
         let missoes = [];
 
-        if (navigator.onLine) {
+        try {
 
           const res = await fetch(
             "/minhas-missoes/" + currentUser.user,
@@ -168,14 +168,18 @@ window.iniciarTrabalho = async function(){
           );
 
           if (!res.ok) {
-            throw new Error("Erro ao carregar missões.");
+            throw new Error("Servidor indisponível.");
           }
 
           missoes = await res.json();
 
           await salvarMissoesOffline(missoes);
 
-        } else {
+        } catch (erro) {
+
+          console.log(
+            "Sem conexão com servidor. Carregando missões offline."
+          );
 
           missoes = await carregarMissoesOffline();
 
@@ -184,7 +188,6 @@ window.iniciarTrabalho = async function(){
           );
 
         }
-
         const pendentes = missoes.filter(
           missao =>
             missao.status_missao === "pendente" &&

@@ -514,3 +514,78 @@ window.iniciarAtualizacaoDashboard = function(){
   }, 5000);
 
 };
+
+
+window.enviarFotosDrone = async function(){
+
+  const input =
+    document.getElementById("drone-fotos");
+
+  const arquivos =
+    Array.from(input.files || []);
+
+  if (!arquivos.length) {
+
+    showToast(
+      "Selecione pelo menos uma foto.",
+      true
+    );
+
+    return;
+  }
+
+  const formData =
+    new FormData();
+
+  arquivos.forEach(foto => {
+    formData.append("fotos", foto);
+  });
+
+  try {
+
+    showToast(
+      `Enviando ${arquivos.length} foto(s)...`
+    );
+
+    const res = await fetch(
+      window.API_URL + "/drone/fotos",
+      {
+        method: "POST",
+        credentials: "include",
+        body: formData
+      }
+    );
+
+    const retorno =
+      await res.json();
+
+    if (!res.ok) {
+
+      throw new Error(
+        retorno.erro ||
+        "Erro ao enviar fotos."
+      );
+
+    }
+
+    showToast(
+      `${retorno.quantidade} foto(s) do drone enviadas.`
+    );
+
+    input.value = "";
+
+  } catch (erro) {
+
+    console.error(
+      "Erro nas fotos do drone:",
+      erro
+    );
+
+    showToast(
+      "Erro ao enviar fotos do drone.",
+      true
+    );
+
+  }
+
+};

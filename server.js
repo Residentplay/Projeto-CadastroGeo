@@ -330,7 +330,26 @@ await pg.query(`
 
 console.log("Tabela PostgreSQL 'usuarios' verificada/criada.");
 
+await pg.query(`
+  CREATE TABLE IF NOT EXISTS levantamentos_drone (
+    id SERIAL PRIMARY KEY,
+    nome TEXT NOT NULL,
+    descricao TEXT,
+    data_voo TIMESTAMP,
+    criado_por TEXT,
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )
+`);
 
+await pg.query(`
+  CREATE TABLE IF NOT EXISTS fotos_drone (
+    id SERIAL PRIMARY KEY,
+    nome_arquivo TEXT NOT NULL,
+    url TEXT NOT NULL,
+    tamanho BIGINT,
+    data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )
+`);
 
 }
 
@@ -1261,6 +1280,84 @@ app.post(
   }
 );
 
+
+app.post(
+  "/drone/fotos",
+  autenticarToken,
+  somenteEngenheiro,
+  upload.array("fotos", 100),
+  async (req, res) => {
+
+    try {
+
+      const arquivos = req.files || [];
+
+      if (!arquivos.length) {
+        return res.status(400).json({
+          erro: "Nenhuma foto selecionada."
+        });
+      }
+
+      for (const arquivo of arquivos) {
+
+        const nomeSeguro =
+          `${Date.now()}-${arquivo.originalname.replace(
+            /[^a-zA-Z0-9._-]/g,
+            "_"
+          )}`;
+
+        const chave =
+          `drone/${nomeSeguro}`;
+
+        await r2.send(
+          new PutObjectCommand({
+            Bucket: process.env.R2_BUCKET,
+            Key: chave,
+            Body: arquivo.buffer,
+            ContentType: arquivo.mimetype
+          })
+        );
+
+        await pg.query(
+          `
+          INSERT INTO fotos_drone (
+            nome_arquivo,
+            url,
+            tamanho
+          )
+          VALUES ($1, $2, $3)
+          `,
+          [
+            arquivo.originalname,
+            chave,
+            arquivo.size
+          ]
+        );
+
+      }
+
+      res.json({
+        ok: true,
+        quantidade: arquivos.length
+      });
+
+    } catch (erro) {
+
+      console.error(
+        "Erro ao enviar fotos do drone:",
+        erro
+      );
+
+      res.status(500).json({
+        erro: "Erro ao enviar fotos do drone."
+      });
+
+    }
+
+  }
+);
+
+
 app.post(
   "/atribuir-casa",
   autenticarToken,
@@ -1842,6 +1939,64 @@ app.post(
   }
 
 });
+
+
+app.post(
+  "/drone/levantamentos",
+  autenticarToken,
+  somenteEngenheiro,
+  async (req, res) => {
+
+    try {
+
+      const {
+        nome,
+        descricao,
+        data_voo
+      } = req.body;
+
+      if (!nome || !nome.trim()) {
+        return res.status(400).json({
+          erro: "Nome do levantamento é obrigatório."
+        });
+      }
+
+      const resultado = await pg.query(
+        `
+        INSERT INTO levantamentos_drone (
+          nome,
+          descricao,
+          data_voo,
+          criado_por
+        )
+        VALUES ($1, $2, $3, $4)
+        RETURNING *
+        `,
+        [
+          nome.trim(),
+          descricao || null,
+          data_voo || null,
+          req.usuario.usuario
+        ]
+      );
+
+      res.json(resultado.rows[0]);
+
+    } catch (erro) {
+
+      console.error(
+        "Erro ao criar levantamento drone:",
+        erro
+      );
+
+      res.status(500).json({
+        erro: erro.message
+      });
+
+    }
+
+  }
+);
 
 
 app.get("/relatorios", autenticarToken, async (req, res) => {

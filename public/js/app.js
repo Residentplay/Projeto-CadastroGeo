@@ -350,7 +350,7 @@ window.doLogin = async function(){
 
   try{
 
-    const res = await fetch("/login",{
+    const res = await fetch(window.API_URL + "/login", {
       method:"POST",
 
       headers:{

@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { rateLimit } = require("express-rate-limit");
 const cookieParser = require("cookie-parser");
+const API_URL = "https://projeto-cadastrogeo.onrender.com";
 const {
   S3Client,
   PutObjectCommand,

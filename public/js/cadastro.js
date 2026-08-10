@@ -723,7 +723,37 @@ window.saveCadastro = async function() {
 
           if (casaOffline) {
             casaOffline.pendenteSincronizacao = true;
+            casaOffline.statusMissao = "concluida";
           }
+
+          try {
+
+            const missoesOffline = await carregarMissoesOffline();
+
+            const atualizadas = missoesOffline.map(missao => {
+
+              if (missao.casa_id === casaIdAtual) {
+                return {
+                  ...missao,
+                  status_missao: "concluida"
+                };
+              }
+
+              return missao;
+
+            });
+
+            await salvarMissoesOffline(atualizadas);
+
+          } catch (erro) {
+
+            console.error(
+              "Erro ao atualizar missão offline:",
+              erro
+            );
+
+          }
+
 
           renderHousesList();
           updateStats();

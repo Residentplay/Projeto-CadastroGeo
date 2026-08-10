@@ -1060,11 +1060,7 @@ function importarGeoJSON(gj){
 }
 
 function updateStats(){
-  const done=Object.keys(cadastros).length;
-  document.getElementById('stat-total').textContent=houses.length;
-  document.getElementById('stat-done').textContent=done;
-  document.getElementById('stat-pend').textContent=houses.length-done;
-  document.getElementById('stat-users').textContent=users.filter(u=>u.role==='colaborador'&&u.active).length;
+  // Os indicadores antigos foram removidos da interface.
 }
 
 

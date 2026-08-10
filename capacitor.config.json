@@ -1,9 +1,5 @@
 {
   "appId": "com.cadastrogeo.app",
   "appName": "CadastroGeo",
-  "webDir": "public",
-  "server": {
-    "url": "https://projeto-cadastrogeo.onrender.com",
-    "cleartext": false
-  }
+  "webDir": "public"
 }

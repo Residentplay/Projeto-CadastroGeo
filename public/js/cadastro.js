@@ -952,11 +952,14 @@ window.carregarCadastrosDoBanco = async function() {
     drawMap();
     updateStats();
 
-  } catch (err) {
+    } catch (err) {
 
-    console.error(err);
+    console.error("ERRO CARREGAR CADASTROS:", err);
 
-    showToast("Erro ao carregar cadastros!", true);
+    showToast(
+      "Erro ao carregar cadastros: " + err.message,
+      true
+    );
 
   }
 };

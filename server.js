@@ -182,7 +182,15 @@ const app = express();
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.static("public"));
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost",
+    "https://localhost",
+    "capacitor://localhost",
+    "https://projeto-cadastrogeo.onrender.com"
+  ],
+  credentials: true
+}));
 app.use(express.static(__dirname));
 app.use(cookieParser());
 
@@ -1100,7 +1108,7 @@ app.post("/login", loginLimiter, async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "none",
       maxAge: 4 * 60 * 60 * 1000
     });
 

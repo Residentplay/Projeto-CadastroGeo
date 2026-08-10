@@ -105,7 +105,11 @@ function renderizarEquipe(dadosEquipe, casasAtuais){
       <div class="equipe-resumo">
 
         <span class="badge-total">
-          Total ${item.total}
+          Total ${
+            Number(item.pendentes || 0) +
+            Number(item.andamento || 0) +
+            Number(item.concluidas || 0)
+          }
         </span>
 
         <div class="equipe-status">
@@ -156,7 +160,8 @@ async function atualizarDashboard(){
   const res = await fetch(
     window.API_URL + "/dashboard",
     {
-      headers: authHeaders()
+      headers: authHeaders(),
+      credentials: "include"
     }
   );
   const dadosDashboard = await res.json();
@@ -236,21 +241,24 @@ window.carregarDashboard = async function(){
   const res = await fetch(
     window.API_URL + "/dashboard",
     {
-      headers: authHeaders()
+      headers: authHeaders(),
+      credentials: "include"
     }
   );
   const dadosDashboard = await res.json();
   const resEquipe = await fetch(
     window.API_URL + "/dashboard/equipe",
     {
-      headers: authHeaders()
+      headers: authHeaders(),
+      credentials: "include"
     }
   );
   const dadosEquipe = await resEquipe.json();
   const resCasasAtuais = await fetch(
     window.API_URL + "/dashboard/casas-atuais",
     {
-      headers: authHeaders()
+      headers: authHeaders(),
+      credentials: "include"
     }
   );
   const casasAtuais = await resCasasAtuais.json();
@@ -260,7 +268,8 @@ window.carregarDashboard = async function(){
   const resRanking = await fetch(
     window.API_URL + "/dashboard/ranking",
     {
-      headers: authHeaders()
+      headers: authHeaders(),
+      credentials: "include"
     }
   );
 

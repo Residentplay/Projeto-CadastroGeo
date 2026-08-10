@@ -928,6 +928,7 @@ async function salvarLotes(){
       {
         method: "POST",
         headers: authHeaders(true),
+        credentials: "include",
         body: JSON.stringify(lotesParaSalvar)
       }
     );
@@ -963,6 +964,7 @@ window.salvarCasas = async function(){
       {
         method: "POST",
         headers: authHeaders(true),
+        credentials: "include",
         body: JSON.stringify(houses)
       }
     );
@@ -1091,7 +1093,8 @@ window.carregarCasas = async function() {
     const res = await fetch(
       window.API_URL + "/casas",
       {
-        headers: authHeaders()
+        headers: authHeaders(),
+        credentials: "include"
       }
     );
 
@@ -1135,9 +1138,40 @@ window.carregarCasas = async function() {
 
   } catch (err) {
 
-    console.error("Erro ao carregar casas:", err);
+    console.error("Erro ao carregar casas online:", err);
 
-    showToast("Erro ao carregar casas!", true);
+    try {
+
+      const casasOffline = await carregarCasasOffline();
+
+      houses = casasOffline || [];
+
+      console.log(
+        "Casas carregadas do modo offline:",
+        houses.length
+      );
+
+      renderHousesList();
+      updateStats();
+      drawMap();
+
+      showToast(
+        "Sem internet. Casas carregadas do aparelho."
+      );
+
+    } catch (erroOffline) {
+
+      console.error(
+        "Erro ao carregar casas offline:",
+        erroOffline
+      );
+
+      showToast(
+        "Não foi possível carregar as casas.",
+        true
+      );
+
+    }
 
   }
 
@@ -1151,7 +1185,8 @@ window.carregarLotes = async function(){
     const res = await fetch(
       window.API_URL + "/lotes",
       {
-        headers: authHeaders()
+        headers: authHeaders(),
+        credentials: "include"
       }
     );
 

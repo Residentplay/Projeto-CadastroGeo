@@ -321,7 +321,8 @@ window.doLogout = async function(){
     await fetch(
       window.API_URL + "/logout",
       {
-        method: "POST"
+        method: "POST",
+        credentials: "include"
       }
     );
 
@@ -351,22 +352,27 @@ window.doLogin = async function(){
   const u = document.getElementById('inp-user').value.trim();
   const p = document.getElementById('inp-pass').value;
 
-  try{
+  const usuarioSalvo =
+    localStorage.getItem("cadastrogeo_usuario");
 
-    const res = await fetch(window.API_URL + "/login", {
-      method:"POST",
+  try {
 
-      headers:{
-        "Content-Type":"application/json"
-      },
+    const res = await fetch(
+      window.API_URL + "/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          usuario: u,
+          senha: p
+        })
+      }
+    );
 
-      body:JSON.stringify({
-        usuario:u,
-        senha:p
-      })
-    });
-
-    if(!res.ok){
+    if (!res.ok) {
 
       const erro = await res.json();
 
@@ -384,32 +390,59 @@ window.doLogin = async function(){
     const usuario = await res.json();
 
     currentUser = {
-      id:"u"+Date.now(),
-      name:usuario.nome,
-      user:usuario.usuario,
-      role:usuario.papel,
-      active:usuario.ativo
+      id: "u" + Date.now(),
+      name: usuario.nome,
+      user: usuario.usuario,
+      role: usuario.papel,
+      active: usuario.ativo
     };
 
-    document.getElementById('login-error').style.display='none';
+    localStorage.setItem(
+      "cadastrogeo_usuario",
+      JSON.stringify(currentUser)
+    );
 
-    document.getElementById('screen-login').style.display='none';
+    document.getElementById('login-error').style.display = 'none';
+    document.getElementById('screen-login').style.display = 'none';
 
     const app = document.getElementById('screen-app');
 
-    app.style.display='flex';
+    app.style.display = 'flex';
 
     setupUI();
-
     switchView('map');
-
     startGPS();
 
-  }catch(err){
+  } catch (err) {
 
-    console.error(err);
+    console.log("Login online falhou:", err);
 
-    showToast("Erro ao realizar login!",true);
+    if (usuarioSalvo) {
+
+      currentUser = JSON.parse(usuarioSalvo);
+
+      document.getElementById('login-error').style.display = 'none';
+      document.getElementById('screen-login').style.display = 'none';
+
+      const app = document.getElementById('screen-app');
+
+      app.style.display = 'flex';
+
+      setupUI();
+      switchView('map');
+      startGPS();
+
+      showToast(
+        "Modo offline. Usando usuário salvo no aparelho."
+      );
+
+      return;
+    }
+
+    showToast(
+      "Sem internet e nenhum usuário salvo neste aparelho.",
+      true
+    );
 
   }
 
@@ -498,7 +531,8 @@ window.consultarRelatorioDiario = async function(){
     const res = await fetch(
       window.API_URL + "/relatorios",
       {
-        headers: authHeaders()
+        headers: authHeaders(),
+        credentials: "include"
       }
     );
 
@@ -881,7 +915,8 @@ window.consultarRelatorioMensal = async function(){
     const res = await fetch(
       `${window.API_URL}/relatorios/mensal?ano=${ano}&mes=${mes}`,
       {
-        headers: authHeaders()
+        headers: authHeaders(),
+        credentials: "include"
       }
     );
 
@@ -1244,7 +1279,8 @@ window.consultarRelatorioAnual = async function(){
     const res = await fetch(
       `${window.API_URL}/relatorios/anual?ano=${ano}`,
       {
-        headers: authHeaders()
+        headers: authHeaders(),
+        credentials: "include"
       }
     );
 

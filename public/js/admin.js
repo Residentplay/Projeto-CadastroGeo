@@ -135,7 +135,8 @@ window.deleteUser = function(id){
           `${window.API_URL}/usuario/${id}`,
           {
             method: "DELETE",
-            headers: authHeaders()
+            headers: authHeaders(),
+            credentials: "include"
           }
         );
         const dados = await res.json();
@@ -214,6 +215,7 @@ window.confirmarAtribuicao = async function(colaborador){
         method: "POST",
 
         headers: authHeaders(true),
+        credentials: "include",
 
         body: JSON.stringify({
           casa_id: currentHouse.id,
@@ -343,7 +345,8 @@ window.carregarUsuarios = async function() {
     const res = await fetch(
       window.API_URL + "/usuarios",
       {
-        headers: authHeaders()
+        headers: authHeaders(),
+        credentials: "include"
       }
     );
 

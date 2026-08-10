@@ -36,7 +36,10 @@ window.carregarTelaMissoes = async function(){
     try {
 
       const res = await fetch(
-        window.API_URL + "/minhas-missoes/" + currentUser.user
+        window.API_URL + "/minhas-missoes/" + currentUser.user,
+        {
+          credentials: "include"
+        }
       );
 
       if (!res.ok) {
@@ -176,7 +179,8 @@ window.iniciarTrabalho = async function(){
           const res = await fetch(
             window.API_URL + "/minhas-missoes/" + currentUser.user,
             {
-              headers: authHeaders()
+              headers: authHeaders(),
+              credentials: "include"
             }
           );
 
@@ -294,66 +298,71 @@ window.abrirMissaoAtual = function(){
 
 window.abrirCadastroMissao = async function(casaId){
 
-  const casa = houses.find(h => h.id === casaId);
+  let casa = houses.find(
+    h => h.id === casaId
+  );
 
-  if(!casa){
+  // Se acabou de abrir o app offline,
+  // procura a casa salva no aparelho
+  if (!casa) {
 
-    showToast("Casa não encontrada!", true);
+    try {
+
+      const casasOffline =
+        await carregarCasasOffline();
+
+      if (casasOffline && casasOffline.length) {
+
+        houses = casasOffline;
+
+        casa = houses.find(
+          h => h.id === casaId
+        );
+
+      }
+
+    } catch (erro) {
+
+      console.error(
+        "Erro ao carregar casa offline:",
+        erro
+      );
+
+    }
+
+  }
+
+  if (!casa) {
+
+    showToast(
+      "Casa não encontrada no aparelho.",
+      true
+    );
 
     return;
 
   }
 
-    switchView("map");
+  try {
 
-    setTimeout(async () => {
+    casa.statusMissao = "em_andamento";
+    casaSelecionada = casa.id;
 
-        initMap();
+    await openHouse(casa);
 
-        map.setView(
-          [casa.lat, casa.lng],
-          21,
-          {
-            animate:true,
-            duration:1
-          }
-        );
+  } catch (erro) {
 
-        if (navigator.onLine) {
+    console.error(
+      "ERRO ABRIR CADASTRO MISSÃO:",
+      erro
+    );
 
-        try {
+    showToast(
+      "Erro ao abrir cadastro: " + erro.message,
+      true
+    );
 
-          const respostaStatus = await fetch(
-            window.API_URL + "/status-missao",
-            {
-              method: "POST",
-              headers: authHeaders(true),
-              body: JSON.stringify({
-                casa_id: item.casa_id,
-                status: "concluida"
-              })
-            }
-          );
-
-        } catch (erro) {
-
-          console.log(
-            "Sem conexão. Status será atualizado depois."
-          );
-
-        }
-
-      }
-
-      casa.statusMissao = "em_andamento";
-
-        casaSelecionada = casa.id;
-
-        drawMap();
-
-        await openHouse(casa);
-
-    },300);
+  }
 
 };
 
@@ -386,7 +395,8 @@ window.carregarMinhasMissoes = async function(){
     const res = await fetch(
       window.API_URL + "/minhas-missoes/" + currentUser.user,
       {
-        headers: authHeaders()
+        headers: authHeaders(),
+        credentials: "include"
       }
     );
 

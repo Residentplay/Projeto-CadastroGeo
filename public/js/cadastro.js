@@ -234,7 +234,8 @@ window.carregarFotosCasa = async function(casaId) {
     const res = await fetch(
       window.API_URL + "/fotos/" + casaId,
       {
-        headers: authHeaders()
+        headers: authHeaders(),
+        credentials: "include"
       }
     );
 
@@ -507,6 +508,7 @@ async function sincronizarCadastrosOffline() {
           {
             method: "POST",
             headers: authHeaders(true),
+            credentials: "include",
             body: JSON.stringify(item.cadastro)
           }
         );
@@ -532,6 +534,7 @@ async function sincronizarCadastrosOffline() {
               window.API_URL + "/fotos",
               {
                 method: "POST",
+                credentials: "include",
                 body: formData
               }
             );
@@ -553,6 +556,7 @@ async function sincronizarCadastrosOffline() {
           {
             method: "POST",
             headers: authHeaders(true),
+            credentials: "include",
             body: JSON.stringify({
               casa_id: item.casa_id,
               status: "concluida"
@@ -719,6 +723,7 @@ window.saveCadastro = async function() {
       {
         method: "POST",
         headers: authHeaders(true),
+        credentials: "include",
         body: JSON.stringify(cadastro)
       }
     );
@@ -742,6 +747,7 @@ window.saveCadastro = async function() {
           window.API_URL + "/fotos",
           {
             method: "POST",
+            credentials: "include",
             body: formData
           }
         );
@@ -777,6 +783,7 @@ window.saveCadastro = async function() {
         {
           method: "POST",
           headers: authHeaders(true),
+          credentials: "include",
           body: JSON.stringify({
             casa_id: casaIdAtual,
             status: "concluida"
@@ -911,7 +918,8 @@ window.carregarCadastro = async function(casaId) {
     const res = await fetch(
       `${window.API_URL}/cadastro/${casaId}`,
       {
-        headers: authHeaders()
+        headers: authHeaders(),
+        credentials: "include"
       }
     );
 
@@ -935,7 +943,8 @@ window.carregarCadastrosDoBanco = async function() {
     const res = await fetch(
       window.API_URL + "/cadastro",
       {
-        headers: authHeaders()
+        headers: authHeaders(),
+        credentials: "include"
       }
     );
     const dados = await res.json();

@@ -7,7 +7,14 @@ window.openHouse = async function(h){
 
   console.log("PASSOU 1");
 
-  currentHouse=h;
+  currentHouse = h;
+
+  currentHouse = h;
+
+  fotosCasa = fotosPorCasa[h.id]
+    ? [...fotosPorCasa[h.id]]
+    : [];
+
   const done=!!cadastros[h.id];
   const viewOnly = false;
   document.getElementById('modal-title').textContent=done?'Ficha de Cadastro Social':'Novo Cadastro Social';

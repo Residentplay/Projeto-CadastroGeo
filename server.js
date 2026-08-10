@@ -1635,7 +1635,6 @@ app.get("/dashboard/ranking", autenticarToken, async (req, res) => {
       WHERE u.papel = 'colaborador'
         AND u.ativo = TRUE
         AND a.status = 'concluida'
-        AND a.data_conclusao::date = CURRENT_DATE
       GROUP BY a.colaborador
       ORDER BY COUNT(*) DESC, a.colaborador
     `);

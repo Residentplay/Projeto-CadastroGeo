@@ -242,7 +242,16 @@ window.switchView = function(v){
     .classList.toggle('active', v === 'missoes');
 
   if(v === 'map'){
+
     initMap();
+
+    if (
+      currentUser &&
+      currentUser.role === "engenheiro"
+    ) {
+      carregarCadastrosDoBanco();
+    }
+
   }
 
   if(v === 'admin'){

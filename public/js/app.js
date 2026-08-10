@@ -165,6 +165,21 @@ window.addEventListener("offline", () => {
 });
 
 
+setInterval(async () => {
+
+  if (
+    navigator.onLine &&
+    window.dbOffline &&
+    typeof sincronizarCadastrosOffline === "function"
+  ) {
+
+    await sincronizarCadastrosOffline();
+
+  }
+
+}, 10000);
+
+
 window.authHeaders = function(contentType = false) {
   const headers = {};
 

@@ -218,39 +218,85 @@ window.arquivoParaBase64 = function(arquivo) {
 
 window.carregarFotosCasa = async function(casaId) {
 
-    const galeria = document.getElementById("galeria-fotos");
+  const galeria = document.getElementById("galeria-fotos");
 
-    galeria.innerHTML = "<p>Carregando fotos...</p>";
+  galeria.innerHTML = "<p>Carregando fotos...</p>";
 
+  try {
 
     const res = await fetch("/fotos/" + casaId, {
       headers: authHeaders()
     });
 
+    if (!res.ok) {
+      throw new Error("Servidor indisponível.");
+    }
+
     const fotos = await res.json();
 
     galeria.innerHTML = "";
 
-    if (!res.ok || !Array.isArray(fotos)) {
-      galeria.innerHTML = "Erro ao carregar fotos.";
-      return;
+    if (!Array.isArray(fotos)) {
+      throw new Error("Resposta inválida.");
     }
 
     fotos.forEach(foto => {
 
-    const img = document.createElement("img");
+      const img = document.createElement("img");
 
-    img.src = foto.url_temporaria;
+      img.src = foto.url_temporaria;
 
-    img.style.width = "120px";
-    img.style.height = "90px";
-    img.style.objectFit = "cover";
-    img.style.borderRadius = "8px";
-    img.style.border = "1px solid #ccc";
+      img.style.width = "120px";
+      img.style.height = "90px";
+      img.style.objectFit = "cover";
+      img.style.borderRadius = "8px";
+      img.style.border = "1px solid #ccc";
 
-    galeria.appendChild(img);
+      galeria.appendChild(img);
 
-  });
+    });
+
+  } catch (erro) {
+
+    console.log(
+      "Sem internet. Carregando fotos salvas no aparelho."
+    );
+
+    galeria.innerHTML = "";
+
+    const cadastroOffline =
+      await buscarCadastroOfflinePorCasa(casaId);
+
+    if (
+      cadastroOffline &&
+      Array.isArray(cadastroOffline.fotos) &&
+      cadastroOffline.fotos.length
+    ) {
+
+      cadastroOffline.fotos.forEach(foto => {
+
+        const img = document.createElement("img");
+
+        img.src = URL.createObjectURL(foto);
+
+        img.style.width = "120px";
+        img.style.height = "90px";
+        img.style.objectFit = "cover";
+        img.style.borderRadius = "8px";
+        img.style.border = "1px solid #ccc";
+
+        galeria.appendChild(img);
+
+      });
+
+    } else {
+
+      galeria.innerHTML =
+        "<p>Nenhuma foto salva no aparelho.</p>";
+
+    }
+
+  }
 
 };
 
@@ -336,6 +382,47 @@ function salvarCadastroOffline(cadastro, casaId, fotos) {
 
     pedido.onsuccess = () => resolve();
     pedido.onerror = () => reject(pedido.error);
+
+  });
+
+}
+
+
+function buscarCadastroOfflinePorCasa(casaId) {
+
+  return new Promise((resolve, reject) => {
+
+    if (!window.dbOffline) {
+      resolve(null);
+      return;
+    }
+
+    const transacao = window.dbOffline.transaction(
+      "cadastrosPendentes",
+      "readonly"
+    );
+
+    const store = transacao.objectStore(
+      "cadastrosPendentes"
+    );
+
+    const pedido = store.getAll();
+
+    pedido.onsuccess = () => {
+
+      const registros = pedido.result || [];
+
+      const encontrado = registros.find(
+        item => item.casa_id === casaId
+      );
+
+      resolve(encontrado || null);
+
+    };
+
+    pedido.onerror = () => {
+      reject(pedido.error);
+    };
 
   });
 

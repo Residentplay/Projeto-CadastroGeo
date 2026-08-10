@@ -71,6 +71,7 @@ function renderizarEquipe(dadosEquipe, casasAtuais){
 
   dadosEquipe.forEach(item => {
 
+
     const usuario = users.find(
       u => u.user === item.colaborador
     );
@@ -254,6 +255,8 @@ window.carregarDashboard = async function(){
     }
   );
   const dadosEquipe = await resEquipe.json();
+  console.log("DADOS EQUIPE:", dadosEquipe);
+
   const resCasasAtuais = await fetch(
     window.API_URL + "/dashboard/casas-atuais",
     {

@@ -779,12 +779,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     <input class="inp" id="inp-pass" type="password" placeholder="••••••••" autocomplete="current-password"/>
     <div class="login-error" id="login-error">Usuário ou senha incorretos.</div>
     <button class="login-btn" onclick="doLogin()">Entrar no sistema</button>
-    <div class="login-hint">
-      <strong>Contas de demonstração:</strong><br/>
-      engenheiro / admin123 — Engenheiro (admin)<br/>
-      colaborador1 / campo123 — Colaborador de Campo<br/>
-      assistente1 / social123 — Assistente Social
-    </div>
+    
   </div>
 </div>
  
@@ -825,15 +820,19 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     📂 Importar GeoJSON
   </button>
 
-  <button onclick="salvarLotes()"
+  <button
+    id="btn-salvar-lotes"
+    onclick="salvarLotes()"
     class="btn-blue">
     💾 Salvar Lotes
   </button>
 
-  <button onclick="salvarCasas()"
+  <button
+    id="btn-salvar-casas"
+    onclick="salvarCasas()"
     class="btn-blue">
     🏠 Salvar Casas
-</button>
+  </button>
 
   <input type="file"
     id="geojson-input"

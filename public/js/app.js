@@ -284,8 +284,50 @@ window.setupUI = async function(){
   av.textContent = currentUser.name.split(' ').map(n=>n[0]).join('').slice(0,2);
   av.style.background = AVATAR_BG[currentUser.role]||'#1f6feb';
   const rp = document.getElementById('role-pill');
-  rp.textContent = ROLE_LABEL[currentUser.role];
-  rp.className = 'role-pill role-'+currentUser.role;
+  if (currentUser.role === 'colaborador') {
+    rp.style.display = 'none';
+  } else {
+    rp.style.display = '';
+    rp.textContent = ROLE_LABEL[currentUser.role];
+    rp.className = 'role-pill role-' + currentUser.role;
+  }
+    const navDashboard =
+      document.getElementById('nav-dashboard');
+
+    const btnSalvarLotes =
+      document.getElementById('btn-salvar-lotes');
+
+    const btnSalvarCasas =
+      document.getElementById('btn-salvar-casas');
+
+    const ehColaborador =
+      currentUser.role === 'colaborador';
+
+    const btnSalvarLotes2 =
+      document.getElementById('btn-salvar-lotes-2');
+
+    const btnSalvarCasas2 =
+      document.getElementById('btn-salvar-casas-2');
+
+    if (btnSalvarLotes2) {
+      btnSalvarLotes2.hidden = ehColaborador;
+    }
+
+    if (btnSalvarCasas2) {
+      btnSalvarCasas2.hidden = ehColaborador;
+    }  
+
+    if (navDashboard) {
+      navDashboard.hidden = ehColaborador;
+    }
+
+    if (btnSalvarLotes) {
+      btnSalvarLotes.hidden = ehColaborador;
+    }
+
+    if (btnSalvarCasas) {
+      btnSalvarCasas.hidden = ehColaborador;
+    }
   document.getElementById('nav-admin').style.display = currentUser.role==='engenheiro'?'':'none';
   document.getElementById('btn-missoes').style.display = currentUser.role === 'colaborador' ? '' : 'none';
   document.getElementById('tab-btn-relatorios').style.display = currentUser.role === 'engenheiro' ? '' : 'none';

@@ -153,9 +153,12 @@ window.abrirCasaEquipe = function(casaId){
 
 async function atualizarDashboard(){
 
-  const res = await fetch("/dashboard", {
-    headers: authHeaders()
-  });
+  const res = await fetch(
+    window.API_URL + "/dashboard",
+    {
+      headers: authHeaders()
+    }
+  );
   const dadosDashboard = await res.json();
 
   renderizarResumo(dadosDashboard);
@@ -230,24 +233,36 @@ window.carregarDashboard = async function(){
 
   try {
 
-  const res = await fetch("/dashboard", {
-    headers: authHeaders()
-  });
+  const res = await fetch(
+    window.API_URL + "/dashboard",
+    {
+      headers: authHeaders()
+    }
+  );
   const dadosDashboard = await res.json();
-  const resEquipe = await fetch("/dashboard/equipe", {
-    headers: authHeaders()
-  });
+  const resEquipe = await fetch(
+    window.API_URL + "/dashboard/equipe",
+    {
+      headers: authHeaders()
+    }
+  );
   const dadosEquipe = await resEquipe.json();
-  const resCasasAtuais = await fetch("/dashboard/casas-atuais", {
-    headers: authHeaders()
-  });
+  const resCasasAtuais = await fetch(
+    window.API_URL + "/dashboard/casas-atuais",
+    {
+      headers: authHeaders()
+    }
+  );
   const casasAtuais = await resCasasAtuais.json();
 
   console.log("CASAS ATUAIS:", casasAtuais);
 
-  const resRanking = await fetch("/dashboard/ranking", {
-    headers: authHeaders()
-  });
+  const resRanking = await fetch(
+    window.API_URL + "/dashboard/ranking",
+    {
+      headers: authHeaders()
+    }
+  );
 
   const dadosRanking = await resRanking.json();
 

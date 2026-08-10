@@ -318,9 +318,12 @@ window.doLogout = async function(){
 
   try {
 
-    await fetch("/logout", {
-      method: "POST"
-    });
+    await fetch(
+      window.API_URL + "/logout",
+      {
+        method: "POST"
+      }
+    );
 
   } catch (erro) {
     console.error("Erro ao sair:", erro);
@@ -492,9 +495,12 @@ window.consultarRelatorioDiario = async function(){
 
   try{
 
-    const res = await fetch("/relatorios", {
-      headers: authHeaders()
-    });
+    const res = await fetch(
+      window.API_URL + "/relatorios",
+      {
+        headers: authHeaders()
+      }
+    );
 
     const dados = await res.json();
 
@@ -873,7 +879,7 @@ window.consultarRelatorioMensal = async function(){
   try{
 
     const res = await fetch(
-      `/relatorios/mensal?ano=${ano}&mes=${mes}`,
+      `${window.API_URL}/relatorios/mensal?ano=${ano}&mes=${mes}`,
       {
         headers: authHeaders()
       }
@@ -1236,7 +1242,7 @@ window.consultarRelatorioAnual = async function(){
   try{
 
     const res = await fetch(
-      `/relatorios/anual?ano=${ano}`,
+      `${window.API_URL}/relatorios/anual?ano=${ano}`,
       {
         headers: authHeaders()
       }

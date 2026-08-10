@@ -36,7 +36,7 @@ window.carregarTelaMissoes = async function(){
     try {
 
       const res = await fetch(
-        "/minhas-missoes/" + currentUser.user
+        window.API_URL + "/minhas-missoes/" + currentUser.user
       );
 
       if (!res.ok) {
@@ -174,7 +174,7 @@ window.iniciarTrabalho = async function(){
         try {
 
           const res = await fetch(
-            "/minhas-missoes/" + currentUser.user,
+            window.API_URL + "/minhas-missoes/" + currentUser.user,
             {
               headers: authHeaders()
             }
@@ -323,14 +323,17 @@ window.abrirCadastroMissao = async function(casaId){
 
         try {
 
-          await fetch("/status-missao", {
-            method: "POST",
-            headers: authHeaders(true),
-            body: JSON.stringify({
-              casa_id: casaId,
-              status: "em_andamento"
-            })
-          });
+          const respostaStatus = await fetch(
+            window.API_URL + "/status-missao",
+            {
+              method: "POST",
+              headers: authHeaders(true),
+              body: JSON.stringify({
+                casa_id: item.casa_id,
+                status: "concluida"
+              })
+            }
+          );
 
         } catch (erro) {
 
@@ -381,7 +384,7 @@ window.carregarMinhasMissoes = async function(){
   try{
 
     const res = await fetch(
-      "/minhas-missoes/" + currentUser.user,
+      window.API_URL + "/minhas-missoes/" + currentUser.user,
       {
         headers: authHeaders()
       }

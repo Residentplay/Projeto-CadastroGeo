@@ -48,8 +48,8 @@ window.addUser = async function(){
   }
 
   const url = editingUserId
-    ? `/usuario/${editingUserId}`
-    : "/usuario";
+  ? `${window.API_URL}/usuario/${editingUserId}`
+  : `${window.API_URL}/usuario`;
 
   const metodo = editingUserId
     ? "PUT"
@@ -131,11 +131,13 @@ window.deleteUser = function(id){
 
       try {
 
-        const res = await fetch(`/usuario/${id}`, {
-          method: "DELETE",
-          headers: authHeaders()
-        });
-
+        const res = await fetch(
+          `${window.API_URL}/usuario/${id}`,
+          {
+            method: "DELETE",
+            headers: authHeaders()
+          }
+        );
         const dados = await res.json();
 
         if (!res.ok) {
@@ -206,21 +208,19 @@ window.confirmarAtribuicao = async function(colaborador){
     console.log("CASA SENDO ATRIBUÍDA:", currentHouse.id);
     console.log("COLABORADOR:", colaborador);
 
-    const res = await fetch("/atribuir-casa",{
+    const res = await fetch(
+      window.API_URL + "/atribuir-casa",
+      {
+        method: "POST",
 
-      method:"POST",
+        headers: authHeaders(true),
 
-      headers: authHeaders(true),
-
-      body:JSON.stringify({
-
-        casa_id: currentHouse.id,
-
-        colaborador: colaborador
-
-      })
-
-    });
+        body: JSON.stringify({
+          casa_id: currentHouse.id,
+          colaborador: colaborador
+        })
+      }
+    );
 
     const retorno = await res.json();
 
@@ -340,9 +340,12 @@ window.carregarUsuarios = async function() {
   try {
 
 
-    const res = await fetch("/usuarios", {
-      headers: authHeaders()
-    });
+    const res = await fetch(
+      window.API_URL + "/usuarios",
+      {
+        headers: authHeaders()
+      }
+    );
 
     if (!res.ok) {
       throw new Error("Não foi possível carregar os usuários.");

@@ -231,9 +231,12 @@ window.carregarFotosCasa = async function(casaId) {
 
   try {
 
-    const res = await fetch("/fotos/" + casaId, {
-      headers: authHeaders()
-    });
+    const res = await fetch(
+      window.API_URL + "/fotos/" + casaId,
+      {
+        headers: authHeaders()
+      }
+    );
 
     if (!res.ok) {
       throw new Error("Servidor indisponível.");
@@ -499,11 +502,14 @@ async function sincronizarCadastrosOffline() {
 
       try {
 
-        const res = await fetch("/cadastro", {
-          method: "POST",
-          headers: authHeaders(true),
-          body: JSON.stringify(item.cadastro)
-        });
+        const res = await fetch(
+          window.API_URL + "/cadastro",
+          {
+            method: "POST",
+            headers: authHeaders(true),
+            body: JSON.stringify(item.cadastro)
+          }
+        );
 
         const retorno = await res.json();
 
@@ -522,10 +528,13 @@ async function sincronizarCadastrosOffline() {
             formData.append("casa_id", item.casa_id);
             formData.append("foto", foto);
 
-            const respostaFoto = await fetch("/fotos", {
-              method: "POST",
-              body: formData
-            });
+            const respostaFoto = await fetch(
+              window.API_URL + "/fotos",
+              {
+                method: "POST",
+                body: formData
+              }
+            );
 
             const retornoFoto = await respostaFoto.json();
 
@@ -539,13 +548,15 @@ async function sincronizarCadastrosOffline() {
 
         }
 
-        const respostaStatus = await fetch("/status-missao", {
-          method: "POST",
-          headers: authHeaders(true),
-          body: JSON.stringify({
-            casa_id: item.casa_id,
-            status: "concluida"
-          })
+        const respostaStatus = await fetch(
+          window.API_URL + "/status-missao",
+          {
+            method: "POST",
+            headers: authHeaders(true),
+            body: JSON.stringify({
+              casa_id: item.casa_id,
+              status: "concluida"
+            })
         });
 
         if (!respostaStatus.ok) {
@@ -703,15 +714,14 @@ window.saveCadastro = async function() {
   try {
 
 
-    const res = await fetch('/cadastro', {
-
-      method: 'POST',
-
-      headers: authHeaders(true),
-
-      body: JSON.stringify(cadastro)
-
-    });
+    const res = await fetch(
+      window.API_URL + "/cadastro",
+      {
+        method: "POST",
+        headers: authHeaders(true),
+        body: JSON.stringify(cadastro)
+      }
+    );
 
     const retorno = await res.json();
 
@@ -728,10 +738,13 @@ window.saveCadastro = async function() {
         formData.append("casa_id", casaIdAtual);
         formData.append("foto", foto);
 
-        const respostaFoto = await fetch("/fotos", {
-          method: "POST",
-          body: formData
-        });
+        const respostaFoto = await fetch(
+          window.API_URL + "/fotos",
+          {
+            method: "POST",
+            body: formData
+          }
+        );
 
         const retornoFoto = await respostaFoto.json();
 
@@ -759,14 +772,17 @@ window.saveCadastro = async function() {
 
     if (casaIdAtual) {
 
-      const respostaMissao = await fetch("/status-missao", {
-        method: "POST",
-        headers: authHeaders(true),
-        body: JSON.stringify({
-          casa_id: casaIdAtual,
-          status: "concluida"
-        })
-      });
+      const respostaMissao = await fetch(
+        window.API_URL + "/status-missao",
+        {
+          method: "POST",
+          headers: authHeaders(true),
+          body: JSON.stringify({
+            casa_id: casaIdAtual,
+            status: "concluida"
+          })
+        }
+      );
 
       if (!respostaMissao.ok) {
         throw new Error("Erro ao concluir missão.");
@@ -892,9 +908,12 @@ window.carregarCadastro = async function(casaId) {
 
   try {
 
-    const res = await fetch(`/cadastro/${casaId}`, {
-      headers: authHeaders()
-    });
+    const res = await fetch(
+      `${window.API_URL}/cadastro/${casaId}`,
+      {
+        headers: authHeaders()
+      }
+    );
 
     return await res.json();
 
@@ -913,10 +932,12 @@ window.carregarCadastrosDoBanco = async function() {
 
   try {
 
-    const res = await fetch("/cadastro", {
-      headers: authHeaders()
-    });
-
+    const res = await fetch(
+      window.API_URL + "/cadastro",
+      {
+        headers: authHeaders()
+      }
+    );
     const dados = await res.json();
 
     cadastros = {};

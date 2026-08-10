@@ -923,11 +923,14 @@ async function salvarLotes(){
 
     console.log("Enviando lotes:", lotesParaSalvar);
 
-    const res = await fetch("/lotes", {
-      method: "POST",
-      headers: authHeaders(true),
-      body: JSON.stringify(lotesParaSalvar)
-    });
+    const res = await fetch(
+      window.API_URL + "/lotes",
+      {
+        method: "POST",
+        headers: authHeaders(true),
+        body: JSON.stringify(lotesParaSalvar)
+      }
+    );
 
     console.log("Status:", res.status);
 
@@ -955,15 +958,14 @@ window.salvarCasas = async function(){
     console.log("Casas para salvar:");
     console.log(houses);
 
-    const res = await fetch("/casas", {
-
-      method: "POST",
-
-      headers: authHeaders(true),
-
-      body: JSON.stringify(houses)
-
-    });
+    const res = await fetch(
+      window.API_URL + "/casas",
+      {
+        method: "POST",
+        headers: authHeaders(true),
+        body: JSON.stringify(houses)
+      }
+    );
 
     const dados = await res.json();
 
@@ -1086,9 +1088,12 @@ window.carregarCasas = async function() {
       return;
     }
 
-    const res = await fetch("/casas", {
-      headers: authHeaders()
-    });
+    const res = await fetch(
+      window.API_URL + "/casas",
+      {
+        headers: authHeaders()
+      }
+    );
 
     const dados = await res.json();
 
@@ -1143,9 +1148,12 @@ window.carregarLotes = async function(){
 
   try{
 
-    const res = await fetch("/lotes", {
-      headers: authHeaders()
-    });
+    const res = await fetch(
+      window.API_URL + "/lotes",
+      {
+        headers: authHeaders()
+      }
+    );
 
     const dados = await res.json();
 

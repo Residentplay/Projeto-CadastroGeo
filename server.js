@@ -328,6 +328,48 @@ await pg.query(`
   )
 `);
 
+const existeEngenheiro = await pg.query(
+  `
+  SELECT id
+  FROM usuarios
+  WHERE papel = 'engenheiro'
+  LIMIT 1
+  `
+);
+
+if (existeEngenheiro.rows.length === 0) {
+
+  const senhaInicial = await bcrypt.hash(
+    "admin123",
+    10
+  );
+
+  await pg.query(
+    `
+    INSERT INTO usuarios (
+      nome,
+      usuario,
+      senha,
+      papel,
+      ativo
+    )
+    VALUES ($1,$2,$3,$4,$5)
+    `,
+    [
+      "Administrador",
+      "engenheiro",
+      senhaInicial,
+      "engenheiro",
+      true
+    ]
+  );
+
+  console.log(
+    "Usuário engenheiro inicial criado."
+  );
+
+}
+
 console.log("Tabela PostgreSQL 'usuarios' verificada/criada.");
 
 await pg.query(`

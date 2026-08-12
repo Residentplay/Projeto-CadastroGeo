@@ -183,6 +183,12 @@ setInterval(async () => {
 window.authHeaders = function(contentType = false) {
   const headers = {};
 
+  const token = localStorage.getItem("cadastrogeo_token");
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   if (contentType) {
     headers["Content-Type"] = "application/json";
   }
@@ -430,6 +436,11 @@ window.doLogin = async function(){
     }
 
     const usuario = await res.json();
+
+    localStorage.setItem(
+      "cadastrogeo_token",
+      usuario.token
+    );
 
     currentUser = {
       id: "u" + Date.now(),
